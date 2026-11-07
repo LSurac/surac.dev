@@ -23,10 +23,10 @@ their date; reversed decisions are struck through, never deleted.
   reviewers. Application links unlock the complete PDF (phone, address), the certificates and the
   cover letter; the open site offers a reduced PDF with e-mail contact only.
 - **The job title stays the search term**: "Fullstack-Entwickler · .NET & Angular". "Agentic" is
-  a section ("Arbeitsweise") and a README paragraph, not a title. Nobody searches for "Agentic
-  Software Engineer" in 2026, and the phrase triggers exactly the vibe-coding prejudice the site is
-  meant to dispel. The section explains what agentic work means here, what it is not, and how to
-  verify it in this repository.
+  a section ("Arbeitsweise") and a README paragraph, not a title: nobody searches for "Agentic
+  Software Engineer" in 2026. The section describes the working mode briefly and factually (plan,
+  rules, what the agents do, what stays with me) and points to this repository as the evidence.
+  It does not argue against anything; the repository speaks for itself.
 - **German first, English complete.** Target employers are German; the CV is German. English is a
   full second locale (URL prefix `/en`, translation tables, PDF in both languages from the same
   data), not a half-translated afterthought. Code, README, commits and docs are English.
@@ -93,7 +93,7 @@ their date; reversed decisions are struck through, never deleted.
 - **Never on this site**: gradient blobs, glassmorphism, Tailwind default palettes, scroll-triggered
   fade-ins, typewriter effects, "Hi, I'm … 👋", skill percentage bars, hero videos, parallax,
   cookie banners, contact forms, animated counters. The research lists most of these as negative
-  signals; the rest are the visual signature of the vibe-coded portfolio this site is not.
+  signals; the rest are the visual clichés of the generic developer portfolio this site avoids.
 - **Fonts are self-hosted** (Source Serif 4, OFL, Latin subsets as versioned `woff2`), never loaded
   from Google Fonts. The grotesk is the system stack. Monospace for code excerpts is the system
   stack.

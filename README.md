@@ -26,11 +26,15 @@ This repository is the second half of that answer. It is public on purpose.
 
 ## How this was built
 
-I work *agentically*: AI coding agents (Claude Code) do research, scaffolding, boilerplate and
-first drafts of tests, driven by a written plan and the rules in `AGENTS.md`. Architecture, data
-model, security decisions, deployment, every review and every commit are mine. That is the opposite
-of vibe coding, and the difference is meant to be visible in this repository: small commits that
-name the behaviour they add, tests that came first, documentation that explains why.
+I work agentically. In practice that means:
+
+- A written plan and a decision log come first (`docs/decisions.md`); the rules for every change
+  are in `AGENTS.md`.
+- AI coding agents (Claude Code) work inside those rules: research, scaffolding, boilerplate,
+  first drafts of tests.
+- Architecture, data model, security, deployment, every review and every commit are mine.
+- Small commits that name the behaviour they add, tests before implementation, documentation that
+  explains why.
 
 ## Repository layout
 
