@@ -23,6 +23,11 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
   which is empty for a Blob, and every NSwag call asks for a blob. `ApiBaseUrlBackend` therefore
   fetches blob responses as ArrayBuffer on the server; the cache restores them as Blob in the
   browser, and the FileReader shim in `server.ts` reads both.
+- **An empty `X-Forwarded-Proto` breaks every server-side API call** (2026-11-07, staging only: the
+  page rendered with status 200 but without any content, and nothing was logged). nginx forwards
+  `$http_x_forwarded_proto`, which is empty when no proxy sits in front of it; Angular trusts the
+  header and builds the request URL `://host/`. Locally the header is missing, in production Caddy
+  sets it. `server.ts` drops empty `X-Forwarded-*` headers before Angular sees them.
 - **Testcontainers needs Docker running on the workstation.** `[PostgresFact]` skips integration
   tests locally when Docker is down and never in CI. A green local run with Docker stopped is not a
   green gate.
