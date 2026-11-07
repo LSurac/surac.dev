@@ -10,6 +10,8 @@ on:
       - "**.md"
       - "deploy/**"
       - "docs/**"
+  # Manual run, e.g. to redeploy after a variable or secret change.
+  workflow_dispatch:
 
 permissions:
   contents: read
