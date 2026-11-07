@@ -41,4 +41,12 @@ public sealed class SlugTests
   {
     Assert.Throws<DomainValidationException>(() => Slug.Parse(new string('a', 81)));
   }
+
+  [Fact]
+  public void Try_parse_reports_failure_instead_of_throwing()
+  {
+    Assert.True(Slug.TryParse("projekt", out var slug));
+    Assert.Equal("projekt", slug.Value);
+    Assert.False(Slug.TryParse("Kein Slug", out _));
+  }
 }

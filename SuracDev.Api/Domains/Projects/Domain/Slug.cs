@@ -16,14 +16,22 @@ public readonly partial record struct Slug
 
   public string Value { get; }
 
+  /// <summary>Parses admin input; trims and lower-cases it first.</summary>
+  /// <exception cref="DomainValidationException">The value is not a valid slug.</exception>
   public static Slug Parse(string? value)
-  {
-    var normalized = value?.Trim().ToLowerInvariant() ?? string.Empty;
-    return normalized.Length is >= MinLength and <= MaxLength && Pattern().IsMatch(normalized)
-      ? new Slug(normalized)
+    => TryParse(value, out var slug)
+      ? slug
       : throw new DomainValidationException(
         "slug",
         "Lowercase letters and digits joined by single hyphens, 2 to 80 characters.");
+
+  /// <summary>Parses a slug from a URL, where an invalid value simply names no project.</summary>
+  public static bool TryParse(string? value, out Slug slug)
+  {
+    var normalized = value?.Trim().ToLowerInvariant() ?? string.Empty;
+    var isValid = normalized.Length is >= MinLength and <= MaxLength && Pattern().IsMatch(normalized);
+    slug = isValid ? new Slug(normalized) : default;
+    return isValid;
   }
 
   public override string ToString() => Value;
