@@ -17,6 +17,12 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
   responses as blobs; Node has no `FileReader`, so SSR calls fail silently and the page renders
   empty. `server.ts` installs a minimal shim before anything else (carried over from the
   maintainer's club website, where it was found the hard way).
+- **The hydration transfer cache loses blob responses** (2026-11-07, found by the first E2E run of
+  the start page: the server render showed the profile, the hydrated page lost it, without a single
+  request or console error). Angular serialises cached `blob` bodies with `new Uint8Array(body)`,
+  which is empty for a Blob, and every NSwag call asks for a blob. `ApiBaseUrlBackend` therefore
+  fetches blob responses as ArrayBuffer on the server; the cache restores them as Blob in the
+  browser, and the FileReader shim in `server.ts` reads both.
 - **Testcontainers needs Docker running on the workstation.** `[PostgresFact]` skips integration
   tests locally when Docker is down and never in CI. A green local run with Docker stopped is not a
   green gate.
