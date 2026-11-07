@@ -18,6 +18,7 @@ import { ProjectCardLink, UiProjectCard } from '../../ui/project-card/project-ca
 import { UiSectionHeading } from '../../ui/section-heading/section-heading';
 import { SkillColumn, UiSkillColumns } from '../../ui/skill-columns/skill-columns';
 import { TimelineEntry, UiTimeline } from '../../ui/timeline/timeline';
+import { valueOf } from '../content/load-state';
 import { documentUrl, PublicContent } from '../content/public-content';
 
 const DESCRIPTION_LENGTH = 160;
@@ -77,7 +78,7 @@ export class HomePage {
     stream: ({ params }) => this.content.skillGroups(params),
   });
 
-  protected readonly profile = computed(() => this.profileResource.value());
+  protected readonly profile = computed(() => valueOf(this.profileResource));
   protected readonly profileLinks = computed(() => toProfileLinks(this.profile()));
   protected readonly hero = computed(() => {
     const profile = this.profile();
@@ -101,16 +102,16 @@ export class HomePage {
     (this.profile()?.facts ?? []).map((fact) => ({ value: fact.value ?? '', label: fact.label ?? '' })),
   );
   protected readonly experiences = computed(() =>
-    (this.experiencesResource.value() ?? []).map((item) => toExperienceEntry(item, this.strings())),
+    (valueOf(this.experiencesResource) ?? []).map((item) => toExperienceEntry(item, this.strings())),
   );
   protected readonly education = computed(() =>
-    (this.educationResource.value() ?? []).map((item) => toEducationEntry(item, this.strings())),
+    (valueOf(this.educationResource) ?? []).map((item) => toEducationEntry(item, this.strings())),
   );
   protected readonly projects = computed(() =>
-    (this.projectsResource.value() ?? []).map((item) => toProjectCard(item, this.strings(), this.locale())),
+    (valueOf(this.projectsResource) ?? []).map((item) => toProjectCard(item, this.strings(), this.locale())),
   );
   protected readonly skillGroups = computed<SkillColumn[]>(() =>
-    (this.skillsResource.value() ?? []).map((group) => ({
+    (valueOf(this.skillsResource) ?? []).map((group) => ({
       id: group.id ?? 0,
       name: group.name ?? '',
       skills: (group.skills ?? []).map((skill) => ({

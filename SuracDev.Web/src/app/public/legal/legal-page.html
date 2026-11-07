@@ -1,0 +1,20 @@
+@if (failure() === 'not-found') {
+  <app-not-found-page />
+} @else if (failure() === 'unavailable') {
+  <app-unavailable-notice />
+} @else if (page(); as page) {
+  <article class="legal">
+    <h1 class="legal__title">{{ page.title }}</h1>
+    @if (contact(); as provider) {
+      <address class="legal__provider">
+        <span>{{ provider.fullName }}</span>
+        @for (line of provider.addressLines; track $index) {
+          <span>{{ line }}</span>
+        }
+        <a [href]="'mailto:' + provider.email">{{ provider.email }}</a>
+      </address>
+    }
+    <ui-prose [html]="page.bodyHtml ?? ''" />
+    <p class="meta">{{ updated() }}</p>
+  </article>
+}

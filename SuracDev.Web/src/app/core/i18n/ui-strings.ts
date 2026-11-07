@@ -59,6 +59,7 @@ export interface UiStrings {
   };
   readonly legal: { readonly updated: string; readonly provider: string };
   readonly notFound: { readonly title: string; readonly text: string; readonly home: string };
+  readonly unavailable: { readonly title: string; readonly text: string };
 }
 
 const de: UiStrings = {
@@ -118,6 +119,10 @@ const de: UiStrings = {
     text: 'Diese Seite gibt es nicht oder nicht mehr.',
     home: 'Zur Startseite',
   },
+  unavailable: {
+    title: 'Gerade nicht erreichbar',
+    text: 'Der Inhalt konnte nicht geladen werden. Bitte später erneut versuchen.',
+  },
 };
 
 const en: UiStrings = {
@@ -176,6 +181,10 @@ const en: UiStrings = {
     title: 'Page not found',
     text: 'This page does not exist or no longer exists.',
     home: 'Back to the start page',
+  },
+  unavailable: {
+    title: 'Temporarily unavailable',
+    text: 'The content could not be loaded. Please try again later.',
   },
 };
 

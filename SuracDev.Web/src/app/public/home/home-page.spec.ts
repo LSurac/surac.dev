@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import {
   PublicCareerClient,
   PublicProfile,
@@ -160,6 +160,16 @@ describe('app-home-page', () => {
       '/en/projects/beispielprojekt',
     );
     expect(screen.getByRole('heading', { level: 2, name: /How I work/ })).toBeInTheDocument();
+  });
+
+  it('keeps the other sections when one part of the content fails to load', async () => {
+    const setup = providers();
+    setup.clients.projects.list.mockReturnValue(throwError(() => ({ status: 500 })));
+    await render(HomePage, { providers: setup.providers });
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Max Mustermann' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 2, name: /Projekte/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /Kenntnisse/ })).toBeInTheDocument();
   });
 
   it('leaves out the projects section when nothing is featured', async () => {

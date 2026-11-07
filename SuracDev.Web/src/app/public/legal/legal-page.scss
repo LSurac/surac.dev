@@ -1,0 +1,15 @@
+.legal {
+  padding: 56px 0 var(--space-8);
+}
+
+.legal__title {
+  margin: 0 0 var(--space-6);
+  font-size: clamp(36px, 5vw, 56px);
+}
+
+.legal__provider {
+  display: grid;
+  gap: var(--space-1);
+  margin-bottom: var(--space-6);
+  font-style: normal;
+}

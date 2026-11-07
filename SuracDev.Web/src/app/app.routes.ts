@@ -6,9 +6,18 @@ import { HomePage } from './public/home/home-page';
  * Locale comes from the URL prefix, never from a cookie: `/` is German, `/en` is English
  * (docs/architecture.md). Route data is bound to component inputs (withComponentInputBinding).
  */
+const caseStudy = () => import('./public/case-study/case-study-page').then((m) => m.CaseStudyPage);
+const legal = () => import('./public/legal/legal-page').then((m) => m.LegalPage);
+
 export const routes: Routes = [
   { path: '', component: HomePage, data: { locale: 'de' } },
   { path: 'en', component: HomePage, data: { locale: 'en' } },
+  { path: 'projekte/:slug', loadComponent: caseStudy, data: { locale: 'de' } },
+  { path: 'en/projects/:slug', loadComponent: caseStudy, data: { locale: 'en' } },
+  { path: 'impressum', loadComponent: legal, data: { locale: 'de', pageKey: 'Imprint' } },
+  { path: 'datenschutz', loadComponent: legal, data: { locale: 'de', pageKey: 'Privacy' } },
+  { path: 'en/impressum', loadComponent: legal, data: { locale: 'en', pageKey: 'Imprint' } },
+  { path: 'en/datenschutz', loadComponent: legal, data: { locale: 'en', pageKey: 'Privacy' } },
   { path: 'admin', loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes) },
   ...(isDevMode()
     ? [
@@ -18,5 +27,8 @@ export const routes: Routes = [
         },
       ]
     : []),
-  { path: '**', redirectTo: '' },
+  {
+    path: '**',
+    loadComponent: () => import('./public/not-found/not-found-page').then((m) => m.NotFoundPage),
+  },
 ];
