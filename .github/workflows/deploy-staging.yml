@@ -25,6 +25,8 @@ jobs:
   deploy:
     name: Deploy
     needs: gates
+    # Skipped, not failed, until the staging host is configured in the repository variables.
+    if: vars.STAGING_HOST != ''
     runs-on: windows-latest
     timeout-minutes: 30
     environment: staging
@@ -35,7 +37,7 @@ jobs:
           persist-credentials: false
 
       - name: Connect to Tailscale
-        uses: tailscale/github-action@4ae5a4c1b9a3f15e3a5b4b2e1d0e6b7a2f0a8c6e # v3
+        uses: tailscale/github-action@6cae46e2d796f265265cfcf628b72a32b4d7cade # v3
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}

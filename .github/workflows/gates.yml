@@ -7,6 +7,8 @@ on:
   push:
     branches: ["**"]
   pull_request:
+  # The deploy workflows reuse this one as their first job.
+  workflow_call:
 
 permissions:
   contents: read
@@ -127,6 +129,10 @@ jobs:
       - name: Install
         working-directory: SuracDev.Web
         run: npm ci --no-audit --no-fund
+
+      # NSwag builds the project itself but does not restore it on a fresh checkout.
+      - name: Restore API
+        run: dotnet restore SuracDev.Api/SuracDev.Api.csproj
 
       # Regenerates the NSwag clients from the API and fails when the committed ones are stale.
       - name: Check generated clients

@@ -1,6 +1,7 @@
 # gitleaks configuration. The default rule set stays active; this file only extends it and
 # documents the allowlist. Runs as a CI gate (.github/workflows/gates.yml) and, locally, via
 # `gitleaks protect --staged` from the pre-commit hook described in docs/build-and-test.md.
+# gitleaks uses Go's RE2: no lookaheads, so exceptions go into the allowlist below.
 title = "surac.dev"
 
 [extend]
@@ -9,7 +10,7 @@ useDefault = true
 [[rules]]
 id = "surac-dev-connection-string"
 description = "PostgreSQL connection string with an inline password"
-regex = '''(?i)Password=(?!\$\{)(?!\s*;)(?!openapi;)(?!suracdev;)[^;\s"']{4,}'''
+regex = '''(?i)Password=[^;\s"'$}]{4,}'''
 tags = ["postgres", "connection-string"]
 
 [allowlist]
@@ -20,7 +21,9 @@ paths = [
   '''docs/research/.*''',
 ]
 regexes = [
-  # Local development defaults that only ever point at a throwaway container.
-  '''Password=suracdev;''',
-  '''Password=openapi;''',
+  # Throwaway credentials of local containers, the OpenApi dummy and the test fixtures.
+  '''Password=suracdev\b''',
+  '''Password=openapi\b''',
+  '''Password=e2e\b''',
+  '''Password=never\b''',
 ]
