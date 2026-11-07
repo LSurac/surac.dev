@@ -149,6 +149,7 @@ export class HomePage {
           description: (profile.intro ?? profile.headline ?? '').slice(0, DESCRIPTION_LENGTH),
           locale: this.locale(),
           paths: { de: '/', en: '/en' },
+          imagePath: profile.photoDocumentId ? documentUrl(profile.photoDocumentId) : null,
         });
       }
     });

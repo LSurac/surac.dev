@@ -68,6 +68,8 @@ export class CaseStudyPage {
           description: study.teaser ?? '',
           locale: this.locale(),
           paths: { de: `/projekte/${this.slug()}`, en: `/en/projects/${this.slug()}` },
+          type: 'article',
+          imagePath: this.images()[0]?.url ?? null,
         });
       }
     });

@@ -58,4 +58,39 @@ describe('Seo', () => {
     expect(document.head.querySelectorAll('link[hreflang="en"]')).toHaveLength(1);
     expect(link(document, 'link[rel="canonical"]')).toBe('https://surac.dev/');
   });
+
+  it('describes the page for link previews with Open Graph', () => {
+    TestBed.configureTestingModule({});
+    TestBed.inject(Seo).apply({
+      title: 'Beispielprojekt – Leonard Surac',
+      description: 'Ein Beispiel.',
+      locale: 'en',
+      paths: { de: '/projekte/beispiel', en: '/en/projects/beispiel' },
+      type: 'article',
+      imagePath: '/api/public/documents/21',
+    });
+    const document = TestBed.inject(DOCUMENT);
+    const og = (property: string) =>
+      document.head.querySelector(`meta[property="og:${property}"]`)?.getAttribute('content');
+
+    expect(og('title')).toBe('Beispielprojekt – Leonard Surac');
+    expect(og('description')).toBe('Ein Beispiel.');
+    expect(og('url')).toBe('https://surac.dev/en/projects/beispiel');
+    expect(og('type')).toBe('article');
+    expect(og('locale')).toBe('en_GB');
+    expect(og('image')).toBe('https://surac.dev/api/public/documents/21');
+  });
+
+  it('removes a previous preview image when the page has none', () => {
+    TestBed.configureTestingModule({});
+    const seo = TestBed.inject(Seo);
+    const paths = { de: '/', en: '/en' };
+    seo.apply({ title: 'A', description: 'a', locale: 'de', paths, imagePath: '/api/public/documents/7' });
+    seo.apply({ title: 'B', description: 'b', locale: 'de', paths });
+
+    const document = TestBed.inject(DOCUMENT);
+    expect(document.head.querySelector('meta[property="og:image"]')).toBeNull();
+    expect(document.head.querySelector('meta[property="og:type"]')?.getAttribute('content')).toBe('website');
+    expect(document.head.querySelector('meta[property="og:locale"]')?.getAttribute('content')).toBe('de_DE');
+  });
 });
