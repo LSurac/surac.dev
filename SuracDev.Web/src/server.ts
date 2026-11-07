@@ -10,6 +10,7 @@ import { extname, join, normalize, sep } from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import type { ServerRequestContext } from './app/core/http/server-request-context';
+import { buildSitemap } from './app/core/seo/sitemap';
 
 /**
  * Minimal FileReader for the generated API clients. NSwag's Angular template reads every response
@@ -163,8 +164,35 @@ function dropEmptyForwardedHeaders(req: IncomingMessage): void {
   }
 }
 
+/**
+ * Answers /sitemap.xml with the start page, the legal pages and every visible case study. The slugs
+ * come from the public API on each request, so a new project appears without a deploy.
+ */
+async function serveSitemap(res: ServerResponse): Promise<void> {
+  const response = await fetch(`${apiBaseUrl}/api/public/projects?locale=de`);
+  if (!response.ok) {
+    throw new Error(`Projects for the sitemap answered ${response.status}.`);
+  }
+
+  const projects = (await response.json()) as { slug?: string }[];
+  const slugs = projects.map((project) => project.slug).filter((slug): slug is string => !!slug);
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.end(buildSitemap(slugs));
+}
+
 function handle(req: IncomingMessage, res: ServerResponse): void {
   dropEmptyForwardedHeaders(req);
+  if (req.method === 'GET' && req.url?.split('?')[0] === '/sitemap.xml') {
+    serveSitemap(res).catch((error: unknown) => {
+      console.error(error);
+      res.statusCode = 503;
+      res.end('Sitemap unavailable');
+    });
+    return;
+  }
+
   if (req.url?.startsWith('/api/')) {
     proxyApi(req, res).catch((error: unknown) => {
       console.error(error);

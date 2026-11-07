@@ -87,6 +87,17 @@ test.describe('start page', () => {
     await expect(page.getByText('Musterstraße 1')).toBeVisible();
   });
 
+  test('publishes robots.txt and a sitemap with the case studies', async ({ request }) => {
+    const robots = await request.get('/robots.txt');
+    const sitemap = await request.get('/sitemap.xml');
+    const xml = await sitemap.text();
+
+    expect(await robots.text()).toContain('Sitemap: https://surac.dev/sitemap.xml');
+    expect(sitemap.headers()['content-type']).toContain('application/xml');
+    expect(xml).toContain('<loc>https://surac.dev/projekte/beispielprojekt</loc>');
+    expect(xml).toContain('hreflang="en" href="https://surac.dev/en/projects/beispielprojekt"');
+  });
+
   test('the API behind the site is healthy', async ({ request }) => {
     const response = await request.get('/api/health');
 
