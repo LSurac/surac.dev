@@ -1,0 +1,130 @@
+<h1 class="editor__heading">{{ text.heading }}</h1>
+
+<div class="editor__layout">
+  <ui-entity-list
+    [items]="listItems()"
+    [selectedId]="selectedId()"
+    [label]="text.list"
+    [createLabel]="text.upload"
+    (selected)="select($event)"
+    (created)="startUpload()"
+  />
+
+  <div>
+    <ui-error-summary [title]="strings.form.saveFailed" [messages]="problem().messages" />
+
+    @if (selection() === 'upload') {
+      <form class="editor" [formGroup]="uploadForm" (ngSubmit)="upload()">
+        <h2 class="editor__section">{{ text.upload }}</h2>
+        <ui-field [label]="text.file" controlId="file" [hint]="text.fileHint" [errors]="errorsFor('file')">
+          <input
+            id="file"
+            type="file"
+            accept="application/pdf,image/png,image/jpeg,image/webp"
+            (change)="chooseFile($event)"
+          />
+        </ui-field>
+        <div class="editor__grid">
+          <ui-field [label]="text.kind" controlId="kind" [errors]="errorsFor('kind')">
+            <select id="kind" formControlName="kind">
+              @for (kind of kinds; track kind) {
+                <option [ngValue]="kind">{{ kindLabel(kind) }}</option>
+              }
+            </select>
+          </ui-field>
+          <ui-field
+            [label]="text.visibility"
+            controlId="visibility"
+            [hint]="text.visibilityHint"
+            [errors]="errorsFor('visibility')"
+          >
+            <select id="visibility" formControlName="visibility">
+              @for (visibility of visibilities; track visibility) {
+                <option [ngValue]="visibility">{{ visibilityLabel(visibility) }}</option>
+              }
+            </select>
+          </ui-field>
+          <ui-field
+            [label]="text.labelDe"
+            controlId="labelDe"
+            [hint]="text.labelHint"
+            [errors]="errorsFor('de.label')"
+          >
+            <input id="labelDe" formControlName="labelDe" lang="de" />
+          </ui-field>
+          <ui-field [label]="text.labelEn" controlId="labelEn" [errors]="errorsFor('en.label')">
+            <input id="labelEn" formControlName="labelEn" lang="en" />
+          </ui-field>
+        </div>
+        <div class="editor__actions">
+          <ui-button [label]="text.submitUpload" variant="primary" type="submit" [disabled]="busy()" />
+        </div>
+      </form>
+    }
+
+    @if (selected(); as document) {
+      <form class="editor" [formGroup]="editForm" (ngSubmit)="save()">
+        <h2 class="editor__section">{{ text.details }}</h2>
+        <p class="editor__meta">
+          {{ document.fileName }} · {{ document.contentType }} · {{ sizeLabel(document) }}
+        </p>
+        @if (isPublicImage(document)) {
+          <img
+            class="editor__preview"
+            [src]="'/api/public/documents/' + document.id"
+            [alt]="document.labelDe || document.fileName"
+          />
+        }
+        <p>
+          <a [href]="'/api/admin/documents/' + document.id + '/content'" download>{{ text.download }}</a>
+        </p>
+        <div class="editor__grid">
+          <ui-field
+            [label]="text.visibility"
+            controlId="editVisibility"
+            [hint]="text.visibilityHint"
+            [errors]="errorsFor('visibility')"
+          >
+            <select id="editVisibility" formControlName="visibility">
+              @for (visibility of visibilities; track visibility) {
+                <option [ngValue]="visibility">{{ visibilityLabel(visibility) }}</option>
+              }
+            </select>
+          </ui-field>
+          <div></div>
+          <ui-field
+            [label]="text.labelDe"
+            controlId="editLabelDe"
+            [hint]="text.labelHint"
+            [errors]="errorsFor('de.label')"
+          >
+            <input id="editLabelDe" formControlName="labelDe" lang="de" />
+          </ui-field>
+          <ui-field [label]="text.labelEn" controlId="editLabelEn" [errors]="errorsFor('en.label')">
+            <input id="editLabelEn" formControlName="labelEn" lang="en" />
+          </ui-field>
+        </div>
+        <div class="editor__actions">
+          <ui-button [label]="strings.form.save" variant="primary" type="submit" [disabled]="busy()" />
+          @if (!confirmingDelete()) {
+            <button type="button" class="editor__delete" (click)="askToDelete()">
+              {{ strings.form.delete }}
+            </button>
+          }
+          @if (confirmingDelete()) {
+            <p class="editor__confirm">{{ strings.form.confirmDelete }}</p>
+            <button type="button" class="editor__delete" (click)="remove()">
+              {{ strings.form.deleteForGood }}
+            </button>
+            <button type="button" class="editor__add" (click)="cancelDelete()">
+              {{ strings.form.cancel }}
+            </button>
+          }
+          @if (saved()) {
+            <p class="editor__saved" role="status">{{ strings.form.saved }}</p>
+          }
+        </div>
+      </form>
+    }
+  </div>
+</div>

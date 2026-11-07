@@ -39,6 +39,10 @@ export const adminRoutes: Routes = [
         path: 'projekte',
         loadComponent: () => import('./projects/project-editor').then((m) => m.ProjectEditor),
       },
+      {
+        path: 'dokumente',
+        loadComponent: () => import('./documents/document-manager').then((m) => m.DocumentManager),
+      },
     ],
   },
 ];

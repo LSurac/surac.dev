@@ -53,6 +53,19 @@
   border-bottom: 1px dotted var(--color-rule);
 }
 
+.editor__meta {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.editor__preview {
+  display: block;
+  max-width: 240px;
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-rule);
+}
+
 .editor__check {
   display: flex;
   gap: var(--space-2);
