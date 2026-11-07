@@ -1,0 +1,10 @@
+<div class="pair">
+  <fieldset class="pair__column" lang="de">
+    <legend class="pair__heading">{{ germanLabel() }}</legend>
+    <ng-content select="[de]" />
+  </fieldset>
+  <fieldset class="pair__column" lang="en">
+    <legend class="pair__heading">{{ englishLabel() }}</legend>
+    <ng-content select="[en]" />
+  </fieldset>
+</div>

@@ -1,0 +1,19 @@
+.summary {
+  margin-bottom: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-card);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+.summary__title {
+  margin: 0 0 var(--space-2);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.summary__list {
+  margin: 0;
+  padding-left: var(--space-5);
+}

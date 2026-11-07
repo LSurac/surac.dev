@@ -1,0 +1,21 @@
+<div class="entities">
+  <ul class="entities__list" [attr.aria-label]="label()">
+    @for (item of items(); track item.id) {
+      <li>
+        <button
+          type="button"
+          class="entities__item"
+          [class.entities__item--muted]="item.muted"
+          [attr.aria-current]="item.id === selectedId() ? 'true' : null"
+          (click)="selected.emit(item.id)"
+        >
+          <span class="entities__title">{{ item.title }}</span>
+          @if (item.meta; as meta) {
+            <span class="entities__meta">{{ meta }}</span>
+          }
+        </button>
+      </li>
+    }
+  </ul>
+  <button type="button" class="entities__create" (click)="created.emit()">{{ createLabel() }}</button>
+</div>

@@ -1,0 +1,15 @@
+<div class="field" [class.field--invalid]="errors().length > 0">
+  <label class="field__label" [for]="controlId()">
+    {{ label() }}
+    @if (badge(); as text) {
+      <span class="field__badge">{{ text }}</span>
+    }
+  </label>
+  <ng-content />
+  @if (hint(); as text) {
+    <p class="field__hint">{{ text }}</p>
+  }
+  @for (error of errors(); track error) {
+    <p class="field__error">{{ error }}</p>
+  }
+</div>

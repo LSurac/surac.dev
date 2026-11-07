@@ -1,0 +1,10 @@
+@if (messages().length > 0) {
+  <div class="summary" role="alert">
+    <p class="summary__title">{{ title() }}</p>
+    <ul class="summary__list">
+      @for (message of messages(); track $index) {
+        <li>{{ message }}</li>
+      }
+    </ul>
+  </div>
+}
