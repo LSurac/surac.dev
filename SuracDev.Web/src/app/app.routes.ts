@@ -9,6 +9,7 @@ import { HomePage } from './public/home/home-page';
 export const routes: Routes = [
   { path: '', component: HomePage, data: { locale: 'de' } },
   { path: 'en', component: HomePage, data: { locale: 'en' } },
+  { path: 'admin', loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes) },
   ...(isDevMode()
     ? [
         {

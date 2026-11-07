@@ -1,0 +1,19 @@
+<div class="shell">
+  <nav class="shell__nav" [attr.aria-label]="strings.title">
+    <p class="shell__title">{{ strings.title }}</p>
+    <ul class="shell__links">
+      @for (link of links; track link.path) {
+        <li>
+          <a [routerLink]="link.path" routerLinkActive="shell__link--active" ariaCurrentWhenActive="page">
+            {{ link.label }}
+          </a>
+        </li>
+      }
+    </ul>
+    <a class="shell__site" routerLink="/">{{ strings.nav.site }}</a>
+    <button type="button" class="shell__logout" (click)="logout()">{{ strings.nav.logout }}</button>
+  </nav>
+  <div class="shell__content">
+    <router-outlet />
+  </div>
+</div>

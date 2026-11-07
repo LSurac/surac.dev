@@ -20,4 +20,15 @@ describe('App shell', () => {
     expect(screen.getByRole('main')).toBeInTheDocument();
     expect(screen.getByRole('contentinfo')).toBeInTheDocument();
   });
+
+  it('leaves the site header and footer out of the admin area', async () => {
+    await render(App, {
+      providers: [provideRouter([{ path: 'admin/login', children: [] }])],
+      initialRoute: '/admin/login',
+    });
+
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument();
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+    expect(screen.getByRole('main')).toBeInTheDocument();
+  });
 });

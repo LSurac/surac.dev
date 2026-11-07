@@ -1,6 +1,10 @@
 <a class="skip-link" href="#main">{{ strings().skipToContent }}</a>
-<app-site-header [locale]="locale()" />
+@if (!isAdmin()) {
+  <app-site-header [locale]="locale()" />
+}
 <main id="main" class="container" tabindex="-1">
   <router-outlet />
 </main>
-<app-site-footer [locale]="locale()" />
+@if (!isAdmin()) {
+  <app-site-footer [locale]="locale()" />
+}

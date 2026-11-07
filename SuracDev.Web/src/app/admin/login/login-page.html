@@ -1,0 +1,14 @@
+<section class="login">
+  <h1 class="login__heading">{{ heading() }}</h1>
+  <ui-error-summary [title]="strings.failed" [messages]="errors()" />
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ui-field
+      [label]="strings.password"
+      controlId="password"
+      [hint]="isFirstLogin() ? strings.firstHint : null"
+    >
+      <input id="password" type="password" formControlName="password" [attr.autocomplete]="autocomplete()" />
+    </ui-field>
+    <ui-button [label]="submitLabel()" variant="primary" type="submit" [disabled]="busy()" />
+  </form>
+</section>
