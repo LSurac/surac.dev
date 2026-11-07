@@ -149,7 +149,22 @@ async function proxyApi(req: IncomingMessage, res: ServerResponse): Promise<void
   }
 }
 
+/**
+ * Drops X-Forwarded-* headers that arrive empty. nginx forwards `$http_x_forwarded_proto` as is,
+ * which is an empty string when no proxy sits in front of it (staging). Angular trusts the header
+ * and builds the request URL `://host/` from it, which makes every server-side API call fail
+ * without a log line (docs/gotchas.md).
+ */
+function dropEmptyForwardedHeaders(req: IncomingMessage): void {
+  for (const name of Object.keys(req.headers)) {
+    if (name.startsWith('x-forwarded-') && !String(req.headers[name] ?? '').trim()) {
+      delete req.headers[name];
+    }
+  }
+}
+
 function handle(req: IncomingMessage, res: ServerResponse): void {
+  dropEmptyForwardedHeaders(req);
   if (req.url?.startsWith('/api/')) {
     proxyApi(req, res).catch((error: unknown) => {
       console.error(error);

@@ -32,6 +32,13 @@ test.describe('start page', () => {
     expect(html).toContain('<title>Max Mustermann – Fullstack-Entwickler');
   });
 
+  test('renders the content behind a proxy that sends an empty forwarded protocol', async ({ request }) => {
+    // nginx forwards $http_x_forwarded_proto, which is empty when nothing sits in front of it (staging).
+    const html = await (await request.get('/', { headers: { 'x-forwarded-proto': '' } })).text();
+
+    expect(html).toContain('Max Mustermann');
+  });
+
   test('renders the English start page with English content and language', async ({ request }) => {
     const html = await (await request.get('/en')).text();
 
