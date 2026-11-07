@@ -1,0 +1,14 @@
+<article class="card">
+  <p class="meta card__status">{{ statusLine() }}</p>
+  <h3 class="card__title">{{ title() }}</h3>
+  <p class="card__teaser">{{ teaser() }}</p>
+  @if (stackLine()) {
+    <p class="meta card__stack">{{ stackLine() }}</p>
+  }
+  <p class="card__links">
+    <a [routerLink]="caseStudyPath()">{{ caseStudyLabel() }}</a>
+    @for (link of links(); track link.href) {
+      <a [href]="link.href" rel="noopener">{{ link.label }}</a>
+    }
+  </p>
+</article>

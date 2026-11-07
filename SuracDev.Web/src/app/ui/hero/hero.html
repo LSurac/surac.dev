@@ -1,0 +1,24 @@
+<section class="hero">
+  <div class="hero__text">
+    <p class="kicker">{{ titleLine() }}</p>
+    <h1 class="hero__name">{{ name() }}</h1>
+    <p class="lede hero__headline">{{ headline() }}</p>
+    <p class="meta hero__location">{{ location() }}</p>
+    <div class="hero__actions">
+      @if (download(); as file) {
+        <ui-button [label]="file.label" variant="primary" [href]="file.href" [download]="file.fileName" />
+      }
+      <ui-button [label]="emailLabel()" [href]="mailto()" />
+    </div>
+    @if (links().length > 0) {
+      <p class="meta hero__links">
+        @for (link of links(); track link.href) {
+          <a [href]="link.href" rel="me noopener">{{ link.label }}</a>
+        }
+      </p>
+    }
+  </div>
+  @if (photoUrl(); as url) {
+    <img class="hero__photo" [src]="url" [alt]="photoAlt()" width="240" height="300" />
+  }
+</section>

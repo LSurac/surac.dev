@@ -1,0 +1,50 @@
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline__item + .timeline__item {
+  border-top: 1px dotted var(--color-rule);
+}
+
+.timeline__entry {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+}
+
+.timeline__period {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline__title {
+  margin: 0 0 var(--space-1);
+  font-size: 22px;
+}
+
+.timeline__organisation,
+.timeline__detail {
+  margin: 0;
+}
+
+.timeline__summary {
+  margin: var(--space-2) 0 0;
+  max-width: var(--measure);
+}
+
+.timeline__bullets {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-5);
+  max-width: var(--measure);
+}

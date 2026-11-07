@@ -1,0 +1,31 @@
+<ol class="timeline" [attr.aria-label]="label()">
+  @for (entry of entries(); track entry.id) {
+    <li class="timeline__item">
+      <article class="timeline__entry">
+        <p class="timeline__period">{{ entry.period }}</p>
+        <div>
+          <h3 class="timeline__title">{{ entry.title }}</h3>
+          <p class="meta timeline__organisation">
+            {{ entry.organisation }}
+            @if (entry.location) {
+              · {{ entry.location }}
+            }
+          </p>
+          @if (entry.summary) {
+            <p class="timeline__summary">{{ entry.summary }}</p>
+          }
+          @if (entry.bullets.length > 0) {
+            <ul class="timeline__bullets">
+              @for (bullet of entry.bullets; track $index) {
+                <li>{{ bullet }}</li>
+              }
+            </ul>
+          }
+          @if (entry.detail) {
+            <p class="meta timeline__detail">{{ entry.detail }}</p>
+          }
+        </div>
+      </article>
+    </li>
+  }
+</ol>

@@ -1,0 +1,22 @@
+<div class="skills">
+  @for (group of groups(); track group.id) {
+    <section class="skills__group">
+      <h3 class="skills__name">{{ group.name }}</h3>
+      <ul class="skills__list" [attr.aria-label]="group.name">
+        @for (skill of group.skills; track skill.name) {
+          <li class="skills__item">
+            <span>
+              {{ skill.name }}
+              @if (skill.qualifier) {
+                <span class="skills__qualifier">({{ skill.qualifier }})</span>
+              }
+            </span>
+            @if (skill.sinceYear) {
+              <span class="skills__since">{{ sinceLabel() }} {{ skill.sinceYear }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</div>
