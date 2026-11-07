@@ -15,6 +15,8 @@ Public endpoints (`[AllowAnonymous]`, on the `public` OpenAPI document):
 - `GET /api/public/profile`, `/experiences`, `/education`, `/projects` (`?featured=true`),
   `/projects/{slug}`, `/skills`, `/legal/{key}` — all read-only, locale via query; `/interests`
   follows in phase 3
+- `GET /api/public/documents/{id}` — public documents only (profile photo, case-study images);
+  link-only documents answer 404 like missing ones
 - `GET /api/public/cv.pdf` (the `Public` variant)
 - `GET /api/links/{token}` and its sub-resources (`/cv.pdf`, `/documents/{id}`), guarded by the
   token itself
@@ -54,7 +56,11 @@ endpoint is on that list. Adding to the list is a deliberate, reviewed act.
 
 - Allowed: PDF, PNG, JPEG, WebP; 10 MB; content sniffed, not trusted from the extension.
 - Stored outside the web root under a random file name on a named volume; served through the API
-  with `Content-Disposition` and the stored content type, never by nginx directly.
+  with `Content-Disposition` and the stored content type, never by nginx directly. A path from the
+  database is only resolved below the storage root.
+- A rejected upload leaves no file behind. A document still referenced (profile photo, project or
+  interest image, application link) cannot be deleted, and one shown on the open site cannot be
+  made link-only. Certificates and cover letters can never be made public.
 - Images are not processed in v1 (no resizing library); the admin uploads web-sized images.
 
 ## Transport and headers

@@ -137,3 +137,8 @@ their date; reversed decisions are struck through, never deleted.
   size, sanitising on the client).
 - **The Impressum takes the address from the profile** instead of repeating it in the Markdown body,
   so the address the law requires exists once.
+- **Admin texts exist in German only** (`admin/admin-strings.ts`), kept out of the templates like
+  every UI string. The admin has exactly one, German-speaking user; translating the admin would be
+  work without a reader. The public site's chrome strings stay complete in both locales.
+- **Deleting asks for confirmation inside the form**, not through `window.confirm`: testable, styled
+  like the rest, and readable by screen readers in context.
