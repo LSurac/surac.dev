@@ -1,0 +1,91 @@
+// Shared layout of the admin editors. Utilitarian on purpose (docs/design.md: the admin reuses
+// the tokens but is not designed like the public site).
+.editor__heading {
+  margin: 0 0 var(--space-5);
+  font-size: 40px;
+}
+
+.editor__section {
+  margin: var(--space-6) 0 var(--space-3);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.editor__layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-6);
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editor__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--space-5);
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editor__row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr auto;
+  gap: var(--space-3);
+  align-items: end;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px dotted var(--color-rule);
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editor__check {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin-bottom: var(--space-4);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+.editor__add,
+.editor__remove,
+.editor__delete {
+  padding: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--color-rule);
+  border-radius: 2px;
+  background: none;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.editor__delete {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.editor__actions {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  margin-top: var(--space-6);
+}
+
+.editor__saved {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-muted);
+}

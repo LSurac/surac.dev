@@ -1,0 +1,119 @@
+<h1 class="editor__heading">{{ text.heading }}</h1>
+
+@if (loadFailed()) {
+  <ui-error-summary [title]="strings.form.loadFailed" [messages]="problem().messages" />
+}
+
+@if (loaded()) {
+  <form class="editor" [formGroup]="form" (ngSubmit)="save()">
+    <ui-error-summary [title]="strings.form.saveFailed" [messages]="problem().messages" />
+
+    <h2 class="editor__section">{{ text.contact }}</h2>
+    <div class="editor__grid">
+      <ui-field [label]="text.fullName" controlId="fullName" [errors]="errorsFor('fullName')">
+        <input id="fullName" formControlName="fullName" autocomplete="off" />
+      </ui-field>
+      <ui-field [label]="text.email" controlId="email" [errors]="errorsFor('email')">
+        <input id="email" type="email" formControlName="email" autocomplete="off" />
+      </ui-field>
+      <ui-field [label]="text.location" controlId="location" [errors]="errorsFor('location')">
+        <input id="location" formControlName="location" />
+      </ui-field>
+      <ui-field [label]="text.phone" controlId="phone" [hint]="text.phoneHint" [errors]="errorsFor('phone')">
+        <input id="phone" type="tel" formControlName="phone" autocomplete="off" />
+      </ui-field>
+      <ui-field [label]="text.gitHubUrl" controlId="gitHubUrl" [errors]="errorsFor('gitHubUrl')">
+        <input id="gitHubUrl" type="url" formControlName="gitHubUrl" />
+      </ui-field>
+      <ui-field [label]="text.linkedInUrl" controlId="linkedInUrl" [errors]="errorsFor('linkedInUrl')">
+        <input id="linkedInUrl" type="url" formControlName="linkedInUrl" />
+      </ui-field>
+    </div>
+    <ui-field
+      [label]="text.addressLines"
+      controlId="addressLines"
+      [hint]="text.addressHint"
+      [errors]="errorsFor('addressLines')"
+    >
+      <textarea id="addressLines" formControlName="addressLines" rows="3"></textarea>
+    </ui-field>
+    <ui-field
+      [label]="text.photo"
+      controlId="photoDocumentId"
+      [hint]="text.photoHint"
+      [errors]="errorsFor('photoDocumentId')"
+    >
+      <select id="photoDocumentId" formControlName="photoDocumentId">
+        <option [ngValue]="null">{{ text.noPhoto }}</option>
+        @for (photo of photos(); track photo.id) {
+          <option [ngValue]="photo.id">{{ photoLabel(photo) }}</option>
+        }
+      </select>
+    </ui-field>
+
+    <h2 class="editor__section">{{ text.texts }}</h2>
+    <ui-locale-pair [germanLabel]="strings.locale.german" [englishLabel]="strings.locale.english">
+      <div de formGroupName="de">
+        @for (key of textKeys; track key) {
+          <ui-field [label]="labelFor(key)" [controlId]="'de-' + key" [errors]="errorsFor('de.' + key)">
+            @if (multiline.has(key)) {
+              <textarea [id]="'de-' + key" [formControlName]="key" rows="5"></textarea>
+            } @else {
+              <input [id]="'de-' + key" [formControlName]="key" />
+            }
+          </ui-field>
+        }
+      </div>
+      <div en formGroupName="en">
+        @for (key of textKeys; track key) {
+          <ui-field
+            [label]="labelFor(key)"
+            [controlId]="'en-' + key"
+            [badge]="untranslated(key)"
+            [errors]="errorsFor('en.' + key)"
+          >
+            @if (multiline.has(key)) {
+              <textarea [id]="'en-' + key" [formControlName]="key" rows="5"></textarea>
+            } @else {
+              <input [id]="'en-' + key" [formControlName]="key" />
+            }
+          </ui-field>
+        }
+      </div>
+    </ui-locale-pair>
+
+    <h2 class="editor__section">{{ text.facts }}</h2>
+    <ui-error-summary [title]="text.facts" [messages]="errorsFor('facts')" />
+    <div formArrayName="facts">
+      @for (fact of facts.controls; track fact; let index = $index) {
+        <div class="editor__row" [formGroupName]="index">
+          <ui-field [label]="text.factValue" [controlId]="'fact-' + index + '-value'">
+            <input [id]="'fact-' + index + '-value'" formControlName="value" />
+          </ui-field>
+          <ui-field [label]="text.factLabelDe" [controlId]="'fact-' + index + '-label-de'">
+            <input [id]="'fact-' + index + '-label-de'" formControlName="labelDe" lang="de" />
+          </ui-field>
+          <ui-field [label]="text.factLabelEn" [controlId]="'fact-' + index + '-label-en'">
+            <input [id]="'fact-' + index + '-label-en'" formControlName="labelEn" lang="en" />
+          </ui-field>
+          <button
+            type="button"
+            class="editor__remove"
+            [attr.aria-label]="removeLabel(index)"
+            (click)="removeFact(index)"
+          >
+            {{ strings.form.remove }}
+          </button>
+        </div>
+      }
+    </div>
+    <button type="button" class="editor__add" (click)="addFact()">{{ text.addFact }}</button>
+
+    <div class="editor__actions">
+      <ui-button [label]="strings.form.save" variant="primary" type="submit" [disabled]="saving()" />
+      @if (saved()) {
+        <p class="editor__saved" role="status">{{ strings.form.saved }}</p>
+      }
+    </div>
+  </form>
+}

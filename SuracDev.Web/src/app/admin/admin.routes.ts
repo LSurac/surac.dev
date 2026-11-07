@@ -13,6 +13,12 @@ export const adminRoutes: Routes = [
     path: '',
     component: AdminShell,
     canActivate: [adminGuard],
-    children: [{ path: '', pathMatch: 'full', redirectTo: 'profil' }],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'profil' },
+      {
+        path: 'profil',
+        loadComponent: () => import('./profile/profile-editor').then((m) => m.ProfileEditor),
+      },
+    ],
   },
 ];

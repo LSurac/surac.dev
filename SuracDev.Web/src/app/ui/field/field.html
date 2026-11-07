@@ -1,6 +1,6 @@
 <div class="field" [class.field--invalid]="errors().length > 0">
   <label class="field__label" [for]="controlId()">
-    {{ label() }}
+    <span>{{ label() }}</span>
     @if (badge(); as text) {
       <span class="field__badge">{{ text }}</span>
     }
