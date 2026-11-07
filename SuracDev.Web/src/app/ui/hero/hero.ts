@@ -7,7 +7,10 @@ export interface HeroLink {
   readonly href: string;
 }
 
-/** The download offered as primary action (the CV PDF). */
+/**
+ * The download offered as primary action (the CV PDF). An empty `fileName` lets the browser take
+ * the name the server sends in Content-Disposition.
+ */
 export interface HeroDownload {
   readonly label: string;
   readonly href: string;

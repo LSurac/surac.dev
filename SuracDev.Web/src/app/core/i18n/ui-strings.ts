@@ -33,6 +33,7 @@ export interface UiStrings {
   };
   readonly hero: {
     readonly email: string;
+    readonly cv: string;
     readonly photoAlt: (name: string) => string;
   };
   readonly career: { readonly openEnd: string; readonly grade: string };
@@ -83,7 +84,7 @@ const de: UiStrings = {
     workingMode: 'Arbeitsweise',
     contact: 'Kontakt',
   },
-  hero: { email: 'E-Mail schreiben', photoAlt: (name) => `Porträt von ${name}` },
+  hero: { email: 'E-Mail schreiben', cv: 'Lebenslauf (PDF)', photoAlt: (name) => `Porträt von ${name}` },
   career: { openEnd: 'heute', grade: 'Note' },
   projects: {
     caseStudy: 'Fallstudie lesen',
@@ -146,7 +147,7 @@ const en: UiStrings = {
     workingMode: 'How I work',
     contact: 'Contact',
   },
-  hero: { email: 'Write an e-mail', photoAlt: (name) => `Portrait of ${name}` },
+  hero: { email: 'Write an e-mail', cv: 'CV (PDF)', photoAlt: (name) => `Portrait of ${name}` },
   career: { openEnd: 'present', grade: 'Grade' },
   projects: {
     caseStudy: 'Read the case study',

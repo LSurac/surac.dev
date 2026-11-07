@@ -121,6 +121,15 @@ describe('app-home-page', () => {
     );
   });
 
+  it('offers the CV as PDF download in the page language, named by the server', async () => {
+    await render(HomePage, { providers: providers().providers, inputs: { locale: 'en' } });
+
+    const download = await screen.findByRole('link', { name: 'CV (PDF)' });
+
+    expect(download).toHaveAttribute('href', '/api/public/cv.pdf?locale=en');
+    expect(download).toHaveAttribute('download', '');
+  });
+
   it('shows the sections in the public order with numbered headings', async () => {
     await render(HomePage, { providers: providers().providers });
     await screen.findByRole('heading', { level: 1 });

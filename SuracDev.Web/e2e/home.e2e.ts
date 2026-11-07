@@ -64,6 +64,16 @@ test.describe('start page', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Example project' })).toBeVisible();
   });
 
+  test('downloads the CV as PDF under the name the server gives it', async ({ page }) => {
+    await page.goto('/');
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('link', { name: 'Lebenslauf (PDF)' }).click(),
+    ]);
+
+    expect(download.suggestedFilename()).toBe('Lebenslauf_Max_Mustermann.pdf');
+  });
+
   test('answers unknown pages and unknown projects with 404', async ({ request }) => {
     expect((await request.get('/gibt-es-nicht')).status()).toBe(404);
     expect((await request.get('/projekte/gibt-es-nicht')).status()).toBe(404);

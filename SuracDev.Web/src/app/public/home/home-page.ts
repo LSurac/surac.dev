@@ -13,7 +13,7 @@ import { Seo } from '../../core/seo/seo';
 import { SOURCE_REPOSITORY_URL } from '../../layout/site-footer/site-footer';
 import { Fact } from '../../ui/fact-bar/fact';
 import { UiFactBar } from '../../ui/fact-bar/fact-bar';
-import { HeroLink, UiHero } from '../../ui/hero/hero';
+import { HeroDownload, HeroLink, UiHero } from '../../ui/hero/hero';
 import { ProjectCardLink, UiProjectCard } from '../../ui/project-card/project-card';
 import { UiSectionHeading } from '../../ui/section-heading/section-heading';
 import { SkillColumn, UiSkillColumns } from '../../ui/skill-columns/skill-columns';
@@ -80,6 +80,12 @@ export class HomePage {
 
   protected readonly profile = computed(() => valueOf(this.profileResource));
   protected readonly profileLinks = computed(() => toProfileLinks(this.profile()));
+  /** The public CV in the page language; the server names the file (Lebenslauf_… / CV_…). */
+  protected readonly cvDownload = computed<HeroDownload>(() => ({
+    label: this.strings().hero.cv,
+    href: `/api/public/cv.pdf?locale=${this.locale()}`,
+    fileName: '',
+  }));
   protected readonly hero = computed(() => {
     const profile = this.profile();
     if (!profile) {
