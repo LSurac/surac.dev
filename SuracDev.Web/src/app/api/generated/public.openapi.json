@@ -322,6 +322,55 @@
         }
       }
     },
+    "/api/public/documents/{id}": {
+      "get": {
+        "tags": [
+          "PublicDocuments"
+        ],
+        "summary": "Serves a public document inline.",
+        "description": "Only documents with visibility Public are served; link-only documents answer 404 exactly\nlike missing ones, so their existence is not confirmed. The response carries the SHA-256 of the\ncontent as ETag; a request with a matching If-None-Match answers 304. Documents never\nchange their content (a new upload gets a new id), so they may be cached for a day.",
+        "operationId": "PublicDocuments_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The document's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file, inline, with its detected content type.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "The cached copy is current."
+          },
+          "404": {
+            "description": "No public document has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/public/experiences": {
       "get": {
         "tags": [

@@ -906,6 +906,312 @@
         }
       }
     },
+    "/api/admin/documents": {
+      "get": {
+        "tags": [
+          "AdminDocuments"
+        ],
+        "summary": "Lists every document, newest first.",
+        "operationId": "AdminDocuments_List",
+        "responses": {
+          "200": {
+            "description": "All documents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminDocument"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminDocuments"
+        ],
+        "summary": "Uploads a document.",
+        "description": "Multipart form with file, kind, visibility and optional labelDe /\nlabelEn. The content type is detected from the file's first bytes; the name and the type\nthe browser sends are ignored. Allowed: PDF, PNG, JPEG, WebP up to 10 MB. Photos and images must\nbe images; certificates and cover letters must be link-only. Images are not resized: upload them\nin web size.",
+        "operationId": "AdminDocuments_Upload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "kind": {
+                    "$ref": "#/components/schemas/DocumentKind"
+                  },
+                  "visibility": {
+                    "$ref": "#/components/schemas/DocumentVisibility"
+                  },
+                  "labelDe": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "labelEn": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Stored; Location points to the content of the new document.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDocument"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The file is empty, too large or of a type not allowed, or kind and visibility do not fit (file, visibility).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The request is larger than a 10 MB file allows.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/documents/{id}": {
+      "put": {
+        "tags": [
+          "AdminDocuments"
+        ],
+        "summary": "Changes the labels and the visibility of a document.",
+        "description": "The file itself never changes; upload a new document instead. A document shown on the open site\n(profile photo, project or interest image) cannot be made link-only, and certificates and cover\nletters can never be made public.",
+        "operationId": "AdminDocuments_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The document's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The new visibility and labels.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentUpdateForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "The visibility breaks a kind rule.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No document has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The document is shown on the open site and would become link-only.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminDocuments"
+        ],
+        "summary": "Deletes a document and its file.",
+        "description": "A document still used by the profile, a project, an interest or an application link cannot be deleted.",
+        "operationId": "AdminDocuments_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The document's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No document has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The document is still in use.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/documents/{id}/content": {
+      "get": {
+        "tags": [
+          "AdminDocuments"
+        ],
+        "summary": "Downloads any document, public or link-only, as an attachment.",
+        "operationId": "AdminDocuments_Download",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The document's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file with its original name.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No document has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/education": {
       "get": {
         "tags": [
@@ -2157,6 +2463,121 @@
           },
           "newPassword": {
             "type": "string"
+          }
+        }
+      },
+      "AdminDocument": {
+        "type": "object",
+        "description": "An uploaded document as the admin sees it.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The document's identifier; public images are served at /api/public/documents/{id}.",
+            "format": "int64"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "The original file name without any client path."
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The type detected from the file's bytes."
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "description": "File size.",
+            "format": "int64"
+          },
+          "kind": {
+            "description": "What the document is.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DocumentKind"
+              }
+            ]
+          },
+          "visibility": {
+            "description": "Public (open site) or link-only (application links only).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DocumentVisibility"
+              }
+            ]
+          },
+          "uploadedAt": {
+            "type": "string",
+            "description": "When it was uploaded.",
+            "format": "date-time"
+          },
+          "labelDe": {
+            "type": "string",
+            "description": "German label, also the alt text of an image.",
+            "nullable": true
+          },
+          "labelEn": {
+            "type": "string",
+            "description": "English label, if any.",
+            "nullable": true
+          }
+        }
+      },
+      "DocumentKind": {
+        "type": "string",
+        "description": "What a document is. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Photo",
+          "Certificate",
+          "CoverLetter",
+          "Image",
+          "Other"
+        ],
+        "enum": [
+          "Unknown",
+          "Photo",
+          "Certificate",
+          "CoverLetter",
+          "Image",
+          "Other"
+        ]
+      },
+      "DocumentVisibility": {
+        "type": "string",
+        "description": "Who may download a document. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Public",
+          "LinkOnly"
+        ],
+        "enum": [
+          "Unknown",
+          "Public",
+          "LinkOnly"
+        ]
+      },
+      "DocumentUpdateForm": {
+        "type": "object",
+        "description": "The changeable fields of a document, for PUT. The file itself never changes; upload a new one.",
+        "additionalProperties": false,
+        "properties": {
+          "visibility": {
+            "description": "Certificates and cover letters stay link-only; documents in use on the open site stay public.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DocumentVisibility"
+              }
+            ]
+          },
+          "labelDe": {
+            "type": "string",
+            "description": "Optional German label.",
+            "nullable": true
+          },
+          "labelEn": {
+            "type": "string",
+            "description": "Optional English label.",
+            "nullable": true
           }
         }
       },
