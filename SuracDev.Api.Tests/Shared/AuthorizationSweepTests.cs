@@ -19,6 +19,8 @@ public sealed class AuthorizationSweepTests(PostgresFixture postgres)
     "GET api/auth/state",
     "POST api/auth/login",
     "GET api/public/profile",
+    "GET api/public/experiences",
+    "GET api/public/education",
   };
 
   [PostgresFact]
