@@ -36,3 +36,6 @@ Thumbs.db
 
 # Editor workspace files
 *.code-workspace
+
+# Decisions waiting for the maintainer (private, never committed)
+open-items.local.md
