@@ -19,11 +19,16 @@ public sealed class ApiFactory(
 {
   public const string InitialPassword = "correct horse battery";
 
+  /// <summary>A documents folder of this factory's own, removed again on dispose.</summary>
+  public string DocumentsPath { get; } = Path.Combine(Path.GetTempPath(), "surac-dev-tests", Guid.NewGuid().ToString("N"));
+
   protected override void ConfigureWebHost(IWebHostBuilder builder)
   {
     builder.UseEnvironment(environment);
     builder.UseSetting("ConnectionStrings:Default", connectionString ?? string.Empty);
     builder.UseSetting("DataProtection:KeyPath", string.Empty);
+    Directory.CreateDirectory(DocumentsPath);
+    builder.UseSetting("Documents:StoragePath", DocumentsPath);
     builder.UseSetting("OTEL_EXPORTER_OTLP_ENDPOINT", otlpEndpoint ?? string.Empty);
   }
 
@@ -34,6 +39,15 @@ public sealed class ApiFactory(
     var response = await client.PostAsJsonAsync("/api/auth/login", new LoginRequest(password));
     response.EnsureSuccessStatusCode();
     return client;
+  }
+
+  public override async ValueTask DisposeAsync()
+  {
+    await base.DisposeAsync();
+    if (Directory.Exists(DocumentsPath))
+    {
+      Directory.Delete(DocumentsPath, recursive: true);
+    }
   }
 
   /// <summary>Runs <paramref name="work"/> against the test database, for arranging rows the API cannot create yet.</summary>

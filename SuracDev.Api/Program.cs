@@ -39,6 +39,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SuracDevSeeder>();
 builder.Services.AddScoped<AdminAuthService>();
 builder.Services.AddScoped<DocumentReferences>();
+builder.Services.AddScoped<DocumentService>();
+builder.Services.AddSingleton<DocumentStorage>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<ExperienceService>();
 builder.Services.AddScoped<EducationService>();

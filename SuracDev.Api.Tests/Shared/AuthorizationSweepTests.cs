@@ -25,6 +25,7 @@ public sealed class AuthorizationSweepTests(PostgresFixture postgres)
     "GET api/public/projects/{slug}",
     "GET api/public/skills",
     "GET api/public/legal/{key}",
+    "GET api/public/documents/{id}",
   };
 
   [PostgresFact]

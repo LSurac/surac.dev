@@ -28,6 +28,7 @@ appsettings.Development.local.json
 
 # Local content (real CV data, uploaded documents, photos)
 content-local/
+.local/
 
 # OS
 Thumbs.db
