@@ -14,7 +14,8 @@ import type { ServerRequestContext } from './app/core/http/server-request-contex
 /**
  * Minimal FileReader for the generated API clients. NSwag's Angular template reads every response
  * as a Blob through FileReader, which Node does not have; without this shim every API call fails
- * during server rendering (docs/gotchas.md).
+ * during server rendering (docs/gotchas.md). On the server the bodies arrive as ArrayBuffer (see
+ * ApiBaseUrlBackend), so both are read.
  */
 class NodeFileReader {
   onload: ((event: { target: NodeFileReader }) => void) | null = null;
@@ -22,8 +23,9 @@ class NodeFileReader {
   result: string | null = null;
   error: unknown = null;
 
-  readAsText(blob: Blob): void {
-    blob.text().then(
+  readAsText(body: Blob | ArrayBuffer): void {
+    const text = body instanceof ArrayBuffer ? Promise.resolve(new TextDecoder().decode(body)) : body.text();
+    text.then(
       (text) => {
         this.result = text;
         this.onload?.({ target: this });
