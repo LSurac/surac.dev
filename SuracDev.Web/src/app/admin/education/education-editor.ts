@@ -14,7 +14,7 @@ import { UiField } from '../../ui/field/field';
 import { UiLocalePair } from '../../ui/locale-pair/locale-pair';
 import { adminStrings } from '../admin-strings';
 import { isUntranslated } from '../forms/lines';
-import { formatPeriod } from '../forms/period';
+import { formatPeriod } from '../../core/format/period';
 import { SaveProblem, toProblem } from '../forms/problem';
 
 type TextKey = 'degree' | 'summary';
