@@ -27,6 +27,10 @@ export const adminRoutes: Routes = [
         path: 'ausbildung',
         loadComponent: () => import('./education/education-editor').then((m) => m.EducationEditor),
       },
+      {
+        path: 'kenntnisse',
+        loadComponent: () => import('./skills/skill-editor').then((m) => m.SkillEditor),
+      },
     ],
   },
 ];
