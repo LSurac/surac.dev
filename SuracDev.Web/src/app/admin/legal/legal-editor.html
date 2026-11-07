@@ -1,0 +1,77 @@
+<h1 class="editor__heading">{{ text.heading }}</h1>
+
+@if (loadFailed()) {
+  <ui-error-summary [title]="strings.form.loadFailed" [messages]="problem().messages" />
+}
+
+@if (loaded()) {
+  <div class="editor__layout">
+    <ul class="legal__list" [attr.aria-label]="text.list">
+      @for (choice of pageChoices; track choice.key) {
+        <li>
+          <button
+            type="button"
+            class="legal__page"
+            [attr.aria-current]="choice.key === currentKey() ? 'true' : null"
+            (click)="select(choice.key)"
+          >
+            {{ choice.label }}
+          </button>
+        </li>
+      }
+    </ul>
+
+    <form class="editor" [formGroup]="form" (ngSubmit)="save()">
+      <ui-error-summary [title]="strings.form.saveFailed" [messages]="problem().messages" />
+
+      <ui-locale-pair [germanLabel]="strings.locale.german" [englishLabel]="strings.locale.english">
+        <div de formGroupName="de">
+          @for (key of textKeys; track key) {
+            <ui-field
+              [label]="labelFor(key)"
+              [controlId]="'de-' + key"
+              [hint]="key === 'bodyMarkdown' ? text.bodyHint : null"
+              [errors]="errorsFor('de.' + key)"
+            >
+              @if (key === 'bodyMarkdown') {
+                <textarea [id]="'de-' + key" [formControlName]="key" rows="18"></textarea>
+              } @else {
+                <input [id]="'de-' + key" [formControlName]="key" />
+              }
+            </ui-field>
+          }
+          @if (currentPage()?.de?.updatedAt; as updatedAt) {
+            <p class="legal__stamp">{{ text.updated }}: {{ updatedAt | date: 'dd.MM.yyyy' }}</p>
+          }
+        </div>
+        <div en formGroupName="en">
+          @for (key of textKeys; track key) {
+            <ui-field
+              [label]="labelFor(key)"
+              [controlId]="'en-' + key"
+              [hint]="key === 'bodyMarkdown' ? text.bodyHint : null"
+              [badge]="untranslated(key)"
+              [errors]="errorsFor('en.' + key)"
+            >
+              @if (key === 'bodyMarkdown') {
+                <textarea [id]="'en-' + key" [formControlName]="key" rows="18"></textarea>
+              } @else {
+                <input [id]="'en-' + key" [formControlName]="key" />
+              }
+            </ui-field>
+          }
+          @if (currentPage()?.en?.updatedAt; as updatedAt) {
+            <p class="legal__stamp">{{ text.updated }}: {{ updatedAt | date: 'dd.MM.yyyy' }}</p>
+          }
+        </div>
+      </ui-locale-pair>
+
+      <div class="editor__actions">
+        <ui-button [label]="strings.form.save" variant="primary" type="submit" [disabled]="saving()" />
+        @if (saved()) {
+          <p class="editor__saved" role="status">{{ strings.form.saved }}</p>
+        }
+      </div>
+    </form>
+  </div>
+}

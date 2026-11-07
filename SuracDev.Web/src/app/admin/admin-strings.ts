@@ -121,4 +121,14 @@ export const adminStrings = {
     countOne: 'Kenntnis',
     countMany: 'Kenntnisse',
   },
+  legal: {
+    heading: 'Rechtstexte',
+    list: 'Seiten',
+    imprint: 'Impressum',
+    privacy: 'Datenschutz',
+    title: 'Titel',
+    bodyMarkdown: 'Text (Markdown)',
+    bodyHint: 'Überschriften mit ##, Listen mit -, Links [Text](https://…).',
+    updated: 'Stand',
+  },
 } as const;

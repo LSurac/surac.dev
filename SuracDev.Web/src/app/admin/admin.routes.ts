@@ -31,6 +31,10 @@ export const adminRoutes: Routes = [
         path: 'kenntnisse',
         loadComponent: () => import('./skills/skill-editor').then((m) => m.SkillEditor),
       },
+      {
+        path: 'rechtstexte',
+        loadComponent: () => import('./legal/legal-editor').then((m) => m.LegalEditor),
+      },
     ],
   },
 ];
