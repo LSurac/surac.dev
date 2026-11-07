@@ -1,10 +1,115 @@
-<section class="hero">
-  <p class="kicker">{{ strings().foundation.kicker }}</p>
-  <h1>{{ strings().foundation.headline }}</h1>
-  <p class="lede">{{ strings().foundation.lede }}</p>
-</section>
+@if (hero(); as person) {
+  <ui-hero
+    [name]="person.name"
+    [titleLine]="person.titleLine"
+    [headline]="person.headline"
+    [location]="person.location"
+    [email]="person.email"
+    [emailLabel]="strings().hero.email"
+    [links]="profileLinks()"
+    [photoUrl]="person.photoUrl"
+    [photoAlt]="person.photoAlt"
+  />
+  <ui-fact-bar [facts]="facts()" />
+}
+
+@if (intro(); as text) {
+  <section class="section">
+    <ui-section-heading
+      [number]="numbers()['profile']"
+      [title]="strings().sections.profile"
+      anchor="profil"
+    />
+    <div class="prose">
+      <p class="lede">{{ text }}</p>
+      <p class="meta">{{ availability() }}</p>
+    </div>
+  </section>
+}
+
+@if (hasCareer()) {
+  <section class="section">
+    <ui-section-heading
+      [number]="numbers()['career']"
+      [title]="strings().sections.career"
+      anchor="werdegang"
+    />
+    <div>
+      <p class="kicker home__subheading">{{ strings().sections.experiences }}</p>
+      <ui-timeline [label]="strings().sections.experiences" [entries]="experiences()" />
+      <p class="kicker home__subheading">{{ strings().sections.education }}</p>
+      <ui-timeline [label]="strings().sections.education" [entries]="education()" />
+    </div>
+  </section>
+}
+
+@if (projects().length > 0) {
+  <section class="section">
+    <ui-section-heading
+      [number]="numbers()['projects']"
+      [title]="strings().sections.projects"
+      anchor="projekte"
+    />
+    <div class="home__projects">
+      @for (project of projects(); track project.id) {
+        <ui-project-card
+          [title]="project.title"
+          [teaser]="project.teaser"
+          [status]="project.status"
+          [period]="project.period"
+          [stackTags]="project.stackTags"
+          [caseStudyPath]="project.caseStudyPath"
+          [caseStudyLabel]="strings().projects.caseStudy"
+          [links]="project.links"
+        />
+      }
+    </div>
+  </section>
+}
+
+@if (skillGroups().length > 0) {
+  <section class="section">
+    <ui-section-heading
+      [number]="numbers()['skills']"
+      [title]="strings().sections.skills"
+      anchor="kenntnisse"
+    />
+    <ui-skill-columns [groups]="skillGroups()" [sinceLabel]="strings().skills.since" />
+  </section>
+}
 
 <section class="section">
-  <ui-section-heading number="01" [title]="strings().nav.projects" anchor="projekte" />
-  <p class="meta">…</p>
+  <ui-section-heading
+    [number]="numbers()['workingMode']"
+    [title]="strings().sections.workingMode"
+    anchor="arbeitsweise"
+  />
+  <div class="prose">
+    @for (paragraph of strings().workingMode.paragraphs; track $index) {
+      <p>{{ paragraph }}</p>
+    }
+    <p>
+      <a [href]="repositoryUrl" rel="noopener">{{ strings().workingMode.repository }}</a>
+    </p>
+  </div>
 </section>
+
+@if (hero(); as person) {
+  <section class="section">
+    <ui-section-heading
+      [number]="numbers()['contact']"
+      [title]="strings().sections.contact"
+      anchor="kontakt"
+    />
+    <div class="prose">
+      <p>{{ strings().contact.lede }}</p>
+      <p class="home__contact">
+        <a [href]="'mailto:' + person.email">{{ person.email }}</a>
+        @for (link of profileLinks(); track link.href) {
+          <a [href]="link.href" rel="me noopener">{{ link.label }}</a>
+        }
+      </p>
+      <p class="meta">{{ person.location }}</p>
+    </div>
+  </section>
+}

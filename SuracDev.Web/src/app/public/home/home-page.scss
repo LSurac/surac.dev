@@ -1,17 +1,19 @@
-.hero {
-  padding: 72px 0 56px;
-  border-bottom: 1px solid var(--color-rule);
+.home__subheading {
+  margin: 0 0 var(--space-2);
 
-  .kicker {
-    margin-bottom: 18px;
+  & + * + & {
+    margin-top: var(--space-6);
   }
+}
 
-  h1 {
-    margin-bottom: 22px;
-    max-width: 14ch;
-  }
+.home__projects {
+  display: grid;
+  gap: var(--space-5);
+}
 
-  @media (max-width: 760px) {
-    padding: 48px 0 40px;
-  }
+.home__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-family: var(--font-sans);
 }

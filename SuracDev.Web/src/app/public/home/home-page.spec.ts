@@ -1,19 +1,183 @@
-import { render, screen } from '@testing-library/angular';
+import { DOCUMENT } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { render, screen, within } from '@testing-library/angular';
+import { of } from 'rxjs';
+import {
+  PublicCareerClient,
+  PublicProfile,
+  PublicProfileClient,
+  PublicProjectCard,
+  PublicProjectsClient,
+  PublicSkillsClient,
+} from '../../api/generated/public.client';
 import { HomePage } from './home-page';
 
-describe('app-home-page', () => {
-  it('opens with the title line as kicker and one level-one heading, in German by default', async () => {
-    await render(HomePage);
+const profile: PublicProfile = {
+  fullName: 'Max Mustermann',
+  email: 'max@example.org',
+  location: 'Musterstadt',
+  gitHubUrl: 'https://github.com/example',
+  linkedInUrl: undefined,
+  photoDocumentId: 7,
+  titleLine: 'Fullstack-Entwickler · .NET & Angular',
+  headline: 'Beispielüberschrift.',
+  intro: 'Kurzprofil in drei Sätzen.',
+  availabilityLine: undefined,
+  facts: [
+    { value: '5', label: 'Jahre' },
+    { value: '1,8', label: 'Abschluss' },
+  ],
+  fallbackFields: [],
+};
 
+const project: PublicProjectCard = {
+  id: 1,
+  slug: 'beispielprojekt',
+  status: 'InProduction',
+  startedYear: 2024,
+  endedYear: undefined,
+  liveUrl: undefined,
+  repositoryUrl: 'https://github.com/example/repo',
+  stackTags: ['.NET', 'Angular'],
+  isFeatured: true,
+  title: 'Beispielprojekt',
+  teaser: 'Ein Beispiel.',
+  fallbackFields: [],
+};
+
+function providers(projects: PublicProjectCard[] = [project]) {
+  const clients = {
+    profile: { get: vi.fn(() => of(profile)) },
+    career: {
+      listExperiences: vi.fn(() =>
+        of([
+          {
+            id: 1,
+            company: 'Beispiel GmbH',
+            location: 'Musterstadt',
+            startDate: '2022-09-01',
+            endDate: undefined,
+            roleTitle: 'Softwareentwickler',
+            summary: undefined,
+            bullets: ['Erster Punkt'],
+            stackLine: '.NET',
+            fallbackFields: [],
+          },
+        ]),
+      ),
+      listEducation: vi.fn(() =>
+        of([
+          {
+            id: 2,
+            institution: 'Berufsschule',
+            location: undefined,
+            startDate: '2019-09-01',
+            endDate: '2022-06-30',
+            grade: '1,8',
+            degree: 'Fachinformatiker',
+            summary: undefined,
+            fallbackFields: [],
+          },
+        ]),
+      ),
+    },
+    projects: { list: vi.fn(() => of(projects)) },
+    skills: {
+      list: vi.fn(() =>
+        of([{ id: 1, name: 'Backend', skills: [{ name: 'C#', sinceYear: 2019 }], fallbackFields: [] }]),
+      ),
+    },
+  };
+  return {
+    clients,
+    providers: [
+      provideRouter([]),
+      { provide: PublicProfileClient, useValue: clients.profile },
+      { provide: PublicCareerClient, useValue: clients.career },
+      { provide: PublicProjectsClient, useValue: clients.projects },
+      { provide: PublicSkillsClient, useValue: clients.skills },
+    ],
+  };
+}
+
+describe('app-home-page', () => {
+  it('opens with name, title line, the fact bar and the photo', async () => {
+    await render(HomePage, { providers: providers().providers });
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Max Mustermann' })).toBeInTheDocument();
     expect(screen.getByText('Fullstack-Entwickler · .NET & Angular')).toBeInTheDocument();
-    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
-    expect(screen.getByRole('heading', { level: 2, name: 'Projekte' })).toBeInTheDocument();
+    expect(screen.getAllByRole('term').map((term) => term.textContent?.trim())).toEqual([
+      'Jahre',
+      'Abschluss',
+    ]);
+    expect(screen.getByRole('img', { name: 'Porträt von Max Mustermann' })).toHaveAttribute(
+      'src',
+      '/api/public/documents/7',
+    );
+    expect(screen.getByRole('link', { name: 'E-Mail schreiben' })).toHaveAttribute(
+      'href',
+      'mailto:max@example.org',
+    );
   });
 
-  it('renders the English texts for the English locale', async () => {
-    await render(HomePage, { inputs: { locale: 'en' } });
+  it('shows the sections in the public order with numbered headings', async () => {
+    await render(HomePage, { providers: providers().providers });
+    await screen.findByRole('heading', { level: 1 });
 
-    expect(screen.getByText('Full-stack developer · .NET & Angular')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: 'Projects' })).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent?.trim()),
+    ).toEqual(['01 Profil', '02 Werdegang', '03 Projekte', '04 Kenntnisse', '05 Arbeitsweise', '06 Kontakt']);
+  });
+
+  it('fills career, projects, skills and contact from the API', async () => {
+    await render(HomePage, { providers: providers().providers });
+    await screen.findByRole('heading', { level: 1 });
+
+    const experience = screen.getByRole('list', { name: 'Berufserfahrung' });
+    expect(within(experience).getByText('09/2022 – heute')).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('list', { name: 'Ausbildung' })).getByText('Note 1,8'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Fallstudie lesen' })).toHaveAttribute(
+      'href',
+      '/projekte/beispielprojekt',
+    );
+    expect(screen.getByText('Im Betrieb · seit 2024')).toBeInTheDocument();
+    expect(within(screen.getByRole('list', { name: 'Backend' })).getByText('C#')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Quellcode dieser Seite auf GitHub' })).toBeInTheDocument();
+  });
+
+  it('asks the API for English content and links English case studies', async () => {
+    const setup = providers();
+    await render(HomePage, { providers: setup.providers, inputs: { locale: 'en' } });
+    await screen.findByRole('heading', { level: 1 });
+
+    expect(setup.clients.profile.get).toHaveBeenCalledWith('en');
+    expect(setup.clients.projects.list).toHaveBeenCalledWith('en', true);
+    expect(screen.getByRole('link', { name: 'Read the case study' })).toHaveAttribute(
+      'href',
+      '/en/projects/beispielprojekt',
+    );
+    expect(screen.getByRole('heading', { level: 2, name: /How I work/ })).toBeInTheDocument();
+  });
+
+  it('leaves out the projects section when nothing is featured', async () => {
+    await render(HomePage, { providers: providers([]).providers });
+    await screen.findByRole('heading', { level: 1 });
+
+    expect(screen.queryByRole('heading', { level: 2, name: /Projekte/ })).not.toBeInTheDocument();
+  });
+
+  it('tells search engines who this is, in which language', async () => {
+    await render(HomePage, { providers: providers().providers, inputs: { locale: 'en' } });
+    await screen.findByRole('heading', { level: 1 });
+    const document = TestBed.inject(DOCUMENT);
+
+    expect(document.title).toBe('Max Mustermann – Fullstack-Entwickler · .NET & Angular');
+    expect(document.documentElement.lang).toBe('en');
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+      'https://surac.dev/en',
+    );
   });
 });
