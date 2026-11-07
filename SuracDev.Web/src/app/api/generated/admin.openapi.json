@@ -6,6 +6,780 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/admin/skill-groups": {
+      "get": {
+        "tags": [
+          "AdminSkillGroups"
+        ],
+        "summary": "Lists every skill group with its skills, in display order.",
+        "operationId": "AdminSkillGroups_List",
+        "responses": {
+          "200": {
+            "description": "All groups with both names and their skills.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminSkillGroup"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminSkillGroups"
+        ],
+        "summary": "Creates a skill group with its skills.",
+        "description": "The German name is required. Skills keep the given order; a name may appear only once per\ngroup (ignoring case), and a \"since year\" must lie between 1950 and 2100.",
+        "operationId": "AdminSkillGroups_Create",
+        "requestBody": {
+          "x-name": "form",
+          "description": "The new group.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillGroupForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created; Location points to the new group.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSkillGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field (de.name, skills, skills.sinceYear).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/skill-groups/{id}": {
+      "get": {
+        "tags": [
+          "AdminSkillGroups"
+        ],
+        "summary": "Reads one skill group for the editor.",
+        "operationId": "AdminSkillGroups_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The group's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group with both names and its skills.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSkillGroup"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No group has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminSkillGroups"
+        ],
+        "summary": "Replaces a skill group's names, position and skills.",
+        "description": "Full replacement: the skills are replaced by the given list in its order.",
+        "operationId": "AdminSkillGroups_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The group's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The complete group.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillGroupForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No group has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminSkillGroups"
+        ],
+        "summary": "Deletes a skill group with all its skills.",
+        "operationId": "AdminSkillGroups_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The group's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No group has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/projects": {
+      "get": {
+        "tags": [
+          "AdminProjects"
+        ],
+        "summary": "Lists every project, including hidden ones, in display order.",
+        "operationId": "AdminProjects_List",
+        "responses": {
+          "200": {
+            "description": "All projects with both locales, decisions and images.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminProject"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminProjects"
+        ],
+        "summary": "Creates a project with its decisions and images.",
+        "description": "German title and teaser are required; en: null creates the project without English\ntexts. The slug must be unique. At most five visible projects can be featured at a time.\nEvery image must reference a public image document (PNG, JPEG, WebP).",
+        "operationId": "AdminProjects_Create",
+        "requestBody": {
+          "x-name": "form",
+          "description": "The new project.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created; Location points to the new project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field (slug, status, de.title, images).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The slug is already used, or five visible projects are already featured.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/projects/{id}": {
+      "get": {
+        "tags": [
+          "AdminProjects"
+        ],
+        "summary": "Reads one project for the editor.",
+        "operationId": "AdminProjects_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The project's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The project with both locales, decisions and images.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProject"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No project has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminProjects"
+        ],
+        "summary": "Replaces a project, its decisions and its images.",
+        "description": "Full replacement: decisions and images are replaced by the given lists in their order;\nen: null removes the English texts. Keeping the project's own slug is not a conflict.",
+        "operationId": "AdminProjects_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The project's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The complete project.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No project has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The slug is used by another project, or five visible projects are already featured.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminProjects"
+        ],
+        "summary": "Deletes a project with its texts, decisions and image references.",
+        "description": "The image documents themselves stay; delete them separately. To take a project off the site\nwithout losing it, set isVisible to false instead.",
+        "operationId": "AdminProjects_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The project's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No project has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/profile": {
+      "get": {
+        "tags": [
+          "AdminProfile"
+        ],
+        "summary": "Reads the complete profile for the editor, including phone and street address.",
+        "description": "de always carries the German texts. en is null when no English text exists yet;\na single empty English field means that field falls back to German on the open site.",
+        "operationId": "AdminProfile_Get",
+        "responses": {
+          "200": {
+            "description": "The profile with both locales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No profile exists yet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminProfile"
+        ],
+        "summary": "Replaces the complete profile with the given one.",
+        "description": "Full replacement: send everything GET returned, changed where needed. German title line\nand headline are required; en: null or English fields left empty remove the English\ntexts, which then fall back to German. The fact bar is replaced in the given order (at most\nfour cells). photoDocumentId must name a public image document or be null.",
+        "operationId": "AdminProfile_Put",
+        "requestBody": {
+          "x-name": "profile",
+          "description": "The complete profile.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminProfile"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field (de.headline, facts, photoDocumentId).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/legal-pages": {
+      "get": {
+        "tags": [
+          "AdminLegalPages"
+        ],
+        "summary": "Lists both legal pages with both locales, Impressum first.",
+        "operationId": "AdminLegalPages_List",
+        "responses": {
+          "200": {
+            "description": "The pages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminLegalPage"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/legal-pages/{key}": {
+      "get": {
+        "tags": [
+          "AdminLegalPages"
+        ],
+        "summary": "Reads one legal page for the editor.",
+        "operationId": "AdminLegalPages_Get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "description": "Imprint or Privacy.",
+            "schema": {
+              "$ref": "#/components/schemas/LegalPageKey"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The page with both locales and their \"last updated\" stamps.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminLegalPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The key is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The page does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminLegalPages"
+        ],
+        "summary": "Replaces the texts of a legal page.",
+        "description": "German title and body are required; en: null removes the English texts, which then\nfall back to German. Only a locale whose text actually changed gets a new \"last updated\"\nstamp, so saving unchanged texts never moves the date the privacy page shows.",
+        "operationId": "AdminLegalPages_Update",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "description": "Imprint or Privacy.",
+            "schema": {
+              "$ref": "#/components/schemas/LegalPageKey"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "Both locales.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LegalPageForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule (de.title, de.bodyMarkdown) or the key is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/state": {
       "get": {
         "tags": [
@@ -131,10 +905,1213 @@
           }
         }
       }
+    },
+    "/api/admin/education": {
+      "get": {
+        "tags": [
+          "AdminEducation"
+        ],
+        "summary": "Lists every education entry, including hidden ones, newest first.",
+        "operationId": "AdminEducation_List",
+        "responses": {
+          "200": {
+            "description": "All entries with both locales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminEducation"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminEducation"
+        ],
+        "summary": "Creates an education entry.",
+        "description": "The German degree is required; en: null creates the entry without English texts. The\ngrade is free text (\"1,8\", \"gut\") of at most 40 characters.",
+        "operationId": "AdminEducation_Create",
+        "requestBody": {
+          "x-name": "form",
+          "description": "The new entry.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EducationForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created; Location points to the new entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminEducation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field (institution, endDate, de.degree).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/education/{id}": {
+      "get": {
+        "tags": [
+          "AdminEducation"
+        ],
+        "summary": "Reads one education entry for the editor.",
+        "operationId": "AdminEducation_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The entry's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The entry with both locales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminEducation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No entry has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminEducation"
+        ],
+        "summary": "Replaces an education entry with the given fields.",
+        "description": "Full replacement: fields left out are cleared. en: null removes the English texts.",
+        "operationId": "AdminEducation_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The entry's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The complete entry.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EducationForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No entry has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminEducation"
+        ],
+        "summary": "Deletes an education entry with its translations.",
+        "description": "To take an entry off the site without losing it, set isVisible to false instead.",
+        "operationId": "AdminEducation_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The entry's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No entry has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/experiences": {
+      "get": {
+        "tags": [
+          "AdminExperiences"
+        ],
+        "summary": "Lists every career station, including hidden ones, newest first.",
+        "operationId": "AdminExperiences_List",
+        "responses": {
+          "200": {
+            "description": "All stations with both locales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminExperience"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminExperiences"
+        ],
+        "summary": "Creates a career station.",
+        "description": "The German role title is required; en: null creates the station without English texts,\nwhich then fall back to German. An end date before the start date is rejected; a null end\ndate marks the current station.",
+        "operationId": "AdminExperiences_Create",
+        "requestBody": {
+          "x-name": "form",
+          "description": "The new station.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperienceForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created; Location points to the new station.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminExperience"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field (company, endDate, de.roleTitle).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/experiences/{id}": {
+      "get": {
+        "tags": [
+          "AdminExperiences"
+        ],
+        "summary": "Reads one career station for the editor.",
+        "operationId": "AdminExperiences_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The station's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The station with both locales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminExperience"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No station has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminExperiences"
+        ],
+        "summary": "Replaces a career station with the given fields.",
+        "description": "Full replacement: fields left out are cleared. en: null removes the English texts.",
+        "operationId": "AdminExperiences_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The station's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The complete station.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperienceForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No station has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminExperiences"
+        ],
+        "summary": "Deletes a career station with its translations.",
+        "description": "To take a station off the site without losing it, set isVisible to false instead.",
+        "operationId": "AdminExperiences_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The station's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No station has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AdminSkillGroup": {
+        "type": "object",
+        "description": "A skill group for the admin editor, with both names and its skills.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The group's identifier.",
+            "format": "int64"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Position among the groups.",
+            "format": "int32"
+          },
+          "nameDe": {
+            "type": "string",
+            "description": "Required German name."
+          },
+          "nameEn": {
+            "type": "string",
+            "description": "Optional English name.",
+            "nullable": true
+          },
+          "skills": {
+            "type": "array",
+            "description": "The skills in display order.",
+            "items": {
+              "$ref": "#/components/schemas/SkillForm"
+            }
+          }
+        }
+      },
+      "SkillForm": {
+        "type": "object",
+        "description": "One skill with both qualifiers.",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Required technology name, at most 80 characters."
+          },
+          "sinceYear": {
+            "type": "integer",
+            "description": "Optional year between 1950 and 2100.",
+            "format": "int32",
+            "nullable": true
+          },
+          "qualifierDe": {
+            "type": "string",
+            "description": "Optional German qualifier.",
+            "nullable": true
+          },
+          "qualifierEn": {
+            "type": "string",
+            "description": "Optional English qualifier.",
+            "nullable": true
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "additionalProperties": {
+          "nullable": true
+        },
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ValidationProblemDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/HttpValidationProblemDetails"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "nullable": true
+            },
+            "properties": {
+              "errors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "HttpValidationProblemDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProblemDetails"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "nullable": true
+            },
+            "properties": {
+              "errors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SkillGroupForm": {
+        "type": "object",
+        "description": "The writable fields of a skill group, for POST and PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "sortOrder": {
+            "type": "integer",
+            "description": "Position among the groups.",
+            "format": "int32"
+          },
+          "nameDe": {
+            "type": "string",
+            "description": "Required German name."
+          },
+          "nameEn": {
+            "type": "string",
+            "description": "Optional English name; empty falls back to German.",
+            "nullable": true
+          },
+          "skills": {
+            "type": "array",
+            "description": "At most 30 skills in display order; names are unique per group (ignoring case).",
+            "items": {
+              "$ref": "#/components/schemas/SkillForm"
+            }
+          }
+        }
+      },
+      "AdminProject": {
+        "type": "object",
+        "description": "A project for the admin editor, with both locales, decisions and images.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The project's identifier.",
+            "format": "int64"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Unique URL segment."
+          },
+          "status": {
+            "description": "Where the project stands; never Unknown.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectStatus"
+              }
+            ]
+          },
+          "startedYear": {
+            "type": "integer",
+            "description": "Optional start year.",
+            "format": "int32",
+            "nullable": true
+          },
+          "endedYear": {
+            "type": "integer",
+            "description": "Optional end year, not before the start year.",
+            "format": "int32",
+            "nullable": true
+          },
+          "liveUrl": {
+            "type": "string",
+            "description": "Optional absolute http(s) URL.",
+            "nullable": true
+          },
+          "repositoryUrl": {
+            "type": "string",
+            "description": "Optional absolute http(s) URL.",
+            "nullable": true
+          },
+          "stackTags": {
+            "type": "array",
+            "description": "At most 20 technology names.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Position among the projects.",
+            "format": "int32"
+          },
+          "isFeatured": {
+            "type": "boolean",
+            "description": "Shown on the start page; at most five visible projects."
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Hidden projects never reach the open site."
+          },
+          "de": {
+            "description": "The German texts; title and teaser are required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null when there are none.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectTextsForm"
+              }
+            ]
+          },
+          "decisions": {
+            "type": "array",
+            "description": "At most five decisions in order.",
+            "items": {
+              "$ref": "#/components/schemas/DecisionForm"
+            }
+          },
+          "images": {
+            "type": "array",
+            "description": "At most twelve images in order.",
+            "items": {
+              "$ref": "#/components/schemas/ImageForm"
+            }
+          }
+        }
+      },
+      "ProjectStatus": {
+        "type": "string",
+        "description": "Where a project stands. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Live",
+          "InProduction",
+          "Archived",
+          "Planned"
+        ],
+        "enum": [
+          "Unknown",
+          "Live",
+          "InProduction",
+          "Archived",
+          "Planned"
+        ]
+      },
+      "ProjectTextsForm": {
+        "type": "object",
+        "description": "The translatable texts of a project in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Required in German.",
+            "nullable": true
+          },
+          "teaser": {
+            "type": "string",
+            "description": "Required in German.",
+            "nullable": true
+          },
+          "problem": {
+            "type": "string",
+            "description": "Optional paragraph.",
+            "nullable": true
+          },
+          "myRole": {
+            "type": "string",
+            "description": "Optional paragraph.",
+            "nullable": true
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Optional paragraph.",
+            "nullable": true
+          },
+          "caseStudyMarkdown": {
+            "type": "string",
+            "description": "Optional Markdown in the restricted subset.",
+            "nullable": true
+          }
+        }
+      },
+      "DecisionForm": {
+        "type": "object",
+        "description": "One decision with both locales.",
+        "additionalProperties": false,
+        "properties": {
+          "de": {
+            "description": "German title and trade-off, both required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DecisionTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "English texts, or null to fall back to German.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DecisionTextsForm"
+              }
+            ]
+          }
+        }
+      },
+      "DecisionTextsForm": {
+        "type": "object",
+        "description": "The texts of a decision in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "tradeOff": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ImageForm": {
+        "type": "object",
+        "description": "One image of a case study with both captions.",
+        "additionalProperties": false,
+        "properties": {
+          "documentId": {
+            "type": "integer",
+            "description": "A public image document.",
+            "format": "int64"
+          },
+          "captionDe": {
+            "type": "string",
+            "description": "Optional German caption.",
+            "nullable": true
+          },
+          "captionEn": {
+            "type": "string",
+            "description": "Optional English caption.",
+            "nullable": true
+          }
+        }
+      },
+      "ProjectForm": {
+        "type": "object",
+        "description": "The writable fields of a project, for POST and PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique URL segment: lowercase letters and digits joined by single hyphens."
+          },
+          "status": {
+            "description": "Where the project stands; never Unknown.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectStatus"
+              }
+            ]
+          },
+          "startedYear": {
+            "type": "integer",
+            "description": "Optional start year.",
+            "format": "int32",
+            "nullable": true
+          },
+          "endedYear": {
+            "type": "integer",
+            "description": "Optional end year, not before the start year.",
+            "format": "int32",
+            "nullable": true
+          },
+          "liveUrl": {
+            "type": "string",
+            "description": "Optional absolute http(s) URL.",
+            "nullable": true
+          },
+          "repositoryUrl": {
+            "type": "string",
+            "description": "Optional absolute http(s) URL.",
+            "nullable": true
+          },
+          "stackTags": {
+            "type": "array",
+            "description": "At most 20 technology names; blanks are dropped.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Position among the projects.",
+            "format": "int32"
+          },
+          "isFeatured": {
+            "type": "boolean",
+            "description": "Shown on the start page; at most five visible projects."
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Whether the open site shows the project."
+          },
+          "de": {
+            "description": "The German texts; title and teaser are required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null to remove them.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectTextsForm"
+              }
+            ]
+          },
+          "decisions": {
+            "type": "array",
+            "description": "At most five decisions in order; replaces the existing ones.",
+            "items": {
+              "$ref": "#/components/schemas/DecisionForm"
+            }
+          },
+          "images": {
+            "type": "array",
+            "description": "At most twelve public image documents in order; replaces the existing ones.",
+            "items": {
+              "$ref": "#/components/schemas/ImageForm"
+            }
+          }
+        }
+      },
+      "AdminProfile": {
+        "type": "object",
+        "description": "The complete profile for the admin editor, both locales side by side. The same shape is read\nwith GET and written back with PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "description": "Required."
+          },
+          "email": {
+            "type": "string",
+            "description": "Required; a single address without display name."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Only printed in the full CV PDF.",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "description": "Required; city or region."
+          },
+          "addressLines": {
+            "type": "array",
+            "description": "Street address for the full PDF and the Impressum, at most four lines.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "gitHubUrl": {
+            "type": "string",
+            "description": "Absolute http(s) URL or null.",
+            "nullable": true
+          },
+          "linkedInUrl": {
+            "type": "string",
+            "description": "Absolute http(s) URL or null.",
+            "nullable": true
+          },
+          "photoDocumentId": {
+            "type": "integer",
+            "description": "A public image document, or null for no photo.",
+            "format": "int64",
+            "nullable": true
+          },
+          "de": {
+            "description": "The German texts; title line and headline are required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProfileTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null when there are none yet; empty fields fall back to German.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProfileTextsForm"
+              }
+            ]
+          },
+          "facts": {
+            "type": "array",
+            "description": "The fact bar in display order, at most four cells.",
+            "items": {
+              "$ref": "#/components/schemas/FactForm"
+            }
+          }
+        }
+      },
+      "ProfileTextsForm": {
+        "type": "object",
+        "description": "The translatable texts of the profile in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "titleLine": {
+            "type": "string",
+            "nullable": true
+          },
+          "headline": {
+            "type": "string",
+            "nullable": true
+          },
+          "intro": {
+            "type": "string",
+            "nullable": true
+          },
+          "availabilityLine": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FactForm": {
+        "type": "object",
+        "description": "One cell of the fact bar with both labels.",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "Required, at most 20 characters."
+          },
+          "labelDe": {
+            "type": "string",
+            "description": "Required German label."
+          },
+          "labelEn": {
+            "type": "string",
+            "description": "Optional English label; falls back to German.",
+            "nullable": true
+          }
+        }
+      },
+      "AdminLegalPage": {
+        "type": "object",
+        "description": "A legal page for the admin editor, with both locales and their stamps.",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "description": "Which page.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LegalPageKey"
+              }
+            ]
+          },
+          "de": {
+            "description": "The German texts.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdminLegalTexts"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null when there are none.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdminLegalTexts"
+              }
+            ]
+          }
+        }
+      },
+      "LegalPageKey": {
+        "type": "string",
+        "description": "Which legal page. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Imprint",
+          "Privacy"
+        ],
+        "enum": [
+          "Unknown",
+          "Imprint",
+          "Privacy"
+        ]
+      },
+      "AdminLegalTexts": {
+        "type": "object",
+        "description": "The stored texts of a legal page in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The page title."
+          },
+          "bodyMarkdown": {
+            "type": "string",
+            "description": "The body in the restricted Markdown subset."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "When this locale last changed; moves only on a real change.",
+            "format": "date-time"
+          }
+        }
+      },
+      "LegalPageForm": {
+        "type": "object",
+        "description": "The writable texts of a legal page, for PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "de": {
+            "description": "The German texts; title and body are required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LegalTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null to remove them.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LegalTextsForm"
+              }
+            ]
+          }
+        }
+      },
+      "LegalTextsForm": {
+        "type": "object",
+        "description": "The texts of a legal page in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Required in German.",
+            "nullable": true
+          },
+          "bodyMarkdown": {
+            "type": "string",
+            "description": "Required in German; restricted Markdown subset.",
+            "nullable": true
+          }
+        }
+      },
       "LoginStateResponse": {
         "type": "object",
         "description": "Whether a password exists yet; the login screen uses it to label the first login.",
@@ -180,6 +2157,284 @@
           },
           "newPassword": {
             "type": "string"
+          }
+        }
+      },
+      "AdminEducation": {
+        "type": "object",
+        "description": "An education entry for the admin editor, with both locales and its visibility.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The entry's identifier.",
+            "format": "int64"
+          },
+          "institution": {
+            "type": "string",
+            "description": "Required."
+          },
+          "location": {
+            "type": "string",
+            "description": "Optional city or region.",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "description": "First day.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Last day, or null while ongoing; never before the start.",
+            "format": "date",
+            "nullable": true
+          },
+          "grade": {
+            "type": "string",
+            "description": "Optional free-text grade, at most 40 characters.",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Tie-breaker between entries with the same start date.",
+            "format": "int32"
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Hidden entries never reach the open site or the PDF."
+          },
+          "de": {
+            "description": "The German texts; the degree is required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EducationTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null when there are none.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EducationTextsForm"
+              }
+            ]
+          }
+        }
+      },
+      "EducationTextsForm": {
+        "type": "object",
+        "description": "The translatable texts of an education entry in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "degree": {
+            "type": "string",
+            "description": "The degree; required in German.",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "description": "Optional paragraph.",
+            "nullable": true
+          }
+        }
+      },
+      "EducationForm": {
+        "type": "object",
+        "description": "The writable fields of an education entry, for POST and PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "institution": {
+            "type": "string",
+            "description": "Required."
+          },
+          "location": {
+            "type": "string",
+            "description": "Optional city or region.",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "description": "First day.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Last day, or null while ongoing; never before the start.",
+            "format": "date",
+            "nullable": true
+          },
+          "grade": {
+            "type": "string",
+            "description": "Optional free-text grade, at most 40 characters.",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Tie-breaker between entries with the same start date.",
+            "format": "int32"
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Whether the open site and the PDF show the entry."
+          },
+          "de": {
+            "description": "The German texts; the degree is required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EducationTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null to remove them.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EducationTextsForm"
+              }
+            ]
+          }
+        }
+      },
+      "AdminExperience": {
+        "type": "object",
+        "description": "A career station for the admin editor, with both locales and its visibility.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The station's identifier.",
+            "format": "int64"
+          },
+          "company": {
+            "type": "string",
+            "description": "Required."
+          },
+          "location": {
+            "type": "string",
+            "description": "Optional city or region.",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "description": "First day of the station.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Last day, or null for the current station; never before the start.",
+            "format": "date",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Tie-breaker between stations with the same start date.",
+            "format": "int32"
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Hidden stations stay in the admin and never reach the open site or the PDF."
+          },
+          "de": {
+            "description": "The German texts; the role title is required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ExperienceTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null when there are none.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ExperienceTextsForm"
+              }
+            ]
+          }
+        }
+      },
+      "ExperienceTextsForm": {
+        "type": "object",
+        "description": "The translatable texts of a career station in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "roleTitle": {
+            "type": "string",
+            "description": "The role; required in German.",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "description": "Optional paragraph.",
+            "nullable": true
+          },
+          "bullets": {
+            "type": "array",
+            "description": "At most twelve short lines; blank lines are dropped.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stackLine": {
+            "type": "string",
+            "description": "Optional technology line.",
+            "nullable": true
+          }
+        }
+      },
+      "ExperienceForm": {
+        "type": "object",
+        "description": "The writable fields of a career station, for POST and PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "company": {
+            "type": "string",
+            "description": "Required."
+          },
+          "location": {
+            "type": "string",
+            "description": "Optional city or region.",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "description": "First day of the station.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Last day, or null for the current station; never before the start.",
+            "format": "date",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Tie-breaker between stations with the same start date.",
+            "format": "int32"
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Whether the open site and the PDF show the station."
+          },
+          "de": {
+            "description": "The German texts; the role title is required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ExperienceTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null to remove them.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ExperienceTextsForm"
+              }
+            ]
           }
         }
       }

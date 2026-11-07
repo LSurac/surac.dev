@@ -17,6 +17,545 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 @Injectable({
   providedIn: 'root',
 })
+export class PublicSkillsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists the skill groups with their skills, in display order.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The groups; an empty list when there are none.
+   */
+  list(locale?: string | undefined): Observable<PublicSkillGroup[]> {
+    let url_ = this.baseUrl + '/api/public/skills?';
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicSkillGroup[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicSkillGroup[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<PublicSkillGroup[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicSkillGroup[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PublicProjectsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists the visible projects as cards, in display order.
+   * @param locale (optional) Content language, de (default) or en.
+   * @param featured (optional) Only the projects featured on the start page.
+   * @return The cards; an empty list when there are none.
+   */
+  list(locale?: string | undefined, featured?: boolean | undefined): Observable<PublicProjectCard[]> {
+    let url_ = this.baseUrl + '/api/public/projects?';
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    if (featured === null) throw new globalThis.Error("The parameter 'featured' cannot be null.");
+    else if (featured !== undefined) url_ += 'featured=' + encodeURIComponent('' + featured) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicProjectCard[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicProjectCard[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<PublicProjectCard[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicProjectCard[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads the case study of a visible project.
+   * @param slug The project's URL segment.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The case study.
+   */
+  get(slug: string, locale?: string | undefined): Observable<PublicCaseStudy> {
+    let url_ = this.baseUrl + '/api/public/projects/{slug}?';
+    if (slug === undefined || slug === null)
+      throw new globalThis.Error("The parameter 'slug' must be defined.");
+    url_ = url_.replace('{slug}', encodeURIComponent('' + slug));
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicCaseStudy>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicCaseStudy>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<PublicCaseStudy> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicCaseStudy);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'No visible project has this slug.',
+            status,
+            _responseText,
+            _headers,
+            result404,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PublicProfileClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Reads the profile for the hero, the fact bar and the contact section.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The profile in the requested locale.
+   */
+  get(locale?: string | undefined): Observable<PublicProfile> {
+    let url_ = this.baseUrl + '/api/public/profile?';
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicProfile>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicProfile>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<PublicProfile> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === '' ? null : (JSON.parse(_responseText, this.jsonParseReviver) as PublicProfile);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No profile exists yet.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PublicLegalClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Reads a legal page.
+   * @param key Which page.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The page in the requested locale.
+   */
+  get(key: LegalPageKey, locale?: string | undefined): Observable<PublicLegalPage> {
+    let url_ = this.baseUrl + '/api/public/legal/{key}?';
+    if (key === undefined || key === null) throw new globalThis.Error("The parameter 'key' must be defined.");
+    url_ = url_.replace('{key}', encodeURIComponent('' + key));
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicLegalPage>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicLegalPage>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<PublicLegalPage> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicLegalPage);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'The key or the locale is not supported.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('The page does not exist.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class HealthClient {
   private http: HttpClient;
   private baseUrl: string;
@@ -107,8 +646,432 @@ export class HealthClient {
   }
 }
 
+@Injectable({
+  providedIn: 'root',
+})
+export class PublicCareerClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists the visible career stations, newest first.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The visible stations; an empty list when there are none.
+   */
+  listExperiences(locale?: string | undefined): Observable<PublicExperience[]> {
+    let url_ = this.baseUrl + '/api/public/experiences?';
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processListExperiences(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processListExperiences(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicExperience[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicExperience[]>;
+        }),
+      );
+  }
+
+  protected processListExperiences(response: HttpResponseBase): Observable<PublicExperience[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicExperience[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Lists the visible education entries, newest first.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The visible entries; an empty list when there are none.
+   */
+  listEducation(locale?: string | undefined): Observable<PublicEducation[]> {
+    let url_ = this.baseUrl + '/api/public/education?';
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processListEducation(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processListEducation(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicEducation[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicEducation[]>;
+        }),
+      );
+  }
+
+  protected processListEducation(response: HttpResponseBase): Observable<PublicEducation[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicEducation[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+/** A skill group of the open site with its skills, in one locale. */
+export interface PublicSkillGroup {
+  /** Stable identifier, for list keys. */
+  id?: number;
+  /** The group name in the requested locale or German. */
+  name?: string;
+  /** The skills in display order. */
+  skills?: PublicSkill[];
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
+}
+
+/** A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a level. */
+export interface PublicSkill {
+  /** The technology name; not translated. */
+  name?: string;
+  /** The year since it is used, if given. */
+  sinceYear?: number | undefined;
+  /** A short qualifier ("Legacy"), in the requested locale or German. */
+  qualifier?: string | undefined;
+}
+
+export interface ProblemDetails {
+  type?: string | undefined;
+  title?: string | undefined;
+  status?: number | undefined;
+  detail?: string | undefined;
+  instance?: string | undefined;
+
+  [key: string]: any;
+}
+
+export interface HttpValidationProblemDetails extends ProblemDetails {
+  errors?: { [key: string]: string[] };
+
+  [key: string]: any;
+}
+
+export interface ValidationProblemDetails extends HttpValidationProblemDetails {
+  errors?: { [key: string]: string[] };
+
+  [key: string]: any;
+}
+
+/** A project card of the open site, in one locale. */
+export interface PublicProjectCard {
+  /** Stable identifier, for list keys. */
+  id?: number;
+  /** URL segment of the case study (/projekte/{slug}, /en/projects/{slug}). */
+  slug?: string;
+  /** Where the project stands. */
+  status?: ProjectStatus;
+  /** Year the project started, if known. */
+  startedYear?: number | undefined;
+  /** Year it ended, or null while it runs. */
+  endedYear?: number | undefined;
+  /** The running product, if public. */
+  liveUrl?: string | undefined;
+  /** The source code, if public. */
+  repositoryUrl?: string | undefined;
+  /** Technology names in display order. */
+  stackTags?: string[];
+  /** Shown on the start page. */
+  isFeatured?: boolean;
+  /** Project title. */
+  title?: string;
+  /** One or two sentences for the card. */
+  teaser?: string;
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
+}
+
+/** Where a project stands. Stored as int; Unknown is never written and values are frozen. */
+export type ProjectStatus = 'Unknown' | 'Live' | 'InProduction' | 'Archived' | 'Planned';
+
+/** The case study of a project, in one locale. */
+export interface PublicCaseStudy {
+  /** URL segment, shared by both locales. */
+  slug?: string;
+  /** Where the project stands. */
+  status?: ProjectStatus;
+  /** Year the project started, if known. */
+  startedYear?: number | undefined;
+  /** Year it ended, or null while it runs. */
+  endedYear?: number | undefined;
+  /** The running product, if public. */
+  liveUrl?: string | undefined;
+  /** The source code, if public. */
+  repositoryUrl?: string | undefined;
+  /** Technology names in display order. */
+  stackTags?: string[];
+  /** Project title. */
+  title?: string;
+  /** The card text, used as lede and meta description. */
+  teaser?: string;
+  /** What had to be solved. */
+  problem?: string | undefined;
+  /** The maintainer's own share. */
+  myRole?: string | undefined;
+  /** What came out of it. */
+  outcome?: string | undefined;
+  /** The case study rendered from the restricted Markdown subset; safe to bind as inner HTML. */
+  caseStudyHtml?: string;
+  /** Architectural choices with their trade-offs, in order. */
+  decisions?: PublicDecision[];
+  /** Screenshots and diagrams, in order. */
+  images?: PublicImage[];
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
+}
+
+/** One decision of a case study. */
+export interface PublicDecision {
+  /** What was decided. */
+  title?: string;
+  /** What it cost and why it was worth it. */
+  tradeOff?: string;
+}
+
+/** One image of a case study. */
+export interface PublicImage {
+  /** Served by GET /api/public/documents/{id}. */
+  documentId?: number;
+  /** Caption and alt text, if given. */
+  caption?: string | undefined;
+}
+
+/** The profile as the open site shows it, in one locale. Phone and street address are never part of it (docs/content-model.md, "Visibility rules"). */
+export interface PublicProfile {
+  /** The person's name. */
+  fullName?: string;
+  /** The public contact address. */
+  email?: string;
+  /** City or region, never a street address. */
+  location?: string;
+  /** Link to the GitHub profile, if any. */
+  gitHubUrl?: string | undefined;
+  /** Link to the LinkedIn profile, if any. */
+  linkedInUrl?: string | undefined;
+  /** The hero photo, served by GET /api/public/documents/{id}; null when none is set. */
+  photoDocumentId?: number | undefined;
+  /** The search-term line under the name ("Fullstack-Entwickler · .NET & Angular"). */
+  titleLine?: string;
+  /** The hero sentence. */
+  headline?: string;
+  /** The short profile, three to five sentences. */
+  intro?: string | undefined;
+  /** An optional availability note. */
+  availabilityLine?: string | undefined;
+  /** The fact bar, in display order, at most four cells. */
+  facts?: PublicFact[];
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
+}
+
+/** One cell of the fact bar. */
+export interface PublicFact {
+  /** The number or short value ("5", "1,8", "C1"). */
+  value?: string;
+  /** What the value means, in the requested locale or German. */
+  label?: string;
+}
+
+/** A legal page of the open site, in one locale. */
+export interface PublicLegalPage {
+  /** Which page. */
+  key?: LegalPageKey;
+  /** The page title. */
+  title?: string;
+  /** The body rendered from the restricted Markdown subset; safe to bind as inner HTML. */
+  bodyHtml?: string;
+  /** When the shown locale last changed ("Stand"). */
+  updatedAt?: string;
+  /** The provider identification from the profile; only on the Impressum (§ 5 DDG). */
+  contact?: ImprintContact | undefined;
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
+}
+
+/** Which legal page. Stored as int; Unknown is never written and values are frozen. */
+export type LegalPageKey = 'Unknown' | 'Imprint' | 'Privacy';
+
+/** Name, postal address and e-mail as the Impressum must show them. */
+export interface ImprintContact {
+  /** The provider's name. */
+  fullName?: string;
+  /** The postal address, line by line. */
+  addressLines?: string[];
+  /** The contact address. */
+  email?: string;
+}
+
 export interface HealthResponse {
   status?: string;
+}
+
+/** A career station as the open site shows it, in one locale. */
+export interface PublicExperience {
+  /** Stable identifier, for list keys. */
+  id?: number;
+  /** The employer. */
+  company?: string;
+  /** City or region, if given. */
+  location?: string | undefined;
+  /** First day of the station. */
+  startDate?: string;
+  /** Last day, or null for the current station. */
+  endDate?: string | undefined;
+  /** The role, in the requested locale or German. */
+  roleTitle?: string;
+  /** One paragraph about the station. */
+  summary?: string | undefined;
+  /** Short achievement lines in display order. */
+  bullets?: string[];
+  /** The technologies used, as one line. */
+  stackLine?: string | undefined;
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
+}
+
+/** An education entry as the open site shows it, in one locale. */
+export interface PublicEducation {
+  /** Stable identifier, for list keys. */
+  id?: number;
+  /** School, chamber or university. */
+  institution?: string;
+  /** City or region, if given. */
+  location?: string | undefined;
+  /** First day. */
+  startDate?: string;
+  /** Last day, or null while ongoing. */
+  endDate?: string | undefined;
+  /** Free-text grade ("1,8"), if given. */
+  grade?: string | undefined;
+  /** The degree, in the requested locale or German. */
+  degree?: string;
+  /** Optional paragraph. */
+  summary?: string | undefined;
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
 }
 
 export class ApiException extends Error {

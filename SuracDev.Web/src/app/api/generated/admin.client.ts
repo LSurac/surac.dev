@@ -17,6 +17,1552 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 @Injectable({
   providedIn: 'root',
 })
+export class AdminSkillGroupsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists every skill group with its skills, in display order.
+   * @return All groups with both names and their skills.
+   */
+  list(): Observable<AdminSkillGroup[]> {
+    let url_ = this.baseUrl + '/api/admin/skill-groups';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminSkillGroup[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminSkillGroup[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminSkillGroup[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminSkillGroup[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Creates a skill group with its skills.
+   * @param form The new group.
+   * @return Created; Location points to the new group.
+   */
+  create(form: SkillGroupForm): Observable<AdminSkillGroup> {
+    let url_ = this.baseUrl + '/api/admin/skill-groups';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processCreate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processCreate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminSkillGroup>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminSkillGroup>;
+        }),
+      );
+  }
+
+  protected processCreate(response: HttpResponseBase): Observable<AdminSkillGroup> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 201) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result201: any = null;
+          result201 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminSkillGroup);
+          return _observableOf(result201);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field (de.name, skills, skills.sinceYear).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one skill group for the editor.
+   * @param id The group's identifier.
+   * @return The group with both names and its skills.
+   */
+  get(id: number): Observable<AdminSkillGroup> {
+    let url_ = this.baseUrl + '/api/admin/skill-groups/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminSkillGroup>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminSkillGroup>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminSkillGroup> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminSkillGroup);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No group has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces a skill group's names, position and skills.
+   * @param id The group's identifier.
+   * @param form The complete group.
+   * @return Saved.
+   */
+  update(id: number, form: SkillGroupForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/skill-groups/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No group has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Deletes a skill group with all its skills.
+   * @param id The group's identifier.
+   * @return Deleted.
+   */
+  delete(id: number): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/skill-groups/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({}),
+    };
+
+    return this.http
+      .request('delete', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processDelete(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processDelete(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processDelete(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No group has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminProjectsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists every project, including hidden ones, in display order.
+   * @return All projects with both locales, decisions and images.
+   */
+  list(): Observable<AdminProject[]> {
+    let url_ = this.baseUrl + '/api/admin/projects';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminProject[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminProject[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminProject[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminProject[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Creates a project with its decisions and images.
+   * @param form The new project.
+   * @return Created; Location points to the new project.
+   */
+  create(form: ProjectForm): Observable<AdminProject> {
+    let url_ = this.baseUrl + '/api/admin/projects';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processCreate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processCreate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminProject>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminProject>;
+        }),
+      );
+  }
+
+  protected processCreate(response: HttpResponseBase): Observable<AdminProject> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 201) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result201: any = null;
+          result201 =
+            _responseText === '' ? null : (JSON.parse(_responseText, this.jsonParseReviver) as AdminProject);
+          return _observableOf(result201);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field (slug, status, de.title, images).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 409) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result409: any = null;
+          result409 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'The slug is already used, or five visible projects are already featured.',
+            status,
+            _responseText,
+            _headers,
+            result409,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one project for the editor.
+   * @param id The project's identifier.
+   * @return The project with both locales, decisions and images.
+   */
+  get(id: number): Observable<AdminProject> {
+    let url_ = this.baseUrl + '/api/admin/projects/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminProject>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminProject>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminProject> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === '' ? null : (JSON.parse(_responseText, this.jsonParseReviver) as AdminProject);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No project has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces a project, its decisions and its images.
+   * @param id The project's identifier.
+   * @param form The complete project.
+   * @return Saved.
+   */
+  update(id: number, form: ProjectForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/projects/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No project has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status === 409) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result409: any = null;
+          result409 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'The slug is used by another project, or five visible projects are already featured.',
+            status,
+            _responseText,
+            _headers,
+            result409,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Deletes a project with its texts, decisions and image references.
+   * @param id The project's identifier.
+   * @return Deleted.
+   */
+  delete(id: number): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/projects/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({}),
+    };
+
+    return this.http
+      .request('delete', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processDelete(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processDelete(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processDelete(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No project has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminProfileClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Reads the complete profile for the editor, including phone and street address.
+   * @return The profile with both locales.
+   */
+  get(): Observable<AdminProfile> {
+    let url_ = this.baseUrl + '/api/admin/profile';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminProfile>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminProfile>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminProfile> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === '' ? null : (JSON.parse(_responseText, this.jsonParseReviver) as AdminProfile);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No profile exists yet.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces the complete profile with the given one.
+   * @param profile The complete profile.
+   * @return Saved.
+   */
+  put(profile: AdminProfile): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/profile';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(profile);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processPut(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processPut(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processPut(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field (de.headline, facts, photoDocumentId).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminLegalPagesClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists both legal pages with both locales, Impressum first.
+   * @return The pages.
+   */
+  list(): Observable<AdminLegalPage[]> {
+    let url_ = this.baseUrl + '/api/admin/legal-pages';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminLegalPage[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminLegalPage[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminLegalPage[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminLegalPage[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one legal page for the editor.
+   * @param key Imprint or Privacy.
+   * @return The page with both locales and their "last updated" stamps.
+   */
+  get(key: LegalPageKey): Observable<AdminLegalPage> {
+    let url_ = this.baseUrl + '/api/admin/legal-pages/{key}';
+    if (key === undefined || key === null) throw new globalThis.Error("The parameter 'key' must be defined.");
+    url_ = url_.replace('{key}', encodeURIComponent('' + key));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminLegalPage>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminLegalPage>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminLegalPage> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminLegalPage);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The key is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('The page does not exist.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces the texts of a legal page.
+   * @param key Imprint or Privacy.
+   * @param form Both locales.
+   * @return Saved.
+   */
+  update(key: LegalPageKey, form: LegalPageForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/legal-pages/{key}';
+    if (key === undefined || key === null) throw new globalThis.Error("The parameter 'key' must be defined.");
+    url_ = url_.replace('{key}', encodeURIComponent('' + key));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule (de.title, de.bodyMarkdown) or the key is not supported.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthClient {
   private http: HttpClient;
   private baseUrl: string;
@@ -396,6 +1942,1262 @@ export class AuthClient {
   }
 }
 
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminEducationClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists every education entry, including hidden ones, newest first.
+   * @return All entries with both locales.
+   */
+  list(): Observable<AdminEducation[]> {
+    let url_ = this.baseUrl + '/api/admin/education';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminEducation[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminEducation[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminEducation[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminEducation[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Creates an education entry.
+   * @param form The new entry.
+   * @return Created; Location points to the new entry.
+   */
+  create(form: EducationForm): Observable<AdminEducation> {
+    let url_ = this.baseUrl + '/api/admin/education';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processCreate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processCreate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminEducation>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminEducation>;
+        }),
+      );
+  }
+
+  protected processCreate(response: HttpResponseBase): Observable<AdminEducation> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 201) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result201: any = null;
+          result201 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminEducation);
+          return _observableOf(result201);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field (institution, endDate, de.degree).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one education entry for the editor.
+   * @param id The entry's identifier.
+   * @return The entry with both locales.
+   */
+  get(id: number): Observable<AdminEducation> {
+    let url_ = this.baseUrl + '/api/admin/education/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminEducation>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminEducation>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminEducation> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminEducation);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No entry has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces an education entry with the given fields.
+   * @param id The entry's identifier.
+   * @param form The complete entry.
+   * @return Saved.
+   */
+  update(id: number, form: EducationForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/education/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No entry has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Deletes an education entry with its translations.
+   * @param id The entry's identifier.
+   * @return Deleted.
+   */
+  delete(id: number): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/education/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({}),
+    };
+
+    return this.http
+      .request('delete', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processDelete(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processDelete(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processDelete(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No entry has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminExperiencesClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists every career station, including hidden ones, newest first.
+   * @return All stations with both locales.
+   */
+  list(): Observable<AdminExperience[]> {
+    let url_ = this.baseUrl + '/api/admin/experiences';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminExperience[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminExperience[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminExperience[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminExperience[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Creates a career station.
+   * @param form The new station.
+   * @return Created; Location points to the new station.
+   */
+  create(form: ExperienceForm): Observable<AdminExperience> {
+    let url_ = this.baseUrl + '/api/admin/experiences';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processCreate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processCreate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminExperience>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminExperience>;
+        }),
+      );
+  }
+
+  protected processCreate(response: HttpResponseBase): Observable<AdminExperience> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 201) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result201: any = null;
+          result201 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminExperience);
+          return _observableOf(result201);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field (company, endDate, de.roleTitle).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one career station for the editor.
+   * @param id The station's identifier.
+   * @return The station with both locales.
+   */
+  get(id: number): Observable<AdminExperience> {
+    let url_ = this.baseUrl + '/api/admin/experiences/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminExperience>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminExperience>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminExperience> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminExperience);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No station has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces a career station with the given fields.
+   * @param id The station's identifier.
+   * @param form The complete station.
+   * @return Saved.
+   */
+  update(id: number, form: ExperienceForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/experiences/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No station has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Deletes a career station with its translations.
+   * @param id The station's identifier.
+   * @return Deleted.
+   */
+  delete(id: number): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/experiences/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({}),
+    };
+
+    return this.http
+      .request('delete', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processDelete(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processDelete(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processDelete(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No station has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+/** A skill group for the admin editor, with both names and its skills. */
+export interface AdminSkillGroup {
+  /** The group's identifier. */
+  id?: number;
+  /** Position among the groups. */
+  sortOrder?: number;
+  /** Required German name. */
+  nameDe?: string;
+  /** Optional English name. */
+  nameEn?: string | undefined;
+  /** The skills in display order. */
+  skills?: SkillForm[];
+}
+
+/** One skill with both qualifiers. */
+export interface SkillForm {
+  /** Required technology name, at most 80 characters. */
+  name?: string;
+  /** Optional year between 1950 and 2100. */
+  sinceYear?: number | undefined;
+  /** Optional German qualifier. */
+  qualifierDe?: string | undefined;
+  /** Optional English qualifier. */
+  qualifierEn?: string | undefined;
+}
+
+export interface ProblemDetails {
+  type?: string | undefined;
+  title?: string | undefined;
+  status?: number | undefined;
+  detail?: string | undefined;
+  instance?: string | undefined;
+
+  [key: string]: any;
+}
+
+export interface HttpValidationProblemDetails extends ProblemDetails {
+  errors?: { [key: string]: string[] };
+
+  [key: string]: any;
+}
+
+export interface ValidationProblemDetails extends HttpValidationProblemDetails {
+  errors?: { [key: string]: string[] };
+
+  [key: string]: any;
+}
+
+/** The writable fields of a skill group, for POST and PUT. */
+export interface SkillGroupForm {
+  /** Position among the groups. */
+  sortOrder?: number;
+  /** Required German name. */
+  nameDe?: string;
+  /** Optional English name; empty falls back to German. */
+  nameEn?: string | undefined;
+  /** At most 30 skills in display order; names are unique per group (ignoring case). */
+  skills?: SkillForm[];
+}
+
+/** A project for the admin editor, with both locales, decisions and images. */
+export interface AdminProject {
+  /** The project's identifier. */
+  id?: number;
+  /** Unique URL segment. */
+  slug?: string;
+  /** Where the project stands; never Unknown. */
+  status?: ProjectStatus;
+  /** Optional start year. */
+  startedYear?: number | undefined;
+  /** Optional end year, not before the start year. */
+  endedYear?: number | undefined;
+  /** Optional absolute http(s) URL. */
+  liveUrl?: string | undefined;
+  /** Optional absolute http(s) URL. */
+  repositoryUrl?: string | undefined;
+  /** At most 20 technology names. */
+  stackTags?: string[];
+  /** Position among the projects. */
+  sortOrder?: number;
+  /** Shown on the start page; at most five visible projects. */
+  isFeatured?: boolean;
+  /** Hidden projects never reach the open site. */
+  isVisible?: boolean;
+  /** The German texts; title and teaser are required. */
+  de?: ProjectTextsForm;
+  /** The English texts, or null when there are none. */
+  en?: ProjectTextsForm | undefined;
+  /** At most five decisions in order. */
+  decisions?: DecisionForm[];
+  /** At most twelve images in order. */
+  images?: ImageForm[];
+}
+
+/** Where a project stands. Stored as int; Unknown is never written and values are frozen. */
+export type ProjectStatus = 'Unknown' | 'Live' | 'InProduction' | 'Archived' | 'Planned';
+
+/** The translatable texts of a project in one locale. */
+export interface ProjectTextsForm {
+  /** Required in German. */
+  title?: string | undefined;
+  /** Required in German. */
+  teaser?: string | undefined;
+  /** Optional paragraph. */
+  problem?: string | undefined;
+  /** Optional paragraph. */
+  myRole?: string | undefined;
+  /** Optional paragraph. */
+  outcome?: string | undefined;
+  /** Optional Markdown in the restricted subset. */
+  caseStudyMarkdown?: string | undefined;
+}
+
+/** One decision with both locales. */
+export interface DecisionForm {
+  /** German title and trade-off, both required. */
+  de?: DecisionTextsForm;
+  /** English texts, or null to fall back to German. */
+  en?: DecisionTextsForm | undefined;
+}
+
+/** The texts of a decision in one locale. */
+export interface DecisionTextsForm {
+  title?: string | undefined;
+  tradeOff?: string | undefined;
+}
+
+/** One image of a case study with both captions. */
+export interface ImageForm {
+  /** A public image document. */
+  documentId?: number;
+  /** Optional German caption. */
+  captionDe?: string | undefined;
+  /** Optional English caption. */
+  captionEn?: string | undefined;
+}
+
+/** The writable fields of a project, for POST and PUT. */
+export interface ProjectForm {
+  /** Unique URL segment: lowercase letters and digits joined by single hyphens. */
+  slug?: string;
+  /** Where the project stands; never Unknown. */
+  status?: ProjectStatus;
+  /** Optional start year. */
+  startedYear?: number | undefined;
+  /** Optional end year, not before the start year. */
+  endedYear?: number | undefined;
+  /** Optional absolute http(s) URL. */
+  liveUrl?: string | undefined;
+  /** Optional absolute http(s) URL. */
+  repositoryUrl?: string | undefined;
+  /** At most 20 technology names; blanks are dropped. */
+  stackTags?: string[];
+  /** Position among the projects. */
+  sortOrder?: number;
+  /** Shown on the start page; at most five visible projects. */
+  isFeatured?: boolean;
+  /** Whether the open site shows the project. */
+  isVisible?: boolean;
+  /** The German texts; title and teaser are required. */
+  de?: ProjectTextsForm;
+  /** The English texts, or null to remove them. */
+  en?: ProjectTextsForm | undefined;
+  /** At most five decisions in order; replaces the existing ones. */
+  decisions?: DecisionForm[];
+  /** At most twelve public image documents in order; replaces the existing ones. */
+  images?: ImageForm[];
+}
+
+/** The complete profile for the admin editor, both locales side by side. The same shape is read with GET and written back with PUT. */
+export interface AdminProfile {
+  /** Required. */
+  fullName?: string;
+  /** Required; a single address without display name. */
+  email?: string;
+  /** Only printed in the full CV PDF. */
+  phone?: string | undefined;
+  /** Required; city or region. */
+  location?: string;
+  /** Street address for the full PDF and the Impressum, at most four lines. */
+  addressLines?: string[];
+  /** Absolute http(s) URL or null. */
+  gitHubUrl?: string | undefined;
+  /** Absolute http(s) URL or null. */
+  linkedInUrl?: string | undefined;
+  /** A public image document, or null for no photo. */
+  photoDocumentId?: number | undefined;
+  /** The German texts; title line and headline are required. */
+  de?: ProfileTextsForm;
+  /** The English texts, or null when there are none yet; empty fields fall back to German. */
+  en?: ProfileTextsForm | undefined;
+  /** The fact bar in display order, at most four cells. */
+  facts?: FactForm[];
+}
+
+/** The translatable texts of the profile in one locale. */
+export interface ProfileTextsForm {
+  titleLine?: string | undefined;
+  headline?: string | undefined;
+  intro?: string | undefined;
+  availabilityLine?: string | undefined;
+}
+
+/** One cell of the fact bar with both labels. */
+export interface FactForm {
+  /** Required, at most 20 characters. */
+  value?: string;
+  /** Required German label. */
+  labelDe?: string;
+  /** Optional English label; falls back to German. */
+  labelEn?: string | undefined;
+}
+
+/** A legal page for the admin editor, with both locales and their stamps. */
+export interface AdminLegalPage {
+  /** Which page. */
+  key?: LegalPageKey;
+  /** The German texts. */
+  de?: AdminLegalTexts;
+  /** The English texts, or null when there are none. */
+  en?: AdminLegalTexts | undefined;
+}
+
+/** Which legal page. Stored as int; Unknown is never written and values are frozen. */
+export type LegalPageKey = 'Unknown' | 'Imprint' | 'Privacy';
+
+/** The stored texts of a legal page in one locale. */
+export interface AdminLegalTexts {
+  /** The page title. */
+  title?: string;
+  /** The body in the restricted Markdown subset. */
+  bodyMarkdown?: string;
+  /** When this locale last changed; moves only on a real change. */
+  updatedAt?: string;
+}
+
+/** The writable texts of a legal page, for PUT. */
+export interface LegalPageForm {
+  /** The German texts; title and body are required. */
+  de?: LegalTextsForm;
+  /** The English texts, or null to remove them. */
+  en?: LegalTextsForm | undefined;
+}
+
+/** The texts of a legal page in one locale. */
+export interface LegalTextsForm {
+  /** Required in German. */
+  title?: string | undefined;
+  /** Required in German; restricted Markdown subset. */
+  bodyMarkdown?: string | undefined;
+}
+
 /** Whether a password exists yet; the login screen uses it to label the first login. */
 export interface LoginStateResponse {
   hasPassword?: boolean;
@@ -415,6 +3217,114 @@ export interface LoginRequest {
 export interface ChangePasswordRequest {
   currentPassword?: string;
   newPassword?: string;
+}
+
+/** An education entry for the admin editor, with both locales and its visibility. */
+export interface AdminEducation {
+  /** The entry's identifier. */
+  id?: number;
+  /** Required. */
+  institution?: string;
+  /** Optional city or region. */
+  location?: string | undefined;
+  /** First day. */
+  startDate?: string;
+  /** Last day, or null while ongoing; never before the start. */
+  endDate?: string | undefined;
+  /** Optional free-text grade, at most 40 characters. */
+  grade?: string | undefined;
+  /** Tie-breaker between entries with the same start date. */
+  sortOrder?: number;
+  /** Hidden entries never reach the open site or the PDF. */
+  isVisible?: boolean;
+  /** The German texts; the degree is required. */
+  de?: EducationTextsForm;
+  /** The English texts, or null when there are none. */
+  en?: EducationTextsForm | undefined;
+}
+
+/** The translatable texts of an education entry in one locale. */
+export interface EducationTextsForm {
+  /** The degree; required in German. */
+  degree?: string | undefined;
+  /** Optional paragraph. */
+  summary?: string | undefined;
+}
+
+/** The writable fields of an education entry, for POST and PUT. */
+export interface EducationForm {
+  /** Required. */
+  institution?: string;
+  /** Optional city or region. */
+  location?: string | undefined;
+  /** First day. */
+  startDate?: string;
+  /** Last day, or null while ongoing; never before the start. */
+  endDate?: string | undefined;
+  /** Optional free-text grade, at most 40 characters. */
+  grade?: string | undefined;
+  /** Tie-breaker between entries with the same start date. */
+  sortOrder?: number;
+  /** Whether the open site and the PDF show the entry. */
+  isVisible?: boolean;
+  /** The German texts; the degree is required. */
+  de?: EducationTextsForm;
+  /** The English texts, or null to remove them. */
+  en?: EducationTextsForm | undefined;
+}
+
+/** A career station for the admin editor, with both locales and its visibility. */
+export interface AdminExperience {
+  /** The station's identifier. */
+  id?: number;
+  /** Required. */
+  company?: string;
+  /** Optional city or region. */
+  location?: string | undefined;
+  /** First day of the station. */
+  startDate?: string;
+  /** Last day, or null for the current station; never before the start. */
+  endDate?: string | undefined;
+  /** Tie-breaker between stations with the same start date. */
+  sortOrder?: number;
+  /** Hidden stations stay in the admin and never reach the open site or the PDF. */
+  isVisible?: boolean;
+  /** The German texts; the role title is required. */
+  de?: ExperienceTextsForm;
+  /** The English texts, or null when there are none. */
+  en?: ExperienceTextsForm | undefined;
+}
+
+/** The translatable texts of a career station in one locale. */
+export interface ExperienceTextsForm {
+  /** The role; required in German. */
+  roleTitle?: string | undefined;
+  /** Optional paragraph. */
+  summary?: string | undefined;
+  /** At most twelve short lines; blank lines are dropped. */
+  bullets?: string[];
+  /** Optional technology line. */
+  stackLine?: string | undefined;
+}
+
+/** The writable fields of a career station, for POST and PUT. */
+export interface ExperienceForm {
+  /** Required. */
+  company?: string;
+  /** Optional city or region. */
+  location?: string | undefined;
+  /** First day of the station. */
+  startDate?: string;
+  /** Last day, or null for the current station; never before the start. */
+  endDate?: string | undefined;
+  /** Tie-breaker between stations with the same start date. */
+  sortOrder?: number;
+  /** Whether the open site and the PDF show the station. */
+  isVisible?: boolean;
+  /** The German texts; the role title is required. */
+  de?: ExperienceTextsForm;
+  /** The English texts, or null to remove them. */
+  en?: ExperienceTextsForm | undefined;
 }
 
 export interface FileResponse {

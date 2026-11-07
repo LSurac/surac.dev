@@ -6,6 +6,292 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/public/skills": {
+      "get": {
+        "tags": [
+          "PublicSkills"
+        ],
+        "summary": "Lists the skill groups with their skills, in display order.",
+        "description": "A skill carries the year since it is used and an optional qualifier (\"Legacy\"), never a level\nor a percentage. Group names and qualifiers fall back to German; a group's\nfallbackFields names its own fields that did.",
+        "operationId": "PublicSkills_List",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The groups; an empty list when there are none.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicSkillGroup"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/projects": {
+      "get": {
+        "tags": [
+          "PublicProjects"
+        ],
+        "summary": "Lists the visible projects as cards, in display order.",
+        "description": "With featured=true only the featured projects are listed, at most five: the start page\nuses that. Texts fall back to German field by field; fallbackFields names the fields that did.",
+        "operationId": "PublicProjects_List",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "featured",
+            "in": "query",
+            "description": "Only the projects featured on the start page.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The cards; an empty list when there are none.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicProjectCard"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/projects/{slug}": {
+      "get": {
+        "tags": [
+          "PublicProjects"
+        ],
+        "summary": "Reads the case study of a visible project.",
+        "description": "The case study comes as HTML rendered from the restricted Markdown subset (headings,\nparagraphs, lists, code, links, images from uploaded documents); all text is escaped, so it is\nsafe to bind as inner HTML. Hidden projects, unknown slugs and malformed slugs all answer 404.",
+        "operationId": "PublicProjects_Get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "description": "The project's URL segment.",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The case study.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCaseStudy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No visible project has this slug.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/profile": {
+      "get": {
+        "tags": [
+          "PublicProfile"
+        ],
+        "summary": "Reads the profile for the hero, the fact bar and the contact section.",
+        "description": "Texts come in the requested locale and fall back to German field by field; fallbackFields\nlists the fields that did, so the page can decide to hide an untranslated section. Phone number\nand street address are never part of this response; they exist only in the full CV PDF and,\nfor the address, the Impressum.",
+        "operationId": "PublicProfile_Get",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The profile in the requested locale.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No profile exists yet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/legal/{key}": {
+      "get": {
+        "tags": [
+          "PublicLegal"
+        ],
+        "summary": "Reads a legal page.",
+        "description": "key is Imprint or Privacy (case-insensitive). The body comes as HTML\nrendered from the restricted Markdown subset and is safe to bind as inner HTML.\nupdatedAt is the \"last updated\" date of the locale shown. The Impressum additionally\ncarries contact with name, postal address and e-mail from the profile, as § 5 DDG\nrequires; no other public response contains the address.",
+        "operationId": "PublicLegal_Get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "description": "Which page.",
+            "schema": {
+              "$ref": "#/components/schemas/LegalPageKey"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The page in the requested locale.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicLegalPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The key or the locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The page does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -35,16 +321,732 @@
           }
         }
       }
+    },
+    "/api/public/experiences": {
+      "get": {
+        "tags": [
+          "PublicCareer"
+        ],
+        "summary": "Lists the visible career stations, newest first.",
+        "description": "Ordered by start date descending, then by sort order. Hidden stations are never listed. Texts\nfall back to German field by field; each station's fallbackFields names the fields that did.",
+        "operationId": "PublicCareer_ListExperiences",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The visible stations; an empty list when there are none.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicExperience"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/education": {
+      "get": {
+        "tags": [
+          "PublicCareer"
+        ],
+        "summary": "Lists the visible education entries, newest first.",
+        "description": "Ordered by start date descending, then by sort order. Hidden entries are never listed. Texts\nfall back to German field by field; each entry's fallbackFields names the fields that did.",
+        "operationId": "PublicCareer_ListEducation",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The visible entries; an empty list when there are none.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicEducation"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "PublicSkillGroup": {
+        "type": "object",
+        "description": "A skill group of the open site with its skills, in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Stable identifier, for list keys.",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "description": "The group name in the requested locale or German."
+          },
+          "skills": {
+            "type": "array",
+            "description": "The skills in display order.",
+            "items": {
+              "$ref": "#/components/schemas/PublicSkill"
+            }
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PublicSkill": {
+        "type": "object",
+        "description": "A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a level.",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The technology name; not translated."
+          },
+          "sinceYear": {
+            "type": "integer",
+            "description": "The year since it is used, if given.",
+            "format": "int32",
+            "nullable": true
+          },
+          "qualifier": {
+            "type": "string",
+            "description": "A short qualifier (\"Legacy\"), in the requested locale or German.",
+            "nullable": true
+          }
+        }
+      },
+      "ValidationProblemDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/HttpValidationProblemDetails"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "nullable": true
+            },
+            "properties": {
+              "errors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "HttpValidationProblemDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProblemDetails"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "nullable": true
+            },
+            "properties": {
+              "errors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "additionalProperties": {
+          "nullable": true
+        },
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PublicProjectCard": {
+        "type": "object",
+        "description": "A project card of the open site, in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Stable identifier, for list keys.",
+            "format": "int64"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL segment of the case study (/projekte/{slug}, /en/projects/{slug})."
+          },
+          "status": {
+            "description": "Where the project stands.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectStatus"
+              }
+            ]
+          },
+          "startedYear": {
+            "type": "integer",
+            "description": "Year the project started, if known.",
+            "format": "int32",
+            "nullable": true
+          },
+          "endedYear": {
+            "type": "integer",
+            "description": "Year it ended, or null while it runs.",
+            "format": "int32",
+            "nullable": true
+          },
+          "liveUrl": {
+            "type": "string",
+            "description": "The running product, if public.",
+            "nullable": true
+          },
+          "repositoryUrl": {
+            "type": "string",
+            "description": "The source code, if public.",
+            "nullable": true
+          },
+          "stackTags": {
+            "type": "array",
+            "description": "Technology names in display order.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isFeatured": {
+            "type": "boolean",
+            "description": "Shown on the start page."
+          },
+          "title": {
+            "type": "string",
+            "description": "Project title."
+          },
+          "teaser": {
+            "type": "string",
+            "description": "One or two sentences for the card."
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ProjectStatus": {
+        "type": "string",
+        "description": "Where a project stands. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Live",
+          "InProduction",
+          "Archived",
+          "Planned"
+        ],
+        "enum": [
+          "Unknown",
+          "Live",
+          "InProduction",
+          "Archived",
+          "Planned"
+        ]
+      },
+      "PublicCaseStudy": {
+        "type": "object",
+        "description": "The case study of a project, in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "URL segment, shared by both locales."
+          },
+          "status": {
+            "description": "Where the project stands.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProjectStatus"
+              }
+            ]
+          },
+          "startedYear": {
+            "type": "integer",
+            "description": "Year the project started, if known.",
+            "format": "int32",
+            "nullable": true
+          },
+          "endedYear": {
+            "type": "integer",
+            "description": "Year it ended, or null while it runs.",
+            "format": "int32",
+            "nullable": true
+          },
+          "liveUrl": {
+            "type": "string",
+            "description": "The running product, if public.",
+            "nullable": true
+          },
+          "repositoryUrl": {
+            "type": "string",
+            "description": "The source code, if public.",
+            "nullable": true
+          },
+          "stackTags": {
+            "type": "array",
+            "description": "Technology names in display order.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "Project title."
+          },
+          "teaser": {
+            "type": "string",
+            "description": "The card text, used as lede and meta description."
+          },
+          "problem": {
+            "type": "string",
+            "description": "What had to be solved.",
+            "nullable": true
+          },
+          "myRole": {
+            "type": "string",
+            "description": "The maintainer's own share.",
+            "nullable": true
+          },
+          "outcome": {
+            "type": "string",
+            "description": "What came out of it.",
+            "nullable": true
+          },
+          "caseStudyHtml": {
+            "type": "string",
+            "description": "The case study rendered from the restricted Markdown subset; safe to bind as inner HTML."
+          },
+          "decisions": {
+            "type": "array",
+            "description": "Architectural choices with their trade-offs, in order.",
+            "items": {
+              "$ref": "#/components/schemas/PublicDecision"
+            }
+          },
+          "images": {
+            "type": "array",
+            "description": "Screenshots and diagrams, in order.",
+            "items": {
+              "$ref": "#/components/schemas/PublicImage"
+            }
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PublicDecision": {
+        "type": "object",
+        "description": "One decision of a case study.",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "What was decided."
+          },
+          "tradeOff": {
+            "type": "string",
+            "description": "What it cost and why it was worth it."
+          }
+        }
+      },
+      "PublicImage": {
+        "type": "object",
+        "description": "One image of a case study.",
+        "additionalProperties": false,
+        "properties": {
+          "documentId": {
+            "type": "integer",
+            "description": "Served by GET /api/public/documents/{id}.",
+            "format": "int64"
+          },
+          "caption": {
+            "type": "string",
+            "description": "Caption and alt text, if given.",
+            "nullable": true
+          }
+        }
+      },
+      "PublicProfile": {
+        "type": "object",
+        "description": "The profile as the open site shows it, in one locale. Phone and street address are never part\nof it (docs/content-model.md, \"Visibility rules\").",
+        "additionalProperties": false,
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "description": "The person's name."
+          },
+          "email": {
+            "type": "string",
+            "description": "The public contact address."
+          },
+          "location": {
+            "type": "string",
+            "description": "City or region, never a street address."
+          },
+          "gitHubUrl": {
+            "type": "string",
+            "description": "Link to the GitHub profile, if any.",
+            "nullable": true
+          },
+          "linkedInUrl": {
+            "type": "string",
+            "description": "Link to the LinkedIn profile, if any.",
+            "nullable": true
+          },
+          "photoDocumentId": {
+            "type": "integer",
+            "description": "The hero photo, served by GET /api/public/documents/{id}; null when none is set.",
+            "format": "int64",
+            "nullable": true
+          },
+          "titleLine": {
+            "type": "string",
+            "description": "The search-term line under the name (\"Fullstack-Entwickler · .NET & Angular\")."
+          },
+          "headline": {
+            "type": "string",
+            "description": "The hero sentence."
+          },
+          "intro": {
+            "type": "string",
+            "description": "The short profile, three to five sentences.",
+            "nullable": true
+          },
+          "availabilityLine": {
+            "type": "string",
+            "description": "An optional availability note.",
+            "nullable": true
+          },
+          "facts": {
+            "type": "array",
+            "description": "The fact bar, in display order, at most four cells.",
+            "items": {
+              "$ref": "#/components/schemas/PublicFact"
+            }
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PublicFact": {
+        "type": "object",
+        "description": "One cell of the fact bar.",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The number or short value (\"5\", \"1,8\", \"C1\")."
+          },
+          "label": {
+            "type": "string",
+            "description": "What the value means, in the requested locale or German."
+          }
+        }
+      },
+      "PublicLegalPage": {
+        "type": "object",
+        "description": "A legal page of the open site, in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "description": "Which page.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LegalPageKey"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "The page title."
+          },
+          "bodyHtml": {
+            "type": "string",
+            "description": "The body rendered from the restricted Markdown subset; safe to bind as inner HTML."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "When the shown locale last changed (\"Stand\").",
+            "format": "date-time"
+          },
+          "contact": {
+            "description": "The provider identification from the profile; only on the Impressum (§ 5 DDG).",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ImprintContact"
+              }
+            ]
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LegalPageKey": {
+        "type": "string",
+        "description": "Which legal page. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Imprint",
+          "Privacy"
+        ],
+        "enum": [
+          "Unknown",
+          "Imprint",
+          "Privacy"
+        ]
+      },
+      "ImprintContact": {
+        "type": "object",
+        "description": "Name, postal address and e-mail as the Impressum must show them.",
+        "additionalProperties": false,
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "description": "The provider's name."
+          },
+          "addressLines": {
+            "type": "array",
+            "description": "The postal address, line by line.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email": {
+            "type": "string",
+            "description": "The contact address."
+          }
+        }
+      },
       "HealthResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
           "status": {
             "type": "string"
+          }
+        }
+      },
+      "PublicExperience": {
+        "type": "object",
+        "description": "A career station as the open site shows it, in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Stable identifier, for list keys.",
+            "format": "int64"
+          },
+          "company": {
+            "type": "string",
+            "description": "The employer."
+          },
+          "location": {
+            "type": "string",
+            "description": "City or region, if given.",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "description": "First day of the station.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Last day, or null for the current station.",
+            "format": "date",
+            "nullable": true
+          },
+          "roleTitle": {
+            "type": "string",
+            "description": "The role, in the requested locale or German."
+          },
+          "summary": {
+            "type": "string",
+            "description": "One paragraph about the station.",
+            "nullable": true
+          },
+          "bullets": {
+            "type": "array",
+            "description": "Short achievement lines in display order.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stackLine": {
+            "type": "string",
+            "description": "The technologies used, as one line.",
+            "nullable": true
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PublicEducation": {
+        "type": "object",
+        "description": "An education entry as the open site shows it, in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Stable identifier, for list keys.",
+            "format": "int64"
+          },
+          "institution": {
+            "type": "string",
+            "description": "School, chamber or university."
+          },
+          "location": {
+            "type": "string",
+            "description": "City or region, if given.",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "description": "First day.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Last day, or null while ongoing.",
+            "format": "date",
+            "nullable": true
+          },
+          "grade": {
+            "type": "string",
+            "description": "Free-text grade (\"1,8\"), if given.",
+            "nullable": true
+          },
+          "degree": {
+            "type": "string",
+            "description": "The degree, in the requested locale or German."
+          },
+          "summary": {
+            "type": "string",
+            "description": "Optional paragraph.",
+            "nullable": true
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
