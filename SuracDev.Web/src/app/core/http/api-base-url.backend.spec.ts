@@ -34,6 +34,22 @@ describe('ApiBaseUrlBackend', () => {
     expect(handled[0]?.responseType).toBe('json');
   });
 
+  it('sends API URLs that Angular already made absolute with the page origin to the API', async () => {
+    const { backend, handled } = setUp();
+
+    await firstValueFrom(
+      backend.handle(
+        new HttpRequest('GET', 'http://srv.example/api/public/profile?locale=de', { responseType: 'json' }),
+      ),
+    );
+    await firstValueFrom(
+      backend.handle(new HttpRequest('GET', 'https://other.example/feed.json', { responseType: 'json' })),
+    );
+
+    expect(handled[0]?.url).toBe('http://api:8080/api/public/profile?locale=de');
+    expect(handled[1]?.url).toBe('https://other.example/feed.json');
+  });
+
   it('fetches blob responses as ArrayBuffer so the transfer cache can serialise them', async () => {
     const { backend, handled } = setUp();
 

@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api-base-url.token';
 
 /**
- * Server-only HTTP backend that makes relative `/api/...` requests absolute. It sits below the
- * interceptors on purpose: the hydration transfer cache keys responses by the request URL, and the
- * browser requests the relative URL, so the cache only matches when the server cached it under the
- * same relative key.
+ * Server-only HTTP backend that sends every `/api/...` request to the API container. Angular's
+ * server rendering already turns relative URLs into absolute ones with the page's own origin
+ * (`http://<public host>/api/...`), which from inside the container points at nothing, so the
+ * path of any `/api/` URL is re-based onto API_BASE_URL. It sits below the interceptors on purpose:
+ * the hydration transfer cache keys responses by the URL the browser requests.
  *
  * It also fetches `blob` responses (every NSwag call) as ArrayBuffer: the transfer cache serialises
  * blob bodies with `new Uint8Array(body)`, which yields nothing for a Blob, so the browser would
@@ -20,8 +21,20 @@ export class ApiBaseUrlBackend implements HttpBackend {
   private readonly apiBaseUrl = inject(API_BASE_URL);
 
   handle(request: HttpRequest<unknown>): Observable<HttpEvent<unknown>> {
-    const url = request.url.startsWith('/') ? this.apiBaseUrl + request.url : request.url;
+    const url = toApiUrl(request.url, this.apiBaseUrl);
     const responseType = request.responseType === 'blob' ? 'arraybuffer' : request.responseType;
     return this.fetchBackend.handle(request.clone({ url, responseType }));
   }
+}
+
+const API_PATH = '/api/';
+
+/** `/api/x?y` and `http://any-host/api/x?y` both become `<apiBaseUrl>/api/x?y`; other URLs stay. */
+function toApiUrl(url: string, apiBaseUrl: string): string {
+  if (url.startsWith('/')) {
+    return apiBaseUrl + url;
+  }
+
+  const parsed = URL.canParse(url) ? new URL(url) : null;
+  return parsed?.pathname.startsWith(API_PATH) ? apiBaseUrl + parsed.pathname + parsed.search : url;
 }

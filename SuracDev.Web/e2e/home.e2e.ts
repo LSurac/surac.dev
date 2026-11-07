@@ -39,6 +39,13 @@ test.describe('start page', () => {
     expect(html).toContain('Max Mustermann');
   });
 
+  test('renders the content when the proxy passes the host without its port', async ({ request }) => {
+    // nginx sends `Host: $host`, which drops the port; the page origin then points at nothing.
+    const html = await (await request.get('/', { headers: { host: 'localhost' } })).text();
+
+    expect(html).toContain('Max Mustermann');
+  });
+
   test('renders the English start page with English content and language', async ({ request }) => {
     const html = await (await request.get('/en')).text();
 
