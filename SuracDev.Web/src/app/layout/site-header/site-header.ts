@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { uiStrings } from '../../core/i18n/ui-strings';
 import { Locale, switchLocaleUrl } from '../../core/locale/locale';
+import { LocaleService } from '../../core/locale/locale.service';
 
 /** Name, section navigation and the locale switch. The switch keeps the visitor on the same page. */
 @Component({
@@ -12,14 +13,14 @@ import { Locale, switchLocaleUrl } from '../../core/locale/locale';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteHeader {
-  private readonly router = inject(Router);
+  private readonly currentUrl = inject(LocaleService).url;
 
   readonly locale = input.required<Locale>();
 
   protected readonly strings = computed(() => uiStrings(this.locale()));
   protected readonly homeUrl = computed(() => (this.locale() === 'de' ? '/' : '/en'));
   protected readonly otherLocale = computed<Locale>(() => (this.locale() === 'de' ? 'en' : 'de'));
-  protected readonly switchUrl = computed(() => switchLocaleUrl(this.router.url, this.otherLocale()));
+  protected readonly switchUrl = computed(() => switchLocaleUrl(this.currentUrl(), this.otherLocale()));
   protected readonly sections = computed(() => {
     const nav = this.strings().nav;
     return [

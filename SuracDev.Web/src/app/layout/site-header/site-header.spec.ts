@@ -1,4 +1,4 @@
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { SiteHeader } from './site-header';
 
@@ -17,5 +17,20 @@ describe('app-site-header', () => {
     expect(screen.getByRole('link', { name: 'Leonard Surac' })).toHaveAttribute('href', '/en');
     expect(screen.getByRole('link', { name: 'Projects' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Deutsch' })).toHaveAttribute('href', '/');
+  });
+
+  it('keeps the language link on the current page after navigating', async () => {
+    const { fixture } = await render(SiteHeader, {
+      inputs: { locale: 'de' },
+      providers: [provideRouter([{ path: 'projekte/:slug', children: [] }])],
+    });
+
+    await fixture.debugElement.injector.get(Router).navigateByUrl('/projekte/beispiel');
+    fixture.detectChanges();
+
+    expect(await screen.findByRole('link', { name: 'English' })).toHaveAttribute(
+      'href',
+      '/en/projects/beispiel',
+    );
   });
 });
