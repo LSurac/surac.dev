@@ -22,7 +22,9 @@
     />
     <div class="prose">
       <p class="lede">{{ text }}</p>
-      <p class="meta">{{ availability() }}</p>
+      @for (note of profileNotes(); track $index) {
+        <p class="meta">{{ note }}</p>
+      }
     </div>
   </section>
 }

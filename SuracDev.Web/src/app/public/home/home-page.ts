@@ -97,7 +97,10 @@ export class HomePage {
     };
   });
   protected readonly intro = computed(() => this.profile()?.intro ?? null);
-  protected readonly availability = computed(() => this.profile()?.availabilityLine ?? null);
+  /** Short notes under the intro; empty when there is none, so no empty paragraph is rendered. */
+  protected readonly profileNotes = computed(() =>
+    [this.profile()?.availabilityLine].filter((line): line is string => !!line),
+  );
   protected readonly facts = computed<Fact[]>(() =>
     (this.profile()?.facts ?? []).map((fact) => ({ value: fact.value ?? '', label: fact.label ?? '' })),
   );

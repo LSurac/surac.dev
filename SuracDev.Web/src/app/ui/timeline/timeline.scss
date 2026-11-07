@@ -45,6 +45,7 @@
 
 .timeline__bullets {
   margin: var(--space-2) 0;
+  list-style: disc;
   padding-left: var(--space-5);
   max-width: var(--measure);
 }
