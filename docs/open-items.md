@@ -36,7 +36,8 @@ What is in flight or waiting on a manual step. Close items here when done; the p
 - [x] Phase 1 domains (Profile, Career, Projects, Skills, Legal) with translations and admin editors.
 - [x] Documents: upload, public photo and case-study images, admin management.
 - [x] Public start page composed from `ui/` components, both locales; case study, legal pages, 404.
-- [ ] Open Graph tags, sitemap and robots (roadmap phase 1, not yet built).
+- [x] Open Graph tags, sitemap (`/sitemap.xml`, both locales) and `robots.txt`.
+- [x] E2E flows 1 and 2 (start page with CV download, admin edit shown on the site).
 - [x] QuestPDF CV `Public` × de/en with golden-file tests and the download on the start page.
 - [ ] CV `Full` variant (phone, address) for application links (phase 2).
 - [ ] Application links and the mini ATS (phase 2).
