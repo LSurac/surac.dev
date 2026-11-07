@@ -5,9 +5,10 @@ name: Gates
 # never hold a deploy key.
 on:
   push:
-    branches: ["**"]
+    # master and dev run the gates inside their deploy workflows (workflow_call below); running
+    # them twice would only cancel each other through the concurrency group.
+    branches-ignore: [master, dev]
   pull_request:
-  # The deploy workflows reuse this one as their first job.
   workflow_call:
 
 permissions:
@@ -130,11 +131,7 @@ jobs:
         working-directory: SuracDev.Web
         run: npm ci --no-audit --no-fund
 
-      # NSwag builds the project itself but does not restore it on a fresh checkout.
-      - name: Restore API
-        run: dotnet restore SuracDev.Api/SuracDev.Api.csproj
-
-      # Regenerates the NSwag clients from the API and fails when the committed ones are stale.
+      # Regenerates the NSwag clients from the built API and fails when the committed ones are stale.
       - name: Check generated clients
         working-directory: SuracDev.Web
         run: npm run contract:check

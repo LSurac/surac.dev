@@ -17,7 +17,8 @@
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "api:generate": "nswag run nswag.public.json && nswag run nswag.admin.json && prettier --write \"src/app/api/generated/*.ts\"",
+    "api:build": "dotnet build ../SuracDev.Api/SuracDev.Api.csproj --configuration Debug",
+    "api:generate": "npm run api:build && nswag run nswag.public.json && nswag run nswag.admin.json && prettier --write \"src/app/api/generated/*.ts\"",
     "contract:check": "node scripts/check-api-contract.mjs",
     "e2e": "pwsh -NoProfile -File e2e/run-e2e.ps1"
   },

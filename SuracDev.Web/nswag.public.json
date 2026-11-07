@@ -6,10 +6,11 @@
       "project": "../SuracDev.Api/SuracDev.Api.csproj",
       "configuration": "Debug",
       "targetFramework": "net10.0",
-      "noBuild": false,
+      "noBuild": true,
       "aspNetCoreEnvironment": "OpenApi",
       "documentName": "public",
-      "output": "$(OutputDir)/public.openapi.json"
+      "output": "$(OutputDir)/public.openapi.json",
+      "msBuildOutputPath": "../SuracDev.Api/bin/Debug/net10.0/"
     }
   },
   "codeGenerators": {

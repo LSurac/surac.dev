@@ -11,6 +11,11 @@ const generatedDir = join(projectRoot, 'src', 'app', 'api', 'generated');
 const tempDir = mkdtempSync(join(tmpdir(), 'surac-dev-contract-'));
 
 try {
+  // The NSwag configs run with noBuild (NSwag's own build step breaks on Linux paths), so build first.
+  execSync('dotnet build ../SuracDev.Api/SuracDev.Api.csproj --configuration Debug', {
+    cwd: projectRoot,
+    stdio: 'inherit',
+  });
   for (const document of ['public', 'admin']) {
     execSync(`npx nswag run nswag.${document}.json /variables:OutputDir=${JSON.stringify(tempDir)}`, {
       cwd: projectRoot,
