@@ -19,8 +19,14 @@ describe('locale', () => {
   it('switches the locale prefix and keeps path, query and hash', () => {
     expect(switchLocaleUrl('/', 'en')).toBe('/en');
     expect(switchLocaleUrl('/en', 'de')).toBe('/');
-    expect(switchLocaleUrl('/projekte/x?view=1#top', 'en')).toBe('/en/projekte/x?view=1#top');
-    expect(switchLocaleUrl('/en/projects/x', 'de')).toBe('/projects/x');
+    expect(switchLocaleUrl('/impressum#top', 'en')).toBe('/en/impressum#top');
     expect(switchLocaleUrl('/en', 'en')).toBe('/en');
+  });
+
+  it('translates the section segments that differ between the locales', () => {
+    expect(switchLocaleUrl('/projekte/x?view=1#top', 'en')).toBe('/en/projects/x?view=1#top');
+    expect(switchLocaleUrl('/en/projects/x', 'de')).toBe('/projekte/x');
+    expect(switchLocaleUrl('/ueber-mich', 'en')).toBe('/en/about');
+    expect(switchLocaleUrl('/en/about', 'de')).toBe('/ueber-mich');
   });
 });
