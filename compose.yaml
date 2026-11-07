@@ -65,9 +65,10 @@ services:
     # because published ports bypass ufw.
     ports:
       - '${SURACDEV_WEB_BIND:-127.0.0.1}:${SURACDEV_WEB_PORT:-8085}:8080'
+    # /var/cache/nginx stays in the image layer: a tmpfs mount there is root-owned and the non-root
+    # nginx cannot create its temp directories (first staging deploy, 2026-11-07).
     tmpfs:
       - /tmp:size=16m
-      - /var/cache/nginx:size=64m
     depends_on:
       surac-dev-api:
         condition: service_healthy

@@ -56,6 +56,11 @@ Workflows (`.github/workflows/`):
 - `dependency-audit.yml` — monthly `npm audit --omit=dev --audit-level=high` and
   `dotnet list package --vulnerable --include-transitive`.
 
+The deploy jobs run only when the environment's switch is on (`vars.STAGING_DEPLOY_ENABLED`,
+`vars.PROD_DEPLOY_ENABLED` set to `true`) and its host variable exists; otherwise they are skipped,
+not failed. Turn a switch on only after the host variables, the host key and all secrets of that
+environment are in place.
+
 Actions are pinned by commit SHA. Workflow permissions are `contents: read`. GitHub Actions minutes
 are finite; when they run out, `deploy.ps1` from the workstation is the documented fallback, never
 both at once.
