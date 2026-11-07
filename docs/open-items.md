@@ -33,11 +33,20 @@ What is in flight or waiting on a manual step. Close items here when done; the p
 
 ## Engineering
 
-- [ ] Phase 1 domains (Profile, Career, Projects, Skills, Legal) with translations and admin editors.
-- [ ] Public start page composed from `ui/` components, both locales.
-- [ ] QuestPDF CV documents (Public/Full × de/en) with golden-file tests.
+- [x] Phase 1 domains (Profile, Career, Projects, Skills, Legal) with translations and admin editors.
+- [x] Documents: upload, public photo and case-study images, admin management.
+- [x] Public start page composed from `ui/` components, both locales; case study, legal pages, 404.
+- [ ] Open Graph tags, sitemap and robots (roadmap phase 1, not yet built).
+- [x] QuestPDF CV `Public` × de/en with golden-file tests and the download on the start page.
+- [ ] CV `Full` variant (phone, address) for application links (phase 2).
 - [ ] Application links and the mini ATS (phase 2).
 - [ ] Interests page and complete English translations (phase 3).
 - [ ] CSP hash/nonce for Angular's SSR inline state; document in gotchas once solved.
+- [ ] Initial bundle is about 382 kB against a 320 kB warning and 400 kB error budget: Angular's
+      FESM packages put everything the lazy routes use from core/common into the shared initial
+      chunk. Address in the phase 3 performance pass before it reaches the error budget.
+- [ ] Lines over 110 characters in C#: `.editorconfig` sets 110, the API code does not follow it
+      consistently (foundation included). Decide: enforce with a formatting pass, or set a C#
+      limit that matches practice.
 - [ ] Decide whether `traktor-library-tools` becomes a second public repository (secret scan,
       README rewrite).
