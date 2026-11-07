@@ -77,6 +77,20 @@ short version:
 - C#: `sealed` classes, primary constructors, file-scoped namespaces, `TreatWarningsAsErrors`. DTOs
   are `sealed record`s in `Contracts/`. No AutoMapper; project in `Select`. Domain errors throw the
   shared `DomainException` hierarchy and are mapped centrally; no per-controller try/catch.
+- XML documentation (C#): every public type has a `<summary>` saying what it is in the domain
+  language and which rule it protects, not its name in other words. Every public method with
+  behaviour (factories, behaviour methods, service use cases, controller actions) has one naming
+  the effect and the rule. Properties, constructors and DTO members only where the name does not say it (null
+  meaning, unit, invariant). One or two sentences, present tense, `<see cref>` for types,
+  `<param>`/`<returns>` only when they add information; point to the document that holds a rule
+  instead of repeating it. No summaries that restate the signature, none in tests (the test name
+  is the documentation). `CS1591` stays suppressed: this is a review rule, not a compiler gate.
+- Controllers are REST and documented for the OpenAPI documents: plural resource nouns, `GET`
+  reads, `POST` creates and answers `201` with `Location`, `PUT` replaces, `DELETE` answers `204`,
+  errors are ProblemDetails. Controller and action XML docs are deliberately detailed because they
+  become the Swagger UI and the comments of the generated clients: a `<summary>`, `<remarks>` for
+  rules and edge cases, `<param>` for every parameter and a `<response code="…">` for every status
+  the action can answer, matched by `[ProducesResponseType]`.
 - Angular: standalone components, Signals, `OnPush`, `strict` and `strictTemplates`, zoneless.
   Presentational components in `ui/` have inputs and outputs only and no injected services.
   Feature components in `public/` and `admin/` compose them and own the data loading. API access goes
