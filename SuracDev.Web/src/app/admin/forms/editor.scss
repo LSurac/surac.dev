@@ -48,6 +48,11 @@
   }
 }
 
+.editor__block {
+  margin-bottom: var(--space-4);
+  border-bottom: 1px dotted var(--color-rule);
+}
+
 .editor__check {
   display: flex;
   gap: var(--space-2);

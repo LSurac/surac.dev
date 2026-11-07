@@ -1,0 +1,206 @@
+<h1 class="editor__heading">{{ text.heading }}</h1>
+
+<div class="editor__layout">
+  <ui-entity-list
+    [items]="listItems()"
+    [selectedId]="selectedId()"
+    [label]="text.list"
+    [createLabel]="text.create"
+    (selected)="select($event)"
+    (created)="startNew()"
+  />
+
+  <div>
+    <ui-error-summary [title]="strings.form.saveFailed" [messages]="problem().messages" />
+
+    @if (selection() !== null) {
+      <form class="editor" [formGroup]="form" (ngSubmit)="save()">
+        <h2 class="editor__section">{{ text.details }}</h2>
+        <div class="editor__grid">
+          <ui-field [label]="text.slug" controlId="slug" [hint]="text.slugHint" [errors]="errorsFor('slug')">
+            <input id="slug" formControlName="slug" />
+          </ui-field>
+          <ui-field [label]="text.status" controlId="status" [errors]="errorsFor('status')">
+            <select id="status" formControlName="status">
+              @for (status of statuses; track status) {
+                <option [ngValue]="status">{{ statusLabel(status) }}</option>
+              }
+            </select>
+          </ui-field>
+          <ui-field [label]="text.startedYear" controlId="startedYear" [errors]="errorsFor('startedYear')">
+            <input id="startedYear" type="number" formControlName="startedYear" />
+          </ui-field>
+          <ui-field [label]="text.endedYear" controlId="endedYear" [errors]="errorsFor('endedYear')">
+            <input id="endedYear" type="number" formControlName="endedYear" />
+          </ui-field>
+          <ui-field [label]="text.liveUrl" controlId="liveUrl" [errors]="errorsFor('liveUrl')">
+            <input id="liveUrl" type="url" formControlName="liveUrl" />
+          </ui-field>
+          <ui-field
+            [label]="text.repositoryUrl"
+            controlId="repositoryUrl"
+            [errors]="errorsFor('repositoryUrl')"
+          >
+            <input id="repositoryUrl" type="url" formControlName="repositoryUrl" />
+          </ui-field>
+          <ui-field
+            [label]="text.stackTags"
+            controlId="stackTags"
+            [hint]="strings.form.linesHint"
+            [errors]="errorsFor('stackTags')"
+          >
+            <textarea id="stackTags" formControlName="stackTags" rows="4"></textarea>
+          </ui-field>
+          <ui-field [label]="strings.form.sortOrder" controlId="sortOrder">
+            <input id="sortOrder" type="number" formControlName="sortOrder" />
+          </ui-field>
+        </div>
+        <label class="editor__check">
+          <input type="checkbox" formControlName="isFeatured" />
+          {{ text.featured }}
+        </label>
+        <label class="editor__check">
+          <input type="checkbox" formControlName="isVisible" />
+          {{ strings.form.visible }}
+        </label>
+
+        <h2 class="editor__section">{{ text.texts }}</h2>
+        <ui-locale-pair [germanLabel]="strings.locale.german" [englishLabel]="strings.locale.english">
+          <div de formGroupName="de">
+            @for (key of textKeys; track key) {
+              <ui-field
+                [label]="labelFor(key)"
+                [controlId]="'de-' + key"
+                [hint]="hintFor(key)"
+                [errors]="errorsFor('de.' + key)"
+              >
+                @if (multiline.has(key)) {
+                  <textarea [id]="'de-' + key" [formControlName]="key" rows="6"></textarea>
+                } @else {
+                  <input [id]="'de-' + key" [formControlName]="key" />
+                }
+              </ui-field>
+            }
+          </div>
+          <div en formGroupName="en">
+            @for (key of textKeys; track key) {
+              <ui-field
+                [label]="labelFor(key)"
+                [controlId]="'en-' + key"
+                [hint]="hintFor(key)"
+                [badge]="untranslated(key)"
+                [errors]="errorsFor('en.' + key)"
+              >
+                @if (multiline.has(key)) {
+                  <textarea [id]="'en-' + key" [formControlName]="key" rows="6"></textarea>
+                } @else {
+                  <input [id]="'en-' + key" [formControlName]="key" />
+                }
+              </ui-field>
+            }
+          </div>
+        </ui-locale-pair>
+
+        <h2 class="editor__section">{{ text.decisions }}</h2>
+        <ui-error-summary [title]="text.decisions" [messages]="errorsFor('decisions')" />
+        <div formArrayName="decisions">
+          @for (decision of decisions.controls; track decision; let index = $index) {
+            <div class="editor__block" [formGroupName]="index">
+              <div class="editor__grid">
+                <ui-field [label]="text.decisionTitleDe" [controlId]="'decision-' + index + '-title-de'">
+                  <input [id]="'decision-' + index + '-title-de'" formControlName="titleDe" lang="de" />
+                </ui-field>
+                <ui-field [label]="text.decisionTitleEn" [controlId]="'decision-' + index + '-title-en'">
+                  <input [id]="'decision-' + index + '-title-en'" formControlName="titleEn" lang="en" />
+                </ui-field>
+                <ui-field
+                  [label]="text.decisionTradeOffDe"
+                  [controlId]="'decision-' + index + '-trade-off-de'"
+                >
+                  <textarea
+                    [id]="'decision-' + index + '-trade-off-de'"
+                    formControlName="tradeOffDe"
+                    lang="de"
+                    rows="3"
+                  ></textarea>
+                </ui-field>
+                <ui-field
+                  [label]="text.decisionTradeOffEn"
+                  [controlId]="'decision-' + index + '-trade-off-en'"
+                >
+                  <textarea
+                    [id]="'decision-' + index + '-trade-off-en'"
+                    formControlName="tradeOffEn"
+                    lang="en"
+                    rows="3"
+                  ></textarea>
+                </ui-field>
+              </div>
+              <button
+                type="button"
+                class="editor__remove"
+                [attr.aria-label]="removeDecisionLabel(index)"
+                (click)="removeDecision(index)"
+              >
+                {{ strings.form.remove }}
+              </button>
+            </div>
+          }
+        </div>
+        <button type="button" class="editor__add" (click)="addDecision()">{{ text.addDecision }}</button>
+
+        <h2 class="editor__section">{{ text.images }}</h2>
+        <ui-error-summary [title]="text.images" [messages]="errorsFor('images')" />
+        <div formArrayName="images">
+          @for (image of imageRows.controls; track image; let index = $index) {
+            <div class="editor__row" [formGroupName]="index">
+              <ui-field [label]="text.image" [controlId]="'image-' + index + '-document'">
+                <select [id]="'image-' + index + '-document'" formControlName="documentId">
+                  @for (document of images(); track document.id) {
+                    <option [ngValue]="document.id">{{ imageLabel(document) }}</option>
+                  }
+                </select>
+              </ui-field>
+              <ui-field [label]="text.captionDe" [controlId]="'image-' + index + '-caption-de'">
+                <input [id]="'image-' + index + '-caption-de'" formControlName="captionDe" lang="de" />
+              </ui-field>
+              <ui-field [label]="text.captionEn" [controlId]="'image-' + index + '-caption-en'">
+                <input [id]="'image-' + index + '-caption-en'" formControlName="captionEn" lang="en" />
+              </ui-field>
+              <button
+                type="button"
+                class="editor__remove"
+                [attr.aria-label]="removeImageLabel(index)"
+                (click)="removeImage(index)"
+              >
+                {{ strings.form.remove }}
+              </button>
+            </div>
+          }
+        </div>
+        <button type="button" class="editor__add" (click)="addImage()">{{ text.addImage }}</button>
+
+        <div class="editor__actions">
+          <ui-button [label]="strings.form.save" variant="primary" type="submit" [disabled]="saving()" />
+          @if (selectedId() !== null && !confirmingDelete()) {
+            <button type="button" class="editor__delete" (click)="askToDelete()">
+              {{ strings.form.delete }}
+            </button>
+          }
+          @if (confirmingDelete()) {
+            <p class="editor__confirm">{{ strings.form.confirmDelete }}</p>
+            <button type="button" class="editor__delete" (click)="remove()">
+              {{ strings.form.deleteForGood }}
+            </button>
+            <button type="button" class="editor__add" (click)="cancelDelete()">
+              {{ strings.form.cancel }}
+            </button>
+          }
+          @if (saved()) {
+            <p class="editor__saved" role="status">{{ strings.form.saved }}</p>
+          }
+        </div>
+      </form>
+    }
+  </div>
+</div>
