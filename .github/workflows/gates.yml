@@ -1,0 +1,134 @@
+name: Gates
+
+# The quality gate on every push and pull request (docs/testing.md, "What CI enforces"). Linux
+# runners, no secrets: this workflow executes third-party code (npm scripts, test tooling) and must
+# never hold a deploy key.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITLEAKS_CONFIG: .gitleaks.toml
+          GITLEAKS_ENABLE_SUMMARY: "true"
+
+  api:
+    name: API build and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build
+        run: dotnet build SuracDev.slnx --configuration Release
+
+      # Testcontainers starts PostgreSQL 17 in Docker, available on ubuntu-latest. The coverage
+      # threshold (85 % lines) lives in the test project file and fails the step when missed.
+      - name: Test with coverage gate
+        run: dotnet test SuracDev.Api.Tests/SuracDev.Api.Tests.csproj --configuration Release --no-build -p:CollectCoverage=true
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: api-coverage
+          path: SuracDev.Api.Tests/TestResults/coverage/
+          if-no-files-found: ignore
+
+  web:
+    name: Web lint, tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: SuracDev.Web
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+          cache: npm
+          cache-dependency-path: SuracDev.Web/package-lock.json
+
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Unit tests with coverage gate
+        run: npm run test:ci
+
+      - name: Production SSR build
+        run: npm run build
+
+  contract:
+    name: API contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+          cache: npm
+          cache-dependency-path: SuracDev.Web/package-lock.json
+
+      - name: Install
+        working-directory: SuracDev.Web
+        run: npm ci --no-audit --no-fund
+
+      # Regenerates the NSwag clients from the API and fails when the committed ones are stale.
+      - name: Check generated clients
+        working-directory: SuracDev.Web
+        run: npm run contract:check

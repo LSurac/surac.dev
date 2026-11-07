@@ -1,0 +1,11 @@
+[Unit]
+Description=surac.dev nightly backup (database dump + documents)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=deploy
+ExecStart=/usr/local/bin/surac-dev-backup
+Nice=10
+IOSchedulingClass=idle

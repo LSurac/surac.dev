@@ -1,0 +1,77 @@
+name: Deploy staging
+
+# Push to dev: gates, then deploy.ps1 to the staging host inside the maintainer's private network,
+# reached by joining the tailnet as an ephemeral tagged node. Host and host key are repository
+# variables; nothing about the network is in this file.
+on:
+  push:
+    branches: [dev]
+    paths-ignore:
+      - "**.md"
+      - "deploy/**"
+      - "docs/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  gates:
+    uses: ./.github/workflows/gates.yml
+
+  deploy:
+    name: Deploy
+    needs: gates
+    runs-on: windows-latest
+    timeout-minutes: 30
+    environment: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@4ae5a4c1b9a3f15e3a5b4b2e1d0e6b7a2f0a8c6e # v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      # A fresh tailnet node's first heavy connection can stall while the path settles; a light
+      # ping first. Exit code ignored on purpose (a relayed path is a normal outcome).
+      - name: Warm up the tailnet path
+        shell: pwsh
+        run: |
+          tailscale ping -c 3 ${{ vars.STAGING_HOST }}
+          exit 0
+
+      - name: Configure deploy SSH access
+        shell: pwsh
+        env:
+          DEPLOY_KEY: ${{ secrets.STAGING_DEPLOY_SSH_KEY }}
+          STAGING_HOST: ${{ vars.STAGING_HOST }}
+          STAGING_HOST_KEY: ${{ vars.STAGING_HOST_KEY }}
+          STAGING_USER: ${{ vars.STAGING_USER }}
+        run: |
+          $sshDir = Join-Path $env:USERPROFILE ".ssh"
+          New-Item -ItemType Directory -Force -Path $sshDir | Out-Null
+          $keyPath = Join-Path $sshDir "surac-dev-staging_ed25519"
+          $normalizedKey = ($env:DEPLOY_KEY -replace "`r`n", "`n").TrimEnd("`n") + "`n"
+          [System.IO.File]::WriteAllText($keyPath, $normalizedKey, [System.Text.UTF8Encoding]::new($false))
+          icacls $keyPath /inheritance:r | Out-Null
+          icacls $keyPath /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R)" | Out-Null
+          @"
+          Host $env:STAGING_HOST
+              User $env:STAGING_USER
+              IdentityFile $keyPath
+              IdentitiesOnly yes
+          "@ | Set-Content -Path (Join-Path $sshDir "config")
+          "$env:STAGING_HOST $env:STAGING_HOST_KEY" | Add-Content -Path (Join-Path $sshDir "known_hosts")
+
+      - name: Deploy
+        shell: pwsh
+        run: .\deploy.ps1 -TargetHost "${{ vars.STAGING_HOST }}" -TargetUser "${{ vars.STAGING_USER }}" -RemotePath /opt/surac-dev -SkipLocalBuild

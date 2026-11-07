@@ -1,0 +1,44 @@
+name: Dependency audit
+
+# Monthly check for known vulnerabilities in npm and NuGet dependencies. A red run is the alert; it
+# changes and deploys nothing. No third-party code executes here and no secret is needed.
+on:
+  schedule:
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+
+      - name: Audit npm runtime dependencies
+        if: always()
+        working-directory: SuracDev.Web
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit NuGet packages
+        if: always()
+        shell: bash
+        run: |
+          dotnet restore SuracDev.slnx
+          dotnet list SuracDev.slnx package --vulnerable --include-transitive | tee nuget-audit.txt
+          if grep -q "has the following vulnerable packages" nuget-audit.txt; then exit 1; fi

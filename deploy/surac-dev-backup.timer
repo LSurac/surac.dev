@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the surac.dev backup nightly
+
+[Timer]
+OnCalendar=*-*-* 03:33:00
+RandomizedDelaySec=5m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

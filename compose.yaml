@@ -1,0 +1,103 @@
+# One file for staging and production (docs/ops-and-deploy.md). Production adds the database
+# container and TLS-aware settings through COMPOSE_PROFILES=prod and the host's .env; staging points
+# at the shared development PostgreSQL. The project name pins the volume names.
+name: surac-dev
+
+x-default-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: '10m'
+    max-file: '3'
+
+x-hardening: &hardening
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  pids_limit: 256
+
+services:
+  surac-dev-api:
+    <<: *hardening
+    build:
+      context: .
+      dockerfile: SuracDev.Api/Dockerfile
+    container_name: surac-dev-api
+    logging: *default-logging
+    mem_limit: 384m
+    environment:
+      ASPNETCORE_ENVIRONMENT: 'Production'
+      ASPNETCORE_HTTP_PORTS: '8080'
+      ConnectionStrings__Default: '${SURACDEV_CONNECTION_STRING}'
+      DataProtection__KeyPath: '/keys'
+      Documents__StoragePath: '/documents'
+      # Empty = telemetry off (staging). Production sets the OTLP endpoint and headers in .env.
+      OTEL_EXPORTER_OTLP_ENDPOINT: '${SURACDEV_OTLP_ENDPOINT:-}'
+      OTEL_EXPORTER_OTLP_HEADERS: '${SURACDEV_OTLP_HEADERS:-}'
+      OTEL_EXPORTER_OTLP_PROTOCOL: 'grpc'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - surac-dev-dpkeys:/keys
+      - surac-dev-documents:/documents
+    healthcheck:
+      test: ['CMD-SHELL', "timeout 5 bash -c '</dev/tcp/127.0.0.1/8080' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  surac-dev-web:
+    <<: *hardening
+    build:
+      context: ./SuracDev.Web
+      dockerfile: Dockerfile
+    container_name: surac-dev-web
+    logging: *default-logging
+    mem_limit: 256m
+    environment:
+      # Host names the SSR engine accepts for this deployment, next to the public ones built in
+      # (angular.json security.allowedHosts). Staging lists its own names here; see .env.example.
+      NG_ALLOWED_HOSTS: '${SURACDEV_ALLOWED_HOSTS:-localhost,127.0.0.1}'
+      NG_TRUST_PROXY_HEADERS: 'x-forwarded-proto,x-forwarded-for'
+    # Bound to loopback: Caddy (production) or the LAN reverse path (staging) fronts it. Never 0.0.0.0,
+    # because published ports bypass ufw.
+    ports:
+      - '${SURACDEV_WEB_BIND:-127.0.0.1}:${SURACDEV_WEB_PORT:-8085}:8080'
+    tmpfs:
+      - /tmp:size=16m
+      - /var/cache/nginx:size=64m
+    depends_on:
+      surac-dev-api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O /dev/null http://127.0.0.1:8080/api/health || exit 1']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  surac-dev-db:
+    <<: *hardening
+    image: postgres:17-alpine
+    container_name: surac-dev-db
+    profiles: [prod]
+    logging: *default-logging
+    mem_limit: 256m
+    environment:
+      POSTGRES_DB: suracdev
+      POSTGRES_USER: suracdev
+      POSTGRES_PASSWORD: '${SURACDEV_DB_PASSWORD}'
+    volumes:
+      - surac-dev-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U suracdev -d suracdev']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  surac-dev-dpkeys:
+  surac-dev-documents:
+  surac-dev-pgdata:
