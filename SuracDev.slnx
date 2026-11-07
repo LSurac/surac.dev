@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SuracDev.Api.Tests/SuracDev.Api.Tests.csproj" />
+  <Project Path="SuracDev.Api/SuracDev.Api.csproj" />
+</Solution>
