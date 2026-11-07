@@ -13,6 +13,10 @@ in phase 1 as a whole so that later phases add UI, not migrations.
   marks fallback fields so the admin can show "untranslated" and the public site can decide to hide
   a section that is not translated yet.
 - Writing: the admin edits both locales side by side. Saving German is mandatory, English optional.
+  An English set whose fields are all empty is removed, so the reader falls back to German.
+- Children with prose (fact labels, decisions, image captions, skill qualifiers, document labels)
+  have their own translation tables as well; a fallback in a child marks the parent field
+  (`facts`, `decisions`) in `fallbackFields`.
 
 ## Entities
 
@@ -25,7 +29,7 @@ The person. Exactly one row.
 | `FullName`, `Email`, `Phone`, `Location` | Phone and street address are `Full`-only (see visibility). |
 | `AddressLines` | Only for the full PDF and the Impressum. |
 | `GitHubUrl`, `LinkedInUrl` | |
-| `PhotoAssetId` | Reference to an uploaded image document. |
+| `PhotoDocumentId` | Reference to an uploaded public image document. |
 | `Translations`: `TitleLine`, `Headline`, `Intro`, `AvailabilityLine` | `TitleLine` is the search-term line ("Fullstack-Entwickler · .NET & Angular"). |
 | `Facts` (ordered, up to 4) | The fact bar: `Value` ("5", "1,8", "C1") plus translated `Label`. |
 
@@ -89,7 +93,7 @@ Rejected=6, Withdrawn=7`, `Notes` (Markdown), `CreatedAt`, `UpdatedAt`.
 
 | Field | Notes |
 |---|---|
-| `Slug` | Public path `/b/<slug>`; a 128-bit random, URL-safe token generated server-side, stored as SHA-256 hash. The clear token is shown once at creation. |
+| `TokenHash` | Public path `/b/<token>`; the token is 128 random bits in base64url, generated server-side; only its SHA-256 (hex) is stored. The clear token is shown once at creation. |
 | `Profile` enum | `Unknown=0, Public=1, Recruiter=2, TechLead=3` |
 | `GreetingDe`, `GreetingEn` | Optional one-line greeting ("Für das Team Sales Backend bei …"). |
 | `ExpiresAt` | Required; default 90 days. |
@@ -108,6 +112,9 @@ site uses.
 ### LegalPage
 
 `Key` enum `Unknown=0, Imprint=1, Privacy=2`, translations: `Title`, `BodyMarkdown`, `UpdatedAt`.
+`UpdatedAt` is per locale and moves only when that locale's text actually changes. The public
+Impressum response adds name, postal address and e-mail from the profile, so the address is
+maintained in one place.
 
 ## Visibility rules
 
@@ -124,6 +131,7 @@ site uses.
 ## Seed
 
 The seeder runs after migrations and only fills empty tables: one admin user without a password,
-one profile with neutral example content ("Max Mustermann"-style, clearly marked as example), two
-skill groups, one example project, the two legal pages with placeholder text. It never contains the
+one profile with neutral example content ("Max Mustermann"-style, clearly marked as example) and a
+full fact bar, one career station, one education entry, one featured example project, two skill
+groups, the two legal pages with placeholder text, all in both locales. It never contains the
 maintainer's real data.

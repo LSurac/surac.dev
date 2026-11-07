@@ -12,12 +12,13 @@ forgotten attribute fails closed. A new admin controller needs no attribute at a
 Public endpoints (`[AllowAnonymous]`, on the `public` OpenAPI document):
 
 - `GET /api/health`
-- `GET /api/public/profile`, `/experiences`, `/education`, `/projects`, `/projects/{slug}`,
-  `/skills`, `/interests`, `/legal/{key}` — all read-only, locale via query
+- `GET /api/public/profile`, `/experiences`, `/education`, `/projects` (`?featured=true`),
+  `/projects/{slug}`, `/skills`, `/legal/{key}` — all read-only, locale via query; `/interests`
+  follows in phase 3
 - `GET /api/public/cv.pdf` (the `Public` variant)
 - `GET /api/links/{token}` and its sub-resources (`/cv.pdf`, `/documents/{id}`), guarded by the
   token itself
-- `POST /api/auth/login` (rate limited)
+- `GET /api/auth/state` and `POST /api/auth/login` (rate limited)
 
 `AuthorizationSweepTests` enumerates every endpoint and asserts 401 for anonymous calls unless the
 endpoint is on that list. Adding to the list is a deliberate, reviewed act.

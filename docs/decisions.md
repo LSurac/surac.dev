@@ -119,3 +119,21 @@ their date; reversed decisions are struck through, never deleted.
   older Angular projects use four spaces; this repository does not inherit that.
 - **Default branch `master` deploys production; `dev` deploys staging.** Branch protection on
   `master` once the repository is public.
+
+## Phase 1 (2026-11-07)
+
+- **The complete content schema ships in one migration**, including documents, interests and the
+  application tables whose UI comes in phases 2 and 3. Later phases add UI, not migrations.
+- **Child entities with prose get translation tables too** (fact labels, decisions, image captions,
+  skill qualifiers, document labels). Rejected: `LabelDe`/`LabelEn` columns on the children, which
+  would break the one rule for translations. The greeting of an application link keeps its two
+  columns, because it is a single line on a single entity and never falls back.
+- **Admin DTOs carry both locales side by side** (`de` required, `en` or null), and `PUT` replaces
+  the whole resource including its ordered children. Rejected: per-locale endpoints and patch
+  semantics; the editor saves one form, and replacing children in order is simpler than diffing.
+- **The restricted Markdown renderer is written in-house** (`Shared/Application/Markdown/`) and
+  runs on the server; public responses carry HTML, admin responses Markdown. Rejected: Markdig (a
+  dependency for a subset one trusted author writes) and `marked` in the browser (public bundle
+  size, sanitising on the client).
+- **The Impressum takes the address from the profile** instead of repeating it in the Markdown body,
+  so the address the law requires exists once.

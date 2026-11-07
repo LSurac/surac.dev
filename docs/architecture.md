@@ -46,7 +46,7 @@ SuracDev.Api/
     Migrations/                  generated only
   Domains/
     Identity/                    AdminUser, login, password change, security stamp
-    Profile/                     the person: name, title line, intro, contact, photo, fact bar
+    Profiles/                    the person: name, title line, intro, contact, photo, fact bar
     Career/                      Experience and Education entries
     Projects/                    Project cards and case studies
     Skills/                      SkillGroup, Skill (with "since year", never a percentage)
@@ -59,12 +59,22 @@ SuracDev.Api/
   Shared/
     Application/Exceptions/      DomainException hierarchy
     Application/Localization/    Locale value object, translation fallback helpers
+    Application/Validation/      shared input rules (text limits, URLs, years, enum sentinel)
+    Application/Markdown/        the restricted Markdown renderer (case studies, legal pages)
     Infrastructure/              GlobalExceptionHandler, SecurityStampValidator, Seeding, Telemetry
 ```
 
 Each domain folder holds `Domain/` (entities, value objects, enums), `Application/` (use-case
 services), `Contracts/` (sealed record DTOs) and `Controllers/`. Controllers are thin: bind, call one
 service method, return. Services use the `DbContext` directly and throw the shared exceptions.
+Domain folders are plural where the entity name would otherwise collide with the namespace
+(`Profiles/` holds `Profile`).
+
+Each content domain has a public controller (`/api/public/...`, anonymous, one locale per request
+via `?locale=de|en`) and an admin controller (`/api/admin/...`, REST CRUD). Public responses carry
+`fallbackFields`; admin DTOs carry both locales side by side (`de`, `en` or null) because the editor
+shows them that way. Markdown is rendered to HTML on the server for public responses and stays
+Markdown in admin responses.
 
 Two OpenAPI documents: `public` (anonymous read endpoints, application-link endpoints, PDF
 download) and `admin` (everything behind the cookie). The Angular app generates one client per
@@ -114,8 +124,9 @@ locale comes from the URL prefix, never from a cookie.
 ## Cross-cutting
 
 - **Errors**: services throw `DomainValidationException` (400), `DomainConflictException` (409),
-  `DomainNotFoundException` (404); `GlobalExceptionHandler` maps them to ProblemDetails. Anything
-  else is a 500 and a logged exception.
+  `DomainNotFoundException` (404); `GlobalExceptionHandler` maps them to ProblemDetails. Unique and
+  foreign-key violations that slip past the services' own checks become 409 without database
+  details (the constraint name goes to the log). Anything else is a 500 and a logged exception.
 - **Auth**: cookie `suracdev.auth`, `FallbackPolicy = DefaultPolicy` (deny by default),
   `[AllowAnonymous]` only on deliberately public endpoints. See `docs/security-and-privacy.md`.
 - **Rate limiting**: fixed-window limiter on login and on application-link resolution.
