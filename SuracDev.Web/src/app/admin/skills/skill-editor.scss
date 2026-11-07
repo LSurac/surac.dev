@@ -1,8 +1,8 @@
 // A skill row has more fields than the fact row of `forms/editor.scss`, plus the move buttons.
 .skill {
-  grid-template-columns: 2fr 1fr 2fr 2fr auto;
+  grid-template-columns: minmax(9rem, 2fr) minmax(5rem, 1fr) minmax(8rem, 2fr) minmax(8rem, 2fr) auto;
 
-  @media (max-width: 960px) {
+  @media (max-width: 1200px) {
     grid-template-columns: 1fr 1fr;
   }
 
