@@ -110,8 +110,11 @@ redaction processor for the token route parameter.
 
 The staging stack is registered in the homelab's stack list so the existing smoke test, health
 check, config backup and update jobs pick it up automatically. The database `suracdev` with its own
-role is created once by hand on the shared instance. The homelab's Pi Dev Center journal receives a
-deployment event from the staging workflow.
+role is created once by hand on the shared instance and is dumped by the homelab's nightly database
+backup like every other database there. The two named volumes (uploaded documents, Data Protection
+keys) are not bind mounts, so the homelab's config backup and rebuild export name them explicitly;
+a new volume in `compose.yaml` has to be added there too. The homelab's Pi Dev Center journal
+receives a deployment event from the staging workflow.
 
 ## Runbook pointers
 
