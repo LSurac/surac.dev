@@ -228,6 +228,61 @@
         }
       }
     },
+    "/api/public/cv.pdf": {
+      "get": {
+        "tags": [
+          "PublicCv"
+        ],
+        "summary": "Downloads the public CV as PDF.",
+        "description": "The Public variant: everything the open site shows, never phone number, street address\nor hidden entries. Rendered on demand from the current content, one column with real text and\nstandard headings so applicant tracking systems can parse it. The file is named\nLebenslauf_<Name>.pdf in German and CV_<Name>.pdf in English.",
+        "operationId": "PublicCv_Get",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The PDF as attachment.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No profile exists yet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/public/legal/{key}": {
       "get": {
         "tags": [
