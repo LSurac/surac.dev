@@ -22,6 +22,378 @@ namespace SuracDev.Api.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.Application", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateOnly?>("AppliedOn")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Company")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("JobAdUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("applications", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.ApplicationLink", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ApplicationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("GreetingDe")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("GreetingEn")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Profile")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .IsFixedLength();
+
+                    b.Property<bool>("UnlockFullPdf")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("application_links", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.ApplicationLinkDocument", b =>
+                {
+                    b.Property<long>("ApplicationLinkId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DocumentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ApplicationLinkId", "DocumentId");
+
+                    b.HasIndex("DocumentId");
+
+                    b.ToTable("application_link_documents", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.LinkEvent", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("DocumentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("LinkId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("LinkId");
+
+                    b.ToTable("link_events", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_link_events_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.Education", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Grade")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("Institution")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("education", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.EducationTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Degree")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long>("EducationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("Summary")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EducationId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("education_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_education_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.Experience", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Company")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("experiences", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.ExperienceTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.PrimitiveCollection<string[]>("Bullets")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<long>("ExperienceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("RoleTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("StackLine")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Summary")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExperienceId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("experience_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_experience_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Documents.Domain.Document", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Sha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .IsFixedLength();
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StoragePath")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoragePath")
+                        .IsUnique();
+
+                    b.ToTable("documents", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Documents.Domain.DocumentTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("DocumentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("document_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_document_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
             modelBuilder.Entity("SuracDev.Api.Domains.Identity.Domain.AdminUser", b =>
                 {
                     b.Property<long>("Id")
@@ -48,6 +420,865 @@ namespace SuracDev.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("admin_users", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Interests.Domain.Interest", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("ImageDocumentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageDocumentId");
+
+                    b.ToTable("interests", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Interests.Domain.InterestTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<long>("InterestId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InterestId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("interest_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_interest_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Legal.Domain.LegalPage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Key")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("legal_pages", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Legal.Domain.LegalPageTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BodyMarkdown")
+                        .HasColumnType("text");
+
+                    b.Property<long>("LegalPageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LegalPageId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("legal_page_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_legal_page_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.Profile", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.PrimitiveCollection<string[]>("AddressLines")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("GitHubUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long?>("PhotoDocumentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhotoDocumentId");
+
+                    b.ToTable("profiles", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.ProfileFact", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("profile_facts", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.ProfileFactTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<long>("ProfileFactId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileFactId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("profile_fact_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_profile_fact_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.ProfileTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AvailabilityLine")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Headline")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Intro")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<long>("ProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TitleLine")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("profile_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_profile_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.Project", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int?>("EndedYear")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LiveUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("RepositoryUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.PrimitiveCollection<string[]>("StackTags")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<int?>("StartedYear")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("projects", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectDecision", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("project_decisions", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectDecisionTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<long>("ProjectDecisionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("TradeOff")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectDecisionId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("project_decision_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_project_decision_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectImage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("DocumentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("project_images", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectImageTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<long>("ProjectImageId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectImageId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("project_image_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_project_image_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CaseStudyMarkdown")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("MyRole")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Outcome")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Problem")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Teaser")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("project_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_project_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.Skill", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<int?>("SinceYear")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("SkillGroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkillGroupId");
+
+                    b.ToTable("skills", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.SkillGroup", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("skill_groups", (string)null);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.SkillGroupTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long>("SkillGroupId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkillGroupId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("skill_group_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_skill_group_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.SkillTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("Qualifier")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long>("SkillId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkillId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("skill_translations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_skill_translations_locale", "\"Locale\" IN ('de', 'en')");
+                        });
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.ApplicationLink", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Applications.Domain.Application", null)
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.ApplicationLinkDocument", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Applications.Domain.ApplicationLink", null)
+                        .WithMany("Documents")
+                        .HasForeignKey("ApplicationLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SuracDev.Api.Domains.Documents.Domain.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.LinkEvent", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Documents.Domain.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SuracDev.Api.Domains.Applications.Domain.ApplicationLink", null)
+                        .WithMany()
+                        .HasForeignKey("LinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.EducationTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Career.Domain.Education", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("EducationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.ExperienceTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Career.Domain.Experience", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ExperienceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Documents.Domain.DocumentTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Documents.Domain.Document", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Interests.Domain.Interest", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Documents.Domain.Document", null)
+                        .WithMany()
+                        .HasForeignKey("ImageDocumentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Interests.Domain.InterestTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Interests.Domain.Interest", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("InterestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Legal.Domain.LegalPageTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Legal.Domain.LegalPage", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("LegalPageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.Profile", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Documents.Domain.Document", null)
+                        .WithMany()
+                        .HasForeignKey("PhotoDocumentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.ProfileFact", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Profiles.Domain.Profile", null)
+                        .WithMany("Facts")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.ProfileFactTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Profiles.Domain.ProfileFact", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ProfileFactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.ProfileTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Profiles.Domain.Profile", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectDecision", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Projects.Domain.Project", null)
+                        .WithMany("Decisions")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectDecisionTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Projects.Domain.ProjectDecision", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ProjectDecisionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectImage", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Documents.Domain.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SuracDev.Api.Domains.Projects.Domain.Project", null)
+                        .WithMany("Images")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectImageTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Projects.Domain.ProjectImage", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ProjectImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Projects.Domain.Project", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.Skill", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Skills.Domain.SkillGroup", null)
+                        .WithMany("Skills")
+                        .HasForeignKey("SkillGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.SkillGroupTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Skills.Domain.SkillGroup", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("SkillGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.SkillTranslation", b =>
+                {
+                    b.HasOne("SuracDev.Api.Domains.Skills.Domain.Skill", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Applications.Domain.ApplicationLink", b =>
+                {
+                    b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.Education", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Career.Domain.Experience", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Documents.Domain.Document", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Interests.Domain.Interest", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Legal.Domain.LegalPage", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.Profile", b =>
+                {
+                    b.Navigation("Facts");
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Profiles.Domain.ProfileFact", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.Project", b =>
+                {
+                    b.Navigation("Decisions");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectDecision", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Projects.Domain.ProjectImage", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.Skill", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("SuracDev.Api.Domains.Skills.Domain.SkillGroup", b =>
+                {
+                    b.Navigation("Skills");
+
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }
