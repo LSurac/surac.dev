@@ -43,8 +43,8 @@ variables and secrets only.
   the fail-loud `Unknown` sentinel, and shipped values are frozen forever.
 - New libraries may be *proposed* (problem solved, alternatives, cost in bundle size, maintenance
   and attack surface), never introduced autonomously. Approved: `Testcontainers.PostgreSql` and
-  `coverlet` (tests only), `QuestPDF` (PDF export), `@testing-library/angular` and
-  `@playwright/test` (web tests only).
+  `coverlet` (tests only), `QuestPDF` (PDF export), `PdfPig` (tests only, reads the generated PDFs
+  for the golden files), `@testing-library/angular` and `@playwright/test` (web tests only).
 - Never put secrets, personal data or infrastructure facts into files, logs, commits or docs.
   `.env` is placed by hand on the host; `.env.example` carries empty keys. The seed contains neutral
   example content, never real CV data.

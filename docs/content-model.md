@@ -81,7 +81,7 @@ An uploaded file. `FileName`, `ContentType`, `SizeBytes`, `StoragePath` (outside
 random name), `Sha256`, `Kind` enum `Unknown=0, Photo=1, Certificate=2, CoverLetter=3, Image=4,
 Other=5`, `Visibility` enum `Unknown=0, Public=1, LinkOnly=2`, `UploadedAt`, translated `Label`.
 Allowed types: PDF, PNG, JPEG, WebP. Size limit 10 MB. Generated CV PDFs are **not** documents;
-they are rendered on demand and cached.
+they are rendered on demand (docs/decisions.md explains why without a cache).
 
 ### Application and ApplicationLink
 

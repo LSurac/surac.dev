@@ -140,5 +140,15 @@ their date; reversed decisions are struck through, never deleted.
 - **Admin texts exist in German only** (`admin/admin-strings.ts`), kept out of the templates like
   every UI string. The admin has exactly one, German-speaking user; translating the admin would be
   work without a reader. The public site's chrome strings stay complete in both locales.
+- **The CV PDF is verified as text, not as bytes.** Golden files hold the text PdfPig extracts in
+  reading order, which is what an applicant tracking system sees and stays stable across operating
+  systems. Rejected: byte or image comparison (fragile across platforms) and a snapshot of the
+  document model only (does not check what ends up in the PDF).
+- **The CV uses QuestPDF's bundled Lato, not Source Serif.** The site's serif exists only as woff2,
+  which QuestPDF cannot embed, and system fonts are switched off so the output is identical on every
+  machine. The PDF is a document for parsers and printers, not a print of the website.
+- **CV PDFs are rendered on every request, not cached.** Rendering takes milliseconds; a cache
+  would need invalidation on every content change for no measurable gain. Revisit if the PDF
+  endpoint ever shows up in the telemetry.
 - **Deleting asks for confirmation inside the form**, not through `window.confirm`: testable, styled
   like the rest, and readable by screen readers in context.
