@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using SuracDev.Api.Data;
+using SuracDev.Api.Domains.Documents.Application;
 using SuracDev.Api.Domains.Identity.Application;
+using SuracDev.Api.Domains.Profiles.Application;
 using SuracDev.Api.Shared.Infrastructure;
 using SuracDev.Api.Shared.Infrastructure.Seeding;
 using SuracDev.Api.Shared.Infrastructure.Telemetry;
@@ -32,6 +34,8 @@ builder.Services.AddDbContext<SuracDevDbContext>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SuracDevSeeder>();
 builder.Services.AddScoped<AdminAuthService>();
+builder.Services.AddScoped<DocumentReferences>();
+builder.Services.AddScoped<ProfileService>();
 builder.Services.AddSingleton(TimeProvider.System);
 
 // Behind the web container's nginx (staging) or Caddy → nginx (production) the client address only
