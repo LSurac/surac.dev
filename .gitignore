@@ -1,0 +1,37 @@
+# Build output
+bin/
+obj/
+artifacts/
+TestResults/
+coverage/
+
+# .NET / IDEs
+*.user
+*.suo
+.vs/
+.idea/
+.vscode/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+out-tsc/
+e2e-results/
+e2e-report/
+playwright-report/
+
+# Environment and secrets — never commit
+.env
+*.local.json
+appsettings.Development.local.json
+
+# Local content (real CV data, uploaded documents, photos)
+content-local/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Editor workspace files
+*.code-workspace

@@ -1,0 +1,26 @@
+# gitleaks configuration. The default rule set stays active; this file only extends it and
+# documents the allowlist. Runs as a CI gate (.github/workflows/gates.yml) and, locally, via
+# `gitleaks protect --staged` from the pre-commit hook described in docs/build-and-test.md.
+title = "surac.dev"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "surac-dev-connection-string"
+description = "PostgreSQL connection string with an inline password"
+regex = '''(?i)Password=(?!\$\{)(?!\s*;)(?!openapi;)(?!suracdev;)[^;\s"']{4,}'''
+tags = ["postgres", "connection-string"]
+
+[allowlist]
+description = "Known non-secrets"
+paths = [
+  '''SuracDev\.Web/src/app/api/generated/.*''',
+  '''SuracDev\.Web/package-lock\.json''',
+  '''docs/research/.*''',
+]
+regexes = [
+  # Local development defaults that only ever point at a throwaway container.
+  '''Password=suracdev;''',
+  '''Password=openapi;''',
+]

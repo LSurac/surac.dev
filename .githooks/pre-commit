@@ -1,0 +1,12 @@
+#!/bin/sh
+# Refuses a commit that would add a secret. Opt in per clone with:
+#   git config core.hooksPath .githooks
+# Needs gitleaks on the PATH (docs/build-and-test.md). CI runs the same scan regardless.
+set -e
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks not found on PATH; install it or commit with --no-verify after a manual check." >&2
+  exit 1
+fi
+
+gitleaks protect --staged --config .gitleaks.toml --redact --no-banner
