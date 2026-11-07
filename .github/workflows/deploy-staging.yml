@@ -25,8 +25,8 @@ jobs:
   deploy:
     name: Deploy
     needs: gates
-    # Skipped, not failed, until the staging host is configured in the repository variables.
-    if: vars.STAGING_HOST != ''
+    # Skipped, not failed, until the host variables and the secrets exist and the switch is on.
+    if: vars.STAGING_DEPLOY_ENABLED == 'true' && vars.STAGING_HOST != ''
     runs-on: windows-latest
     timeout-minutes: 30
     environment: staging
