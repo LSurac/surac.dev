@@ -1,0 +1,21 @@
+Max Mustermann
+Full-stack developer · .NET & Angular
+max.mustermann@example.org · Musterstadt · github.com/example
+Profile
+An example short profile in two sentences. It shows where the profile goes in the CV.
+Experience
+Software developer – Beispiel GmbH, Musterstadt
+09/2022 – present
+• First example point
+• Second example point
+.NET · Angular · PostgreSQL
+Education
+Fachinformatiker – Beispiel-Berufsschule
+09/2019 – 06/2022
+1,8
+Skills
+Backend: C# (seit 2019), ASP.NET Core (seit 2020)
+Projects
+Beispielprojekt
+Ein Beispielprojekt.
+.NET · Angular

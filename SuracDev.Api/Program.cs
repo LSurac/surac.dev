@@ -10,6 +10,7 @@ using SuracDev.Api.Domains.Career.Application;
 using SuracDev.Api.Domains.Documents.Application;
 using SuracDev.Api.Domains.Identity.Application;
 using SuracDev.Api.Domains.Legal.Application;
+using SuracDev.Api.Domains.Pdf.Application;
 using SuracDev.Api.Domains.Profiles.Application;
 using SuracDev.Api.Domains.Projects.Application;
 using SuracDev.Api.Domains.Skills.Application;
@@ -47,6 +48,7 @@ builder.Services.AddScoped<EducationService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<SkillService>();
 builder.Services.AddScoped<LegalPageService>();
+builder.Services.AddScoped<CvService>();
 builder.Services.AddSingleton(TimeProvider.System);
 
 // Behind the web container's nginx (staging) or Caddy → nginx (production) the client address only
