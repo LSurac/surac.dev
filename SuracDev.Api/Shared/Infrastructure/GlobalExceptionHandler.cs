@@ -2,16 +2,23 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using SuracDev.Api.Shared.Application.Exceptions;
 
 namespace SuracDev.Api.Shared.Infrastructure;
 
 /// <summary>
 /// Translates the <see cref="DomainException"/> hierarchy into ProblemDetails so services simply
-/// throw and controllers never need try/catch. Anything else falls through to the default handling.
+/// throw and controllers never need try/catch. Unique and foreign-key violations that slip past the
+/// services' own checks (two concurrent saves) become 409 without database details. Anything else
+/// falls through to the default handling: a logged 500 without internals.
 /// </summary>
-public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
+public sealed class GlobalExceptionHandler(
+  IProblemDetailsService problemDetailsService,
+  ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
+  /// <summary>Maps an expected exception to ProblemDetails; returns false for everything else.</summary>
   public async ValueTask<bool> TryHandleAsync(
     HttpContext httpContext,
     Exception exception,
@@ -36,6 +43,8 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
         Title = "Not found.",
         Detail = notFound.Message,
       },
+      DbUpdateException { InnerException: PostgresException postgres } when IsConstraintViolation(postgres)
+        => ConstraintConflict(postgres),
       _ => null,
     };
 
@@ -52,6 +61,24 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
       Exception = exception,
       ProblemDetails = problemDetails,
     });
+  }
+
+  private static bool IsConstraintViolation(PostgresException exception)
+    => exception.SqlState is PostgresErrorCodes.UniqueViolation or PostgresErrorCodes.ForeignKeyViolation;
+
+  private ProblemDetails ConstraintConflict(PostgresException exception)
+  {
+    // The constraint name helps the maintainer in the log; the client only learns that it was a conflict.
+    logger.LogWarning(
+      "Database constraint {Constraint} rejected a save ({SqlState}).", exception.ConstraintName, exception.SqlState);
+    return new ProblemDetails
+    {
+      Status = StatusCodes.Status409Conflict,
+      Title = "Conflict.",
+      Detail = exception.SqlState == PostgresErrorCodes.UniqueViolation
+        ? "An entry with the same unique value already exists."
+        : "The entry references something that does not exist or is still referenced elsewhere.",
+    };
   }
 
   private static ModelStateDictionary ToModelState(IReadOnlyDictionary<string, string[]> errors)
