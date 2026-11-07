@@ -1,0 +1,17 @@
+.hero {
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--color-rule);
+
+  .kicker {
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    margin-bottom: 22px;
+    max-width: 14ch;
+  }
+
+  @media (max-width: 760px) {
+    padding: 48px 0 40px;
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": false
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "surac-dev": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss",
+          "changeDetection": "OnPush"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/surac-dev",
+            "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "src/server.ts"
+            },
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "polyfills": [],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": ["src/styles.scss"],
+            "scripts": [],
+            "security": {
+              "allowedHosts": ["surac.dev", "www.surac.dev"]
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "320kB",
+                  "maximumError": "400kB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "surac-dev:build:production"
+            },
+            "development": {
+              "buildTarget": "surac-dev:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "runner": "vitest",
+            "setupFiles": ["src/test-setup.ts"],
+            "coverageReporters": ["text-summary", "lcov"],
+            "coverageExclude": [
+              "src/main.ts",
+              "src/main.server.ts",
+              "src/server.ts",
+              "src/test-setup.ts",
+              "src/app/app.config.ts",
+              "src/app/app.config.server.ts",
+              "src/app/app.routes.server.ts",
+              "src/app/api/generated/**",
+              "src/app/public/styleguide/**"
+            ],
+            "coverageThresholds": {
+              "lines": 80
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+@if (href(); as url) {
+  <a
+    class="button"
+    [class.button--primary]="variant() === 'primary'"
+    [href]="url"
+    [attr.download]="download()"
+  >
+    {{ label() }}
+  </a>
+} @else {
+  <button
+    class="button"
+    [class.button--primary]="variant() === 'primary'"
+    [type]="type()"
+    [disabled]="disabled()"
+    (click)="pressed.emit()"
+  >
+    {{ label() }}
+  </button>
+}

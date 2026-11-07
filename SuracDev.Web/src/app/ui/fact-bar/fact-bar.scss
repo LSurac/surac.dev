@@ -1,0 +1,38 @@
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.facts__cell {
+  display: flex;
+  flex-direction: column-reverse;
+  padding: var(--space-5) var(--space-5) var(--space-5) 0;
+  border-right: 1px solid var(--color-rule);
+
+  &:last-child {
+    border-right: 0;
+  }
+
+  @media (max-width: 760px) {
+    &:nth-child(even) {
+      border-right: 0;
+    }
+  }
+}
+
+.facts__value {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.facts__label {
+  margin-top: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-muted);
+}

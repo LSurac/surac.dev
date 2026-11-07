@@ -1,0 +1,36 @@
+// Layout primitives (docs/design.md, "Layout").
+.container {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.section {
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--color-rule);
+  display: grid;
+  grid-template-columns: var(--label-column) 1fr;
+  gap: var(--space-7);
+
+  @media (max-width: 760px) {
+    padding: 40px 0;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -100px;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  z-index: 10;
+
+  &:focus {
+    top: var(--space-2);
+  }
+}

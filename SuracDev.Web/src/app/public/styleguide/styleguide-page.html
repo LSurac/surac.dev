@@ -1,0 +1,33 @@
+<section class="section">
+  <ui-section-heading number="A" title="Section heading" />
+  <div>
+    <ui-section-heading number="01" title="Profil" />
+  </div>
+</section>
+
+<section class="section">
+  <ui-section-heading number="B" title="Buttons" />
+  <div style="display: flex; gap: 14px; flex-wrap: wrap">
+    <ui-button label="Lebenslauf (PDF)" variant="primary" href="#" />
+    <ui-button label="E-Mail schreiben" href="mailto:example@example.invalid" />
+    <ui-button label="Speichern" variant="primary" />
+    <ui-button label="Abbrechen" />
+    <ui-button label="Deaktiviert" [disabled]="true" />
+  </div>
+</section>
+
+<section class="section">
+  <ui-section-heading number="C" title="Fact bar" />
+  <ui-fact-bar [facts]="facts" />
+</section>
+
+<section class="section">
+  <ui-section-heading number="D" title="Typography" />
+  <div class="prose">
+    <h1>Ich baue Software, die im Betrieb bestehen muss.</h1>
+    <p class="lede">Lede: Fünf Jahre produktive Business-Anwendungen in gewachsenen Systemlandschaften.</p>
+    <p>Fließtext in der Serif. <a href="#">Ein Link</a> in der Akzentfarbe.</p>
+    <p class="meta">Meta in der Grotesk, gedämpft.</p>
+    <p class="kicker">Kicker · Versal · Akzent</p>
+  </div>
+</section>

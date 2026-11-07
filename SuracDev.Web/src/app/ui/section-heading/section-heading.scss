@@ -1,0 +1,17 @@
+.heading {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  line-height: 1.4;
+}
+
+.heading__number {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+}

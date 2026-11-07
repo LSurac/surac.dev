@@ -1,0 +1,34 @@
+{
+  "runtime": "Net100",
+  "defaultVariables": "OutputDir=src/app/api/generated",
+  "documentGenerator": {
+    "aspNetCoreToOpenApi": {
+      "project": "../SuracDev.Api/SuracDev.Api.csproj",
+      "configuration": "Debug",
+      "targetFramework": "net10.0",
+      "noBuild": false,
+      "aspNetCoreEnvironment": "OpenApi",
+      "documentName": "admin",
+      "output": "$(OutputDir)/admin.openapi.json"
+    }
+  },
+  "codeGenerators": {
+    "openApiToTypeScriptClient": {
+      "className": "{controller}Client",
+      "template": "Angular",
+      "httpClass": "HttpClient",
+      "injectionTokenType": "InjectionToken",
+      "rxJsVersion": 7.8,
+      "dateTimeType": "string",
+      "generateClientClasses": true,
+      "generateClientInterfaces": false,
+      "generateDtoTypes": true,
+      "generateOptionalParameters": true,
+      "useSingletonProvider": true,
+      "typeStyle": "Interface",
+      "enumStyle": "StringLiteral",
+      "nullValue": "Undefined",
+      "output": "$(OutputDir)/admin.client.ts"
+    }
+  }
+}

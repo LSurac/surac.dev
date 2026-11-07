@@ -31,6 +31,10 @@ Browser ──HTTPS──▶ Caddy (host, TLS, HSTS, www→apex, security header
 
 Staging uses the same images and compose file without the `prod` profile and without Caddy.
 
+`src/server.ts` also forwards `/api/*` to the API itself (`API_BASE_URL`), so `npm run serve:ssr`
+and the Playwright suite work without nginx; in the containers nginx answers `/api/` first and the
+node proxy is never reached.
+
 ## Backend layout (`SuracDev.Api`)
 
 ```

@@ -1,0 +1,16 @@
+<header class="header container">
+  <a class="header__brand" [routerLink]="homeUrl()">{{ strings().siteName }}</a>
+  <nav class="header__nav" [attr.aria-label]="strings().nav.projects">
+    @for (section of sections(); track section.fragment) {
+      <a [routerLink]="homeUrl()" [fragment]="section.fragment">{{ section.label }}</a>
+    }
+    <a
+      class="header__locale"
+      [href]="switchUrl()"
+      [attr.lang]="otherLocale()"
+      [attr.hreflang]="otherLocale()"
+    >
+      {{ strings().localeSwitch.target }}
+    </a>
+  </nav>
+</header>

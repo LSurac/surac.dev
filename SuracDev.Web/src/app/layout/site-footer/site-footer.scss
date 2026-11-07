@@ -1,0 +1,25 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-top: var(--space-6);
+  padding-bottom: 60px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+
+  a {
+    color: var(--color-muted);
+  }
+}
+
+.footer__updated {
+  margin: 0;
+}

@@ -1,0 +1,6 @@
+// Global styles: tokens, reset, typography, layout primitives. Component styles stay in the
+// components. docs/design.md is the specification; this file implements it.
+@use 'styles/tokens';
+@use 'styles/reset';
+@use 'styles/typography';
+@use 'styles/layout';
