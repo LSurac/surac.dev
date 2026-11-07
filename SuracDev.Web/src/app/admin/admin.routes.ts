@@ -23,6 +23,10 @@ export const adminRoutes: Routes = [
         path: 'werdegang',
         loadComponent: () => import('./experiences/experience-editor').then((m) => m.ExperienceEditor),
       },
+      {
+        path: 'ausbildung',
+        loadComponent: () => import('./education/education-editor').then((m) => m.EducationEditor),
+      },
     ],
   },
 ];
