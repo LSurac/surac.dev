@@ -19,6 +19,10 @@ export const adminRoutes: Routes = [
         path: 'profil',
         loadComponent: () => import('./profile/profile-editor').then((m) => m.ProfileEditor),
       },
+      {
+        path: 'werdegang',
+        loadComponent: () => import('./experiences/experience-editor').then((m) => m.ExperienceEditor),
+      },
     ],
   },
 ];

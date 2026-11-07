@@ -83,6 +83,13 @@
   margin-top: var(--space-6);
 }
 
+.editor__confirm {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-accent);
+}
+
 .editor__saved {
   margin: 0;
   font-family: var(--font-sans);
