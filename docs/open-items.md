@@ -3,23 +3,37 @@
 What is in flight or waiting on a manual step. Close items here when done; the phases live in
 `docs/roadmap.md`.
 
+## Done (foundation, 2026-11-07)
+
+- [x] Repository public, `master` protected (four required checks, linear history), `dev` branch.
+- [x] Staging: database and role on the shared development PostgreSQL, stack registered, port
+      8085, uptime monitor, first deploy by hand, then by CI from `dev` over the private network.
+- [x] Repository variables and secrets for staging, including the Tailscale OAuth client;
+      `STAGING_DEPLOY_ENABLED` is on.
+- [x] gitleaks installed locally, pre-commit hook active.
+- [x] Domain `surac.dev` registered and the production VPS ordered (own account).
+
 ## Manual steps (maintainer)
 
-- [ ] Register `surac.dev` (Cloudflare Registrar), zone on Cloudflare, DNS only (no proxy).
+- [ ] VPS provider: sign the data processing agreement; wait for the order to appear in the panel.
+- [ ] Cloudflare: add the zone `surac.dev` (free plan), switch the nameservers at the registrar,
+      keep records "DNS only"; a zone-scoped API token for the maintainer's DNS tooling.
 - [ ] Cloudflare Email Routing: `leonard@surac.dev` → private mailbox.
-- [ ] Own VPS account (not the club's), data processing agreement, server S-class, Debian 13.
-- [ ] Repository variables `PROD_HOST`, `PROD_HOST_KEY`, `STAGING_HOST`, `STAGING_HOST_KEY`;
-      secrets `PROD_DEPLOY_SSH_KEY`, `STAGING_DEPLOY_SSH_KEY`, `TS_OAUTH_CLIENT_ID`, `TS_OAUTH_SECRET`.
-- [ ] Staging database `suracdev` and role on the shared development PostgreSQL; stack registered
-      in the homelab stack list; port 8085.
 - [ ] Current professional photo (web size and print size).
 - [ ] Decide the English wording of the title line and the fact bar labels.
-- [ ] Make the repository public once gitleaks, branch protection and README are in place.
-- [ ] GitHub profile README, pin this repository, bio link to `surac.dev`.
+- [ ] GitHub profile README, pin this repository, bio link to `surac.dev` (at launch).
+
+## Production setup (once the VPS is reachable)
+
+- [ ] Harden the host per the maintainer's VPS runbook, install Caddy, Tailscale (`tag:prod`),
+      Docker, the backup and healthwatch timers (`deploy/README.md`).
+- [ ] `.env` with the `prod` profile, repository variables `PROD_HOST`, `PROD_HOST_KEY`, secret
+      `PROD_DEPLOY_SSH_KEY`, DNS records, first `deploy.ps1 -Production`, then `PROD_DEPLOY_ENABLED`.
+- [ ] Backup pull into the maintainer's offsite chain, uptime monitor, telemetry API key.
 
 ## Engineering
 
-- [ ] Phase 1 domains (Profile, Career, Projects, Skills, Legal) with admin editors.
+- [ ] Phase 1 domains (Profile, Career, Projects, Skills, Legal) with translations and admin editors.
 - [ ] Public start page composed from `ui/` components, both locales.
 - [ ] QuestPDF CV documents (Public/Full × de/en) with golden-file tests.
 - [ ] Application links and the mini ATS (phase 2).
