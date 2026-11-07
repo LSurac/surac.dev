@@ -11,20 +11,33 @@ namespace SuracDev.Api.Shared.Infrastructure.Seeding;
 /// </summary>
 public sealed class SuracDevSeeder(SuracDevDbContext dbContext, TimeProvider timeProvider)
 {
+  /// <summary>Adds the admin without a password and the example content to every table that is still empty.</summary>
   public async Task SeedAsync(CancellationToken cancellationToken = default)
   {
-    await SeedAdminAsync(cancellationToken);
+    var now = timeProvider.GetUtcNow();
+
+    // The first login sets the password.
+    await SeedWhenEmptyAsync(dbContext.AdminUsers, () => [AdminUser.Create("Admin", now)], cancellationToken);
+    await SeedWhenEmptyAsync(dbContext.Profiles, () => [ExampleContent.Profile()], cancellationToken);
+    await SeedWhenEmptyAsync(dbContext.Experiences, () => [ExampleContent.Experience()], cancellationToken);
+    await SeedWhenEmptyAsync(dbContext.Educations, () => [ExampleContent.Education()], cancellationToken);
+    await SeedWhenEmptyAsync(dbContext.Projects, () => [ExampleContent.Project()], cancellationToken);
+    await SeedWhenEmptyAsync(dbContext.SkillGroups, ExampleContent.SkillGroups, cancellationToken);
+    await SeedWhenEmptyAsync(dbContext.LegalPages, () => ExampleContent.LegalPages(now), cancellationToken);
   }
 
-  private async Task SeedAdminAsync(CancellationToken cancellationToken)
+  private async Task SeedWhenEmptyAsync<TEntity>(
+    DbSet<TEntity> table,
+    Func<IEnumerable<TEntity>> create,
+    CancellationToken cancellationToken)
+    where TEntity : class
   {
-    if (await dbContext.AdminUsers.AnyAsync(cancellationToken))
+    if (await table.AnyAsync(cancellationToken))
     {
       return;
     }
 
-    // The first login sets the password.
-    dbContext.AdminUsers.Add(AdminUser.Create("Admin", timeProvider.GetUtcNow()));
+    table.AddRange(create());
     await dbContext.SaveChangesAsync(cancellationToken);
   }
 }
