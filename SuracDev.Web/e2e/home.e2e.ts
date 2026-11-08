@@ -1,4 +1,22 @@
 import { expect, test } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+/** The script-src of the CSP nginx sends (staging and production); the SSR server itself sends none. */
+function cspScriptSources(): string {
+  const headers = readFileSync(join(__dirname, '..', 'security-headers.conf'), 'utf8');
+  return /script-src ([^;]+);/.exec(headers)?.[1] ?? '';
+}
+
+/** The sha256 sources of every inline script with code in a server-rendered page; an empty one runs nothing. */
+function inlineScriptHashes(html: string): string[] {
+  return [...html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)]
+    .filter(
+      ([, attributes = '', body = '']) => body.trim() !== '' && !/\bsrc=|application\/json/.test(attributes),
+    )
+    .map(([, , body = '']) => `'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`);
+}
 
 /** Flow 1 (docs/testing.md): the start page is rendered on the server, in both locales. */
 test.describe('start page', () => {
@@ -113,6 +131,18 @@ test.describe('start page', () => {
     expect(sitemap.headers()['content-type']).toContain('application/xml');
     expect(xml).toContain('<loc>https://surac.dev/projekte/beispielprojekt</loc>');
     expect(xml).toContain('hreflang="en" href="https://surac.dev/en/projects/beispielprojekt"');
+  });
+
+  test('allows every inline script of the server render in the CSP', async ({ request }) => {
+    const allowed = cspScriptSources();
+
+    for (const path of ['/', '/en', '/ueber-mich', '/impressum', '/projekte/beispielprojekt', '/b/unknown']) {
+      const hashes = inlineScriptHashes(await (await request.get(path)).text());
+      expect(hashes.length, path).toBeGreaterThan(0);
+      for (const hash of hashes) {
+        expect(allowed, `${path} needs ${hash} in security-headers.conf`).toContain(hash);
+      }
+    }
   });
 
   test('the API behind the site is healthy', async ({ request }) => {
