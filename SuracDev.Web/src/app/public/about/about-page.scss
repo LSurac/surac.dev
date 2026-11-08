@@ -13,10 +13,13 @@
   gap: var(--space-4);
 }
 
+// One square frame for every photo: the space is reserved before the image arrives (no layout
+// shift), whatever its own proportions are.
 .about__image {
   display: block;
   width: 100%;
-  max-width: 480px;
-  height: auto;
+  max-width: 360px;
+  aspect-ratio: 1;
+  object-fit: cover;
   border: 1px solid var(--color-rule);
 }

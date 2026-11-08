@@ -56,6 +56,16 @@ describe('about page', () => {
     expect(screen.getAllByRole('img')).toHaveLength(1);
   });
 
+  it('loads the first image first and the others lazily', async () => {
+    await renderPage(() => of([chess, { ...music, imageDocumentId: 8, imageAlt: 'Am DJ-Pult' }]));
+
+    expect(await screen.findByRole('img', { name: 'Schachbrett im Vereinsheim' })).toHaveAttribute(
+      'fetchpriority',
+      'high',
+    );
+    expect(screen.getByRole('img', { name: 'Am DJ-Pult' })).toHaveAttribute('loading', 'lazy');
+  });
+
   it('loads the English page and tells search engines both addresses', async () => {
     const { interests } = await renderPage(() => of([chess]), 'en');
 
