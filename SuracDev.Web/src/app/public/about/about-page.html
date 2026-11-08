@@ -6,21 +6,32 @@
     <p class="lede">{{ strings().about.lede }}</p>
   </header>
 
-  @for (interest of interests(); track interest.id; let first = $first) {
-    <section class="section about__interest">
-      <h2 class="about__title">{{ interest.title }}</h2>
-      <div class="about__body">
+  @for (interest of interests(); track interest.id) {
+    <section class="section">
+      <ui-section-heading [number]="interest.number" [title]="interest.title" />
+      <div
+        class="about__entry"
+        [class.about__entry--with-image]="interest.image"
+        [class.about__entry--image-first]="interest.imageFirst"
+      >
+        <div class="about__text">
+          @if (interest.bodyHtml; as html) {
+            <ui-prose [html]="html" />
+          }
+        </div>
         @if (interest.image; as image) {
-          <img
-            class="about__image"
-            [src]="image.url"
-            [alt]="image.alt"
-            [attr.loading]="first ? null : 'lazy'"
-            [attr.fetchpriority]="first ? 'high' : null"
-          />
-        }
-        @if (interest.bodyHtml; as html) {
-          <ui-prose [html]="html" />
+          <figure class="about__figure">
+            <img
+              class="about__image"
+              [src]="image.url"
+              [alt]="image.alt"
+              width="360"
+              height="450"
+              [attr.loading]="image.eager ? null : 'lazy'"
+              [attr.fetchpriority]="image.eager ? 'high' : null"
+            />
+            <figcaption class="about__caption">{{ image.alt }}</figcaption>
+          </figure>
         }
       </div>
     </section>

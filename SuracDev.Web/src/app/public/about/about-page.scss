@@ -3,23 +3,65 @@
   border-bottom: 1px solid var(--color-rule);
 }
 
-.about__title {
-  margin: 0;
-  font-size: 30px;
-}
-
-.about__body {
+// Text beside the photo on wide screens, the side alternating from section to section; the photo
+// above the text on phones (docs/design.md, "Layout").
+.about__entry {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-6);
+  align-items: start;
 }
 
-// One square frame for every photo: the space is reserved before the image arrives (no layout
+.about__entry--with-image {
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 300px);
+
+  &.about__entry--image-first {
+    grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+
+    .about__figure {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 760px) {
+    &,
+    &.about__entry--image-first {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .about__figure {
+      order: -1;
+      max-width: 420px;
+    }
+  }
+}
+
+.about__text {
+  max-width: var(--measure);
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.about__figure {
+  margin: 0;
+}
+
+// One 4:5 frame for every photo: the space is reserved before the image arrives (no layout
 // shift), whatever its own proportions are.
 .about__image {
   display: block;
   width: 100%;
-  max-width: 360px;
-  aspect-ratio: 1;
+  height: auto;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
   border: 1px solid var(--color-rule);
+}
+
+.about__caption {
+  margin-top: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-muted);
 }

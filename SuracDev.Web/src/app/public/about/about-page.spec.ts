@@ -47,13 +47,32 @@ describe('about page', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Über mich' })).toBeInTheDocument();
     expect(
       screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent?.trim()),
-    ).toEqual(['Schach', 'Musik']);
+    ).toEqual(['01 Schach', '02 Musik']);
     expect(screen.getByRole('img', { name: 'Schachbrett im Vereinsheim' })).toHaveAttribute(
       'src',
       '/api/public/documents/7',
     );
     expect(screen.getByText('Verein')).toBeInTheDocument();
     expect(screen.getAllByRole('img')).toHaveLength(1);
+  });
+
+  it('captions each photo with its description', async () => {
+    await renderPage(() => of([chess]));
+
+    const photo = await screen.findByRole('img', { name: 'Schachbrett im Vereinsheim' });
+
+    expect(photo.closest('figure')?.querySelector('figcaption')).toHaveTextContent(
+      'Schachbrett im Vereinsheim',
+    );
+  });
+
+  it('gives the high priority to the first photo, even below a section without one', async () => {
+    await renderPage(() => of([music, { ...chess, id: 3 }]));
+
+    expect(await screen.findByRole('img', { name: 'Schachbrett im Vereinsheim' })).toHaveAttribute(
+      'fetchpriority',
+      'high',
+    );
   });
 
   it('loads the first image first and the others lazily', async () => {
