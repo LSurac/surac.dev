@@ -152,3 +152,28 @@ their date; reversed decisions are struck through, never deleted.
   endpoint ever shows up in the telemetry.
 - **Deleting asks for confirmation inside the form**, not through `window.confirm`: testable, styled
   like the rest, and readable by screen readers in context.
+
+## Phase 2 (2026-11-08)
+
+- **An application link is the start page, not a page of its own.** `/b/<token>` renders the same
+  `HomePage` with the link's section order, greeting and downloads; the content still comes from
+  the public endpoints. `GET /api/links/{token}` answers only what the link changes. Rejected: a
+  link endpoint that returns the whole page content (a second read model of the same data) and a
+  separate link page template (two pages to keep in step). The section order lives in
+  `SectionOrder` in the API; the web mirrors the public order for the open site, which never asks
+  the link endpoint.
+- **The link response does not name its audience profile.** It carries the section order, which is
+  all the page needs; a recipient reading the network tab does not learn that they were filed as
+  "Recruiter".
+- **Revoking is final.** A revoked link cannot be changed or revived; the admin creates a new one.
+  Reviving would reopen a URL that was closed on purpose, possibly after it leaked.
+- **Every page view counts as an opening.** Reloads, language switches and messenger link previews
+  are counted, because the events deliberately store nothing that could tell them apart. The
+  number is a signal for the maintainer, not a metric to optimise.
+- **Response rate and time to first open are defined in one place** (`ApplicationPipeline`):
+  `Withdrawn` counts as sent without response; the time runs from the first link's creation, which
+  is when the maintainer sends the application in practice. Rejected: measuring from `AppliedOn`,
+  a date without time, which turns "opened after three hours" into "opened on the same day".
+- **Link pages keep the visitor on the link.** The header's name and section anchors point to the
+  link page itself, not to the open site, so one click does not lose the greeting and the
+  unlocked documents.

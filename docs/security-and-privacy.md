@@ -45,8 +45,12 @@ endpoint is on that list. Adding to the list is a deliberate, reviewed act.
   The database stores only the SHA-256 of the token; the clear token is displayed once at creation.
 - Required expiry (default 90 days), manual revoke. Expired or revoked links answer 404, not 410, so
   the existence of a past link is not confirmed.
-- Resolution is rate limited per client address to make enumeration pointless on top of the key
-  space.
+- Resolution is rate limited per client address (30 requests per minute on `/api/links/**`) to make
+  enumeration pointless on top of the key space. Server-side renders pass the visitor's
+  `X-Forwarded-For` on to the API, so the limit applies per visitor, not per web container.
+- Revoking is final: a revoked link cannot be changed or revived; the admin creates a new one.
+- Link pages carry `noindex`; their canonical and Open Graph URL is the open start page, so a link
+  preview never shows the token.
 - A link unlocks exactly what the admin attached: the full PDF (phone, address) and the chosen
   `LinkOnly` documents. Nothing else changes.
 - Events recorded per link: kind, timestamp, locale, document id. **Never** IP address, user agent,

@@ -30,6 +30,13 @@ What is in flight or waiting on a manual step. Close items here when done; the p
 - [ ] `.env` with the `prod` profile, repository variables `PROD_HOST`, `PROD_HOST_KEY`, secret
       `PROD_DEPLOY_SSH_KEY`, DNS records, first `deploy.ps1 -Production`, then `PROD_DEPLOY_ENABLED`.
 - [ ] Backup pull into the maintainer's offsite chain, uptime monitor, telemetry API key.
+- [ ] Client address behind Caddy: Caddy sets `X-Forwarded-For: <client>`, nginx appends the address
+      it sees (the Docker gateway), and the API's `ForwardedHeaders` reads only the last entry
+      (`ForwardLimit` 1). In production every visitor would share one rate-limit partition, for
+      login and application links alike, so ten wrong logins lock the admin out for everyone. Fix
+      before go-live (nginx `real_ip`/passing Caddy's header through, or `ForwardLimit` 2 with
+      known proxies in production only) and cover it with a test. Staging (no Caddy) is not
+      affected.
 
 ## Engineering
 
@@ -39,13 +46,17 @@ What is in flight or waiting on a manual step. Close items here when done; the p
 - [x] Open Graph tags, sitemap (`/sitemap.xml`, both locales) and `robots.txt`.
 - [x] E2E flows 1 and 2 (start page with CV download, admin edit shown on the site).
 - [x] QuestPDF CV `Public` × de/en with golden-file tests and the download on the start page.
-- [ ] CV `Full` variant (phone, address) for application links (phase 2).
-- [ ] Application links and the mini ATS (phase 2).
+- [x] CV `Full` variant (phone, address) for application links.
+- [x] Application links and the mini ATS: admin API and UI, `/b/<token>` view in both locales,
+      link events, statistics page, E2E flows 3 and 4 (phase 2, 2026-11-08).
 - [ ] Interests page and complete English translations (phase 3).
 - [ ] CSP hash/nonce for Angular's SSR inline state; document in gotchas once solved.
-- [ ] Initial bundle is about 382 kB against a 320 kB warning and 400 kB error budget: Angular's
-      FESM packages put everything the lazy routes use from core/common into the shared initial
-      chunk. Address in the phase 3 performance pass before it reaches the error budget.
+- [ ] Initial bundle is 392.7 kB against a 320 kB warning and 400 kB error budget (385 kB before
+      phase 2; the lazy link page shares `HomePage` with the eager start page, which costs chunk
+      overhead, and an eager link route measured worse at 395 kB). Angular's FESM packages put
+      everything the lazy routes use from core/common into the shared initial chunk. Only about
+      7 kB headroom left: address before the next feature that touches the start page, at the
+      latest in the phase 3 performance pass.
 - [ ] Lines over 110 characters in C#: `.editorconfig` sets 110, the API code does not follow it
       consistently (foundation included). Decide: enforce with a formatting pass, or set a C#
       limit that matches practice.

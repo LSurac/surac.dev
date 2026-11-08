@@ -97,13 +97,23 @@ Rejected=6, Withdrawn=7`, `Notes` (Markdown), `CreatedAt`, `UpdatedAt`.
 | `Profile` enum | `Unknown=0, Public=1, Recruiter=2, TechLead=3` |
 | `GreetingDe`, `GreetingEn` | Optional one-line greeting ("Für das Team Sales Backend bei …"). |
 | `ExpiresAt` | Required; default 90 days. |
-| `IsRevoked` | Manual kill switch. |
+| `IsRevoked` | Manual kill switch; final, a revoked link cannot be changed any more. |
 | `UnlockFullPdf` | Full PDF with phone and address. |
 | `Documents` | The certificates / cover letter unlocked by this link (`LinkOnly` documents only). |
 
 `LinkEvent`: `LinkId`, `Kind` enum `Unknown=0, Opened=1, PdfDownloaded=2, DocumentDownloaded=3`,
 `OccurredAt`, `Locale`, `DocumentId` (nullable). **No IP address, no user agent, no referrer.**
-The statistics page aggregates these per application.
+An opening is recorded per page view of `/b/<token>`, a language switch included; reloads and link
+previews of messengers count as openings too, because nothing about the visitor is stored that
+could tell them apart.
+
+The statistics page aggregates these per application (`Domains/Applications/Domain/ApplicationPipeline.cs`):
+
+- **Sent** is every status except `Draft`; **responded** is `Replied`, `Interview`, `Offer` or
+  `Rejected`. `Withdrawn` counts as sent without response, because the status no longer says
+  whether a reply came first. The response rate is responded / sent.
+- **Time to first open** runs from the creation of the application's first link to the first
+  opening of any of its links, in whole minutes.
 
 Profile behaviour is configuration, not code paths: a `SectionOrder` per profile (list of section
 keys) lives in `Shared/Application/Audience/` and is covered by tests. `Public` is the order the open

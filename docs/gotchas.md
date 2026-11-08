@@ -41,3 +41,12 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
   redefines a key wins. Keep `.env` free of duplicates.
 - **A PowerShell-generated SSH key with `-N '""'` has a non-empty passphrase.** Generate deploy
   keys from Git Bash or WSL.
+- **A server-rendered `@for` must start with the same list in the browser** (2026-11-08, found by
+  the application-link E2E flow: the sections came out of order after hydration, "02" before
+  "01", while the component tests were green). The start page filtered its section list by loaded
+  content; the server rendered all sections, the browser's first render none, and hydration paired
+  the server's markup with the wrong entries. Derive `@for` lists from data that is identical on
+  both sides at the first render and hide empty entries inside the loop body.
+- **`git worktree remove --force` follows a junction on Windows.** A scratch worktree with
+  `node_modules` linked to the main checkout deleted the real `node_modules` on removal. Delete the
+  junction itself first, or give the worktree its own `npm ci`.

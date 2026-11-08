@@ -102,7 +102,8 @@ SuracDev.Web/
 ```
 
 Routes: `/` and `/en/` (start page), `/projekte/<slug>` and `/en/projects/<slug>`, `/ueber-mich`
-and `/en/about`, `/b/<token>` (application link), `/impressum`, `/datenschutz`, `/admin/**`
+and `/en/about`, `/b/<token>` and `/en/b/<token>` (application link: the start page in the link's
+section order, with its greeting and downloads), `/impressum`, `/datenschutz`, `/admin/**`
 (client-rendered, no SSR, excluded from robots), `/styleguide` (development build only).
 
 Rendering: public routes are server-rendered with hydration; the admin area is client-only. The
