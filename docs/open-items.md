@@ -52,11 +52,12 @@ What is in flight or waiting on a manual step. Close items here when done; the p
 - [ ] Performance pass (LCP, bundle, Lighthouse) and ntfy reminders: deferred, see
       `docs/roadmap.md`.
 - [ ] CSP hash/nonce for Angular's SSR inline state; document in gotchas once solved.
-- [ ] Initial bundle is 392.7 kB against a 320 kB warning and 400 kB error budget (385 kB before
+- [ ] Initial bundle is 394.6 kB against a 320 kB warning and 400 kB error budget (385 kB before
       phase 2; the lazy link page shares `HomePage` with the eager start page, which costs chunk
       overhead, and an eager link route measured worse at 395 kB). Angular's FESM packages put
       everything the lazy routes use from core/common into the shared initial chunk. Only about
-      7 kB headroom left: address before the next feature that touches the start page, at the
+      5 kB headroom left (the about link in the header added 1.8 kB): address before the next
+      feature that touches the start page, at the
       latest in the phase 3 performance pass.
 - [ ] Lines over 110 characters in C#: `.editorconfig` sets 110, the API code does not follow it
       consistently (foundation included). Decide: enforce with a formatting pass, or set a C#
