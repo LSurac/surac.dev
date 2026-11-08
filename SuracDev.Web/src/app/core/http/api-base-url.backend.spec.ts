@@ -67,7 +67,9 @@ describe('ApiBaseUrlBackend', () => {
     const page = new Request('http://srv.example/b/token', { headers: { 'X-Forwarded-For': '203.0.113.7' } });
     const { backend, handled } = setUp(page);
 
-    await firstValueFrom(backend.handle(new HttpRequest('GET', '/api/links/token', { responseType: 'json' })));
+    await firstValueFrom(
+      backend.handle(new HttpRequest('GET', '/api/links/token', { responseType: 'json' })),
+    );
     await firstValueFrom(
       backend.handle(new HttpRequest('GET', 'https://other.example/feed.json', { responseType: 'json' })),
     );
@@ -79,7 +81,9 @@ describe('ApiBaseUrlBackend', () => {
   it('adds no forwarded address when the page request carries none', async () => {
     const { backend, handled } = setUp(new Request('http://localhost:4000/'));
 
-    await firstValueFrom(backend.handle(new HttpRequest('GET', '/api/public/profile', { responseType: 'json' })));
+    await firstValueFrom(
+      backend.handle(new HttpRequest('GET', '/api/public/profile', { responseType: 'json' })),
+    );
 
     expect(handled[0]?.headers.has('X-Forwarded-For')).toBe(false);
   });

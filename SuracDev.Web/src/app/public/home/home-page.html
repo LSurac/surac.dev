@@ -26,7 +26,11 @@
   @switch (section) {
     @case ('Intro') {
       <section class="section">
-        <ui-section-heading [number]="numbers()['Intro']" [title]="strings().sections.profile" anchor="profil" />
+        <ui-section-heading
+          [number]="numbers()['Intro']"
+          [title]="strings().sections.profile"
+          anchor="profil"
+        />
         <div class="prose">
           <p class="lede">{{ intro() }}</p>
           @for (note of profileNotes(); track $index) {

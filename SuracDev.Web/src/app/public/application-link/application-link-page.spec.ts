@@ -44,7 +44,10 @@ async function renderPage(get: () => unknown, locale: 'de' | 'en' = 'de') {
             }),
         },
       },
-      { provide: PublicCareerClient, useValue: { listExperiences: () => of([]), listEducation: () => of([]) } },
+      {
+        provide: PublicCareerClient,
+        useValue: { listExperiences: () => of([]), listEducation: () => of([]) },
+      },
       { provide: PublicProjectsClient, useValue: { list: () => of([]) } },
       { provide: PublicSkillsClient, useValue: { list: () => of([]) } },
       { provide: RESPONSE_INIT, useValue: response },
