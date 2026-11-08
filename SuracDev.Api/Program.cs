@@ -60,6 +60,16 @@ builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<ApplicationLinkService>();
 builder.Services.AddScoped<LinkAccessService>();
 builder.Services.AddScoped<ApplicationStatisticsService>();
+
+// The weekly digest of applications without reply; off unless an ntfy server and topic are configured.
+var reminderSection = builder.Configuration.GetSection(ReminderOptions.Section);
+builder.Services.Configure<ReminderOptions>(reminderSection);
+builder.Services.AddHttpClient(ApplicationReminderService.HttpClientName);
+builder.Services.AddScoped<ApplicationReminderService>();
+if (reminderSection.Get<ReminderOptions>()?.IsEnabled == true && !isOpenApiGeneration)
+{
+  builder.Services.AddHostedService<ApplicationReminderWorker>();
+}
 builder.Services.AddSingleton(TimeProvider.System);
 
 // The client address arrives in X-Forwarded-For: from nginx on staging, from Caddy → nginx in
