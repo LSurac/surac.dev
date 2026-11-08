@@ -180,8 +180,24 @@ public static partial class MarkdownRenderer
       : Escape(alt);
   }
 
+  /// <summary>
+  /// A link if its target is allowed, plain text otherwise. External web links open in a new tab
+  /// without access to this page (docs/design.md, "Links"); mail and site links open in place.
+  /// </summary>
   private static string Link(string text, string href)
-    => IsAllowedHref(href) ? $"<a href=\"{Escape(href)}\">{Inline(text)}</a>" : Inline(text);
+  {
+    if (!IsAllowedHref(href))
+    {
+      return Inline(text);
+    }
+
+    var external = IsExternal(href) ? " target=\"_blank\" rel=\"noopener noreferrer\"" : string.Empty;
+    return $"<a href=\"{Escape(href)}\"{external}>{Inline(text)}</a>";
+  }
+
+  private static bool IsExternal(string href)
+    => href.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+      || href.StartsWith("http://", StringComparison.OrdinalIgnoreCase);
 
   private static bool IsAllowedHref(string href)
     => href.StartsWith("https://", StringComparison.OrdinalIgnoreCase)

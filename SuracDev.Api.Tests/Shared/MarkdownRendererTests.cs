@@ -70,13 +70,22 @@ public sealed class MarkdownRendererTests
   }
 
   [Theory]
-  [InlineData("https://example.org/a?b=1&c=2", "https://example.org/a?b=1&amp;c=2")]
   [InlineData("mailto:max@example.org", "mailto:max@example.org")]
   [InlineData("/projekte/beispiel", "/projekte/beispiel")]
-  [InlineData("https://de.wikipedia.org/wiki/Test_(Begriff)", "https://de.wikipedia.org/wiki/Test_(Begriff)")]
-  public void Links_to_web_mail_and_site_paths_are_kept(string url, string href)
+  public void Mail_and_site_links_open_in_place(string url, string href)
   {
     Assert.Equal($"<p><a href=\"{href}\">Text</a></p>", MarkdownRenderer.ToHtml($"[Text]({url})"));
+  }
+
+  [Theory]
+  [InlineData("https://example.org/a?b=1&c=2", "https://example.org/a?b=1&amp;c=2")]
+  [InlineData("http://example.org", "http://example.org")]
+  [InlineData("https://de.wikipedia.org/wiki/Test_(Begriff)", "https://de.wikipedia.org/wiki/Test_(Begriff)")]
+  public void External_links_open_in_a_new_tab_without_access_to_this_page(string url, string href)
+  {
+    Assert.Equal(
+      $"<p><a href=\"{href}\" target=\"_blank\" rel=\"noopener noreferrer\">Text</a></p>",
+      MarkdownRenderer.ToHtml($"[Text]({url})"));
   }
 
   [Theory]
