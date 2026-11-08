@@ -36,6 +36,9 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: '${SURACDEV_OTLP_ENDPOINT:-}'
       OTEL_EXPORTER_OTLP_HEADERS: '${SURACDEV_OTLP_HEADERS:-}'
       OTEL_EXPORTER_OTLP_PROTOCOL: 'grpc'
+      Reminders__NtfyServer: '${SURACDEV_NTFY_SERVER:-}'
+      Reminders__NtfyTopic: '${SURACDEV_NTFY_TOPIC:-}'
+      Reminders__NtfyToken: '${SURACDEV_NTFY_TOKEN:-}'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     volumes:
