@@ -50,3 +50,9 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
 - **`git worktree remove --force` follows a junction on Windows.** A scratch worktree with
   `node_modules` linked to the main checkout deleted the real `node_modules` on removal. Delete the
   junction itself first, or give the worktree its own `npm ci`.
+- **An Angular update can change the event replay scripts** (2026-11-08). Their SHA-256 is in the
+  CSP of `security-headers.conf`; when the E2E test "allows every inline script of the server
+  render in the CSP" fails, it names the new hash. Replace both hashes there, nowhere else.
+- **Wrapping an XML doc comment changes the OpenAPI documents.** NSwag keeps the line break in the
+  description, so `npm run contract:check` fails after a formatting pass over C#; regenerate the
+  clients (`npm run api:generate`) in the same push.

@@ -89,6 +89,8 @@ rotation.
 The homelab pulls `/opt/surac-dev-backups/` read-only (forced-command SSH key) at 05:00 into the
 existing offsite chain (encrypted rclone to cloud storage). A restore drill runs monthly: restore the
 latest dump into a scratch PostgreSQL, run `MigrateAsync`, count rows, compare with the manifest.
+The procedure was rehearsed on staging on 2026-11-08: the nightly dump restored into a throwaway
+`postgres:17-alpine` container without network and matched the live row counts.
 
 ## Monitoring
 
@@ -102,9 +104,18 @@ latest dump into a scratch PostgreSQL, run `MigrateAsync`, count rows, compare w
 
 OpenTelemetry in the API: ASP.NET Core and HttpClient instrumentation, OTLP/gRPC exporter to the
 maintainer's Seq over the private network. Enabled only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set;
-local, tests and staging run without it. Spans never carry request bodies, cookies, tokens or
-link slugs (the link controller redacts the route value). Logs follow the same path with a
-redaction processor for the token route parameter.
+local, tests and staging run without it. Spans never carry request bodies or cookies; the path of
+`/api/links/{token}` is rewritten to the placeholder before export (`TelemetryRedaction`). Request
+logs of ASP.NET Core are below the `Warning` level and are not exported.
+
+## Reminders
+
+On Mondays from 07:00 UTC the API sends one ntfy message listing every application still `Sent`
+fourteen days after `AppliedOn` (`docs/decisions.md`). `.env` sets `SURACDEV_NTFY_SERVER`,
+`SURACDEV_NTFY_TOPIC` and, for a protected topic, `SURACDEV_NTFY_TOKEN`; without server and topic
+the worker is not registered. Staging uses the homelab's ntfy (values copied on the host from the
+homelab's monitor configuration, never written down); production needs a route to it over the
+private network.
 
 ## Staging specifics
 

@@ -44,7 +44,7 @@ I work agentically. In practice that means:
 | `SuracDev.Api.Tests/` | xUnit: domain unit tests, API integration tests on PostgreSQL via Testcontainers |
 | `SuracDev.Web/` | Angular 22 SSR app. `src/app/{core,ui,public,admin,layout,api/generated}`, Playwright E2E under `e2e/` |
 | `deploy/` | Caddyfile, backup and healthwatch scripts, systemd units for the production host |
-| `docs/` | Architecture, decisions, content model, design, testing, security, operations, roadmap |
+| `docs/` | Architecture, decisions, content model, design, testing, security, operations, open items |
 | `.github/workflows/` | CI gates, production and staging deploys, monthly dependency audit |
 
 ## Running it locally
@@ -78,4 +78,6 @@ example seed.
 
 ## Status
 
-Foundation. See `docs/roadmap.md` for the phases and `docs/open-items.md` for what is in flight.
+Feature-complete: public site, admin, CV PDF, application links with statistics and reminders, the
+"Über mich" page. Running on staging; production goes live once the host is set up. What is
+still open is in `docs/open-items.md`.

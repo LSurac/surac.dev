@@ -23,7 +23,9 @@ something changes. Do not duplicate their content here.
 - `docs/ops-and-deploy.md` — hosting, CI/CD, staging vs production, backups, monitoring, telemetry.
 - `docs/build-and-test.md` — the exact commands.
 - `docs/gotchas.md` — non-obvious traps already hit once.
-- `docs/roadmap.md` — phases and the launch checklist. `docs/open-items.md` — what is in flight.
+- `docs/open-items.md` — what is still open: manual steps, production setup, the launch checks.
+  Only open lines stay in it; a finished item is deleted, its lasting facts go to the document
+  they belong to.
 - `docs/research/` — the recruiter/hiring-manager research the information architecture is based on.
 
 Infrastructure access facts (hosts, IPs, SSH targets, credentials) are **not** in this repository.

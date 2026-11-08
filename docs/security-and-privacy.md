@@ -72,12 +72,14 @@ endpoint is on that list. Adding to the list is a deliberate, reviewed act.
 
 ## Transport and headers
 
-Caddy terminates TLS (Let's Encrypt), redirects `www` to apex, sets HSTS (the `.dev` TLD is
-HSTS-preloaded anyway), `X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`,
-`Permissions-Policy` and a Content-Security-Policy with `default-src 'self'`, `font-src 'self'`,
-`img-src 'self' data:`, no inline scripts (Angular SSR's inline state is allowed via nonce or
-hash, see `docs/gotchas.md` once hit). nginx inside the web container repeats the headers for
-staging, where no Caddy sits in front.
+Caddy terminates TLS (Let's Encrypt), redirects `www` to apex and sets HSTS (the `.dev` TLD is
+HSTS-preloaded anyway). nginx inside the web container sets the other headers for staging and
+production alike (`SuracDev.Web/security-headers.conf`): `X-Content-Type-Options`,
+`Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` and a
+Content-Security-Policy with `default-src 'self'`, `font-src 'self'`, `img-src 'self' data:` and
+`script-src 'self'` plus the SHA-256 of Angular's two event-replay inline scripts (the JSON
+transfer state is not executable and needs no allowance). An E2E test fails when an Angular update
+changes those scripts (`docs/gotchas.md`).
 
 ## Personal data inventory
 
@@ -91,7 +93,7 @@ staging, where no Caddy sits in front.
 | Link events | `link_events` | admin only | no personal data of visitors is stored |
 | Admin password hash, security stamp | `admin_users` | nobody | |
 | Server logs | Caddy access log (IP, path, UA, 14 days), API logs | maintainer | Art. 6 (1) f DSGVO, named in the privacy page |
-| Telemetry | Seq (traces/logs, 30 days) | maintainer | no request bodies, no cookies, no tokens in spans |
+| Telemetry | Seq (traces/logs, 30 days) | maintainer | no request bodies, no cookies; link tokens are rewritten to `{token}` in span paths (`TelemetryRedactionTests`) |
 
 No cookies on the public site. The admin cookie is strictly necessary and set only after login.
 Therefore no consent banner. Fonts are self-hosted; no third-party requests from the public site.

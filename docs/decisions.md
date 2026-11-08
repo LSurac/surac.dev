@@ -177,3 +177,35 @@ their date; reversed decisions are struck through, never deleted.
 - **Link pages keep the visitor on the link.** The header's name and section anchors point to the
   link page itself, not to the open site, so one click does not lose the greeting and the
   unlocked documents.
+
+## Before launch (2026-11-08)
+
+- **C# lines may be 120 characters long**, everything else stays at 110. The API code never
+  followed 110; long generic signatures and LINQ chains read worse broken that early. One
+  formatting-only commit wrapped the remaining outliers.
+- **Angular's event replay scripts are allowed by hash, not by nonce.** The two inline scripts are
+  constant per Angular version, so two `sha256-` sources in `security-headers.conf` keep
+  `script-src` strict without moving the CSP into the node process. An E2E test hashes the inline
+  scripts of the server render and fails when an Angular update changes them. Rejected: a nonce
+  per request (the header would have to come from `server.ts`, not nginx) and `'unsafe-inline'`.
+- **The bundle target is the transferred size; the budget sits above the framework floor.**
+  Angular core, router, common and platform-browser alone are about 366 kB of the 395 kB raw
+  initial bundle (108 kB transferred). "Under 150 kB" from the roadmap is met as transferred size;
+  as raw size it is out of reach without dropping SSR or the router. The budget warns from 400 kB
+  and fails from 430 kB, so a warning means growth, not the status quo.
+- **Measured performance (2026-11-08, Lighthouse mobile profile, staging over plain HTTP/1.1):**
+  performance 93 to 95, accessibility, SEO 100, LCP 2.7 to 2.9 s with the portrait as LCP element.
+  Best practices are 79 on staging only because it has no HTTPS and no HTTP/2; production behind
+  Caddy has both. The hero photo loads with `fetchpriority="high"`.
+- **Reminders are a stateless weekly digest.** On Mondays from 07:00 UTC the API sends one ntfy
+  message listing every application still `Sent` fourteen days after `AppliedOn`. Rejected: one
+  reminder per application with a "reminded at" column, which needs a migration and a state to
+  get wrong; repeating the digest weekly until the status changes is what a reminder is for.
+- **Named volumes stay** for documents and Data Protection keys. Bind mounts under
+  `/opt/surac-dev` would be picked up by the homelab backup without naming them, but the switch
+  means moving live data on staging and changes the production layout; the volumes are already in
+  the backup and rebuild lists (`docs/ops-and-deploy.md`).
+- **`traktor-library-tools` stays private.** One strong public repository says more than a second
+  half-finished one.
+- **Telemetry rewrites the path of `/api/links/{token}`** before a span is exported. The token is
+  a capability; the request logs that would carry it are below the exported level anyway.

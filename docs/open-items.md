@@ -1,27 +1,35 @@
 # Open items
 
-What is in flight or waiting on a manual step. Close items here when done; the phases live in
-`docs/roadmap.md`.
+What is still open. Only open lines stay here: a finished item is deleted, and what it taught goes
+into the document it belongs to (`docs/decisions.md`, `docs/ops-and-deploy.md`, …).
 
-## Done (foundation, 2026-11-07)
+## Acceptance on staging (maintainer)
 
-- [x] Repository public, `master` protected (four required checks, linear history), `dev` branch.
-- [x] Staging: database and role on the shared development PostgreSQL, stack registered, port
-      8085, uptime monitor, first deploy by hand, then by CI from `dev` over the private network.
-- [x] Repository variables and secrets for staging, including the Tailscale OAuth client;
-      `STAGING_DEPLOY_ENABLED` is on.
-- [x] gitleaks installed locally, pre-commit hook active.
-- [x] Domain `surac.dev` registered and the production VPS ordered (own account).
+The staging content was entered on 2026-11-08 from the 2026 CV, the project repositories and the
+cover letters. To check and complete in the admin:
+
+- [ ] Texts in both languages: profile, career, projects and case studies, "Über mich", the
+      "Arbeitsweise" section (`SuracDev.Web/src/app/core/i18n/ui-strings.ts`), the fact bar values.
+- [ ] Privacy page: name hosting provider and location (placeholder in the text).
+- [ ] Abitur entry: the CV has only the year; start date is a placeholder (07/2016).
+- [ ] LinkedIn URL, availability line (both empty).
+- [ ] Status of the twelve applications taken from the cover letters (all set to "Versendet"; the
+      weekly reminder lists them until changed).
+- [ ] Create one application link per profile and open it, including a document download.
+- [ ] Admin password additionally in Vaultwarden? (today only in Credential Manager
+      `Claude:SuracDevAdmin`).
 
 ## Manual steps (maintainer)
 
 - [ ] VPS provider: sign the data processing agreement; wait for the order to appear in the panel.
 - [ ] Cloudflare: add the zone `surac.dev` (free plan), switch the nameservers at the registrar,
       keep records "DNS only"; a zone-scoped API token for the maintainer's DNS tooling.
-- [ ] Cloudflare Email Routing: `leonard@surac.dev` → private mailbox.
-- [ ] Current professional photo (web size and print size).
-- [ ] Decide the English wording of the title line and the fact bar labels.
-- [ ] GitHub profile README, pin this repository, bio link to `surac.dev` (at launch).
+- [ ] Cloudflare Email Routing: `leonard@surac.dev` → private mailbox. The site already shows this
+      address.
+- [ ] Current professional photo (web size and print size); staging uses the photo from the CV.
+- [ ] GitHub: pin this repository and set the profile's website to `https://surac.dev` (the CLI
+      token lacks the `user` scope: `gh auth refresh -h github.com -s user`, or in the browser).
+      The profile README exists (`LSurac/LSurac`).
 
 ## Production setup (once the VPS is reachable)
 
@@ -29,38 +37,19 @@ What is in flight or waiting on a manual step. Close items here when done; the p
       Docker, the backup and healthwatch timers (`deploy/README.md`).
 - [ ] `.env` with the `prod` profile, repository variables `PROD_HOST`, `PROD_HOST_KEY`, secret
       `PROD_DEPLOY_SSH_KEY`, DNS records, first `deploy.ps1 -Production`, then `PROD_DEPLOY_ENABLED`.
-- [ ] Backup pull into the maintainer's offsite chain, uptime monitor, telemetry API key.
-- [x] Client address behind Caddy: the API now reads `X-Forwarded-For` through its own hops
-      (loopback, Docker networks), so every visitor gets their own rate-limit partition in
-      production too (2026-11-08, `ClientAddressTests`).
+- [ ] Backup pull into the maintainer's offsite chain, uptime monitor, telemetry API key, ntfy
+      route for the reminders.
+- [ ] Restore drill once on production (rehearsed on staging, `docs/ops-and-deploy.md`).
 
-## Engineering
+## Launch checks (after go-live)
 
-- [x] Phase 1 domains (Profile, Career, Projects, Skills, Legal) with translations and admin editors.
-- [x] Documents: upload, public photo and case-study images, admin management.
-- [x] Public start page composed from `ui/` components, both locales; case study, legal pages, 404.
-- [x] Open Graph tags, sitemap (`/sitemap.xml`, both locales) and `robots.txt`.
-- [x] E2E flows 1 and 2 (start page with CV download, admin edit shown on the site).
-- [x] QuestPDF CV `Public` × de/en with golden-file tests and the download on the start page.
-- [x] CV `Full` variant (phone, address) for application links.
-- [x] Application links and the mini ATS: admin API and UI, `/b/<token>` view in both locales,
-      link events, statistics page, E2E flows 3 and 4 (phase 2, 2026-11-08).
-- [x] Interests ("Über mich") page with admin editor, both locales (phase 3, 2026-11-08).
-- [x] Code excerpts with source caption in case studies (phase 3, 2026-11-08).
-- [ ] Complete English translations of the real content and English PDF review by a native
-      speaker (maintainer, content work).
-- [ ] Performance pass (LCP, bundle, Lighthouse) and ntfy reminders: deferred, see
-      `docs/roadmap.md`.
-- [ ] CSP hash/nonce for Angular's SSR inline state; document in gotchas once solved.
-- [ ] Initial bundle is 394.6 kB against a 320 kB warning and 400 kB error budget (385 kB before
-      phase 2; the lazy link page shares `HomePage` with the eager start page, which costs chunk
-      overhead, and an eager link route measured worse at 395 kB). Angular's FESM packages put
-      everything the lazy routes use from core/common into the shared initial chunk. Only about
-      5 kB headroom left (the about link in the header added 1.8 kB): address before the next
-      feature that touches the start page, at the
-      latest in the phase 3 performance pass.
-- [ ] Lines over 110 characters in C#: `.editorconfig` sets 110, the API code does not follow it
-      consistently (foundation included). Decide: enforce with a formatting pass, or set a C#
-      limit that matches practice.
-- [ ] Decide whether `traktor-library-tools` becomes a second public repository (secret scan,
-      README rewrite).
+- [ ] Both PDFs open in Acrobat, Chrome and a phone; copy-paste yields text in reading order; file
+      names `Lebenslauf_Leonard_Surac.pdf` / `CV_Leonard_Surac.pdf`.
+- [ ] Start page passes a 30-second recruiter read on desktop and phone.
+- [ ] Every link works; spell check in both languages by a second person; English PDF reviewed by
+      a native speaker.
+- [ ] Keyboard walk-through of every page (Lighthouse accessibility is 100 on all public pages).
+- [ ] Lighthouse on production with HTTPS and HTTP/2; LCP target 1.5 s (staging: 2.7 s over
+      HTTP/1.1 without TLS, `docs/decisions.md`).
+- [ ] Uptime monitor green for 7 days.
+- [ ] CV PDF in the application folder replaced by the generated one.

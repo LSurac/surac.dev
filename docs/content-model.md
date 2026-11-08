@@ -115,6 +115,12 @@ The statistics page aggregates these per application (`Domains/Applications/Doma
 - **Time to first open** runs from the creation of the application's first link to the first
   opening of any of its links, in whole minutes.
 
+### Reminders
+
+Applications still `Sent` fourteen days after `AppliedOn` are listed in a weekly ntfy digest,
+longest waiting first (`ApplicationReminder`). Nothing is stored about reminders; the digest repeats
+each week until the status changes.
+
 Profile behaviour is configuration, not code paths: a `SectionOrder` per profile (list of section
 keys) lives in `Shared/Application/Audience/` and is covered by tests. `Public` is the order the open
 site uses.
