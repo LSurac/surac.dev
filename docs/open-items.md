@@ -5,26 +5,11 @@ into the document it belongs to (`docs/decisions.md`, `docs/ops-and-deploy.md`, 
 
 ## Acceptance on staging (maintainer)
 
-The staging content was entered on 2026-11-08 from the 2026 CV, the reference letters, the
-maintainer's work notes, the project repositories and the cover letters. To check and complete in
-the admin:
+The staging content was entered on 2026-11-08 and accepted by the maintainer the same day. Still
+open in the admin:
 
-- [ ] Texts in both languages: profile, career, projects and case studies, "Über mich", the
-      "Arbeitsweise" section (`SuracDev.Web/src/app/core/i18n/ui-strings.ts`). The case studies are
-      written in the first person as problem, solution, implementation.
-- [ ] Würth IT station: 1Plus and the sales backend services are the main work, the other bullets
-      are side projects from the work notes; location is empty. Confirm or trim.
-- [ ] Fact bar: "8 own applications in production" counts SK Sulzfeld, Kassensturz, Pi Dev Center,
-      Cycle Tracker, Trading Lab, Music Sorter, the homelab launcher and surac.dev itself. Confirm
-      the count or name fewer. The vocational school cell now shows the certificate's average 1,3
-      "with award" (it said 1,0; only the subject grades are all "sehr gut").
-- [ ] Abitur entry: the CV has only the year; start date is a placeholder (07/2016).
-- [ ] LinkedIn URL, availability line (both empty).
-- [ ] Orga-Soft: only the apprenticeship reference exists (Paperless has no separate reference
-      letter for 06–10/2024). Request one if wanted; AERA's final reference is uploaded.
-- [ ] "Über mich": a chess photo is missing (Immich had only screenshots of games).
-- [ ] Admin password additionally in Vaultwarden? (today only in Credential Manager
-      `Claude:SuracDevAdmin`).
+- [ ] Availability line (empty).
+- [ ] "Über mich": a chess photo, once one exists (Immich had only screenshots of games).
 
 ## Manual steps (maintainer)
 
