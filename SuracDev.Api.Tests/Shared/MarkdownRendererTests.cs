@@ -37,6 +37,23 @@ public sealed class MarkdownRendererTests
   }
 
   [Fact]
+  public void A_code_excerpt_names_the_file_it_comes_from()
+  {
+    Assert.Equal(
+      "<figure class=\"excerpt\"><figcaption><code>Domains/Applications/Domain/ApplicationLink.cs</code></figcaption>"
+        + "<pre><code class=\"language-csharp\">public void Revoke();</code></pre></figure>",
+      MarkdownRenderer.ToHtml("```csharp Domains/Applications/Domain/ApplicationLink.cs\npublic void Revoke();\n```"));
+  }
+
+  [Fact]
+  public void A_source_that_is_no_plain_path_is_ignored()
+  {
+    Assert.Equal(
+      "<pre><code class=\"language-csharp\">x</code></pre>",
+      MarkdownRenderer.ToHtml("```csharp <script>alert(1)</script>\nx\n```"));
+  }
+
+  [Fact]
   public void Inline_emphasis_strong_and_code_are_rendered()
   {
     Assert.Equal(

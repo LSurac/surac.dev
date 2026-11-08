@@ -71,9 +71,15 @@ public static partial class MarkdownRenderer
       : ReadParagraph(lines, ref index);
   }
 
+  /// <summary>
+  /// A fenced block. The info string carries an optional language and an optional source path
+  /// ("csharp Domains/X/Y.cs"); with a path the block becomes a code excerpt captioned with it.
+  /// </summary>
   private static string ReadCodeBlock(string[] lines, ref int index)
   {
-    var language = LanguagePattern().Match(lines[index].Trim()[Fence.Length..].Trim()).Value;
+    var info = InfoPattern().Match(lines[index].Trim()[Fence.Length..].Trim());
+    var language = info.Groups["language"].Value;
+    var source = info.Groups["source"].Value;
     index++;
     var code = new List<string>();
     while (index < lines.Length && !lines[index].TrimStart().StartsWith(Fence, StringComparison.Ordinal))
@@ -84,7 +90,10 @@ public static partial class MarkdownRenderer
 
     index++; // the closing fence, or past the end when it is missing
     var attribute = language.Length > 0 ? $" class=\"language-{Escape(language)}\"" : string.Empty;
-    return $"<pre><code{attribute}>{Escape(string.Join('\n', code))}</code></pre>";
+    var block = $"<pre><code{attribute}>{Escape(string.Join('\n', code))}</code></pre>";
+    return source.Length == 0
+      ? block
+      : $"<figure class=\"excerpt\"><figcaption><code>{Escape(source)}</code></figcaption>{block}</figure>";
   }
 
   private static string ReadList(string[] lines, ref int index, bool ordered)
@@ -193,8 +202,8 @@ public static partial class MarkdownRenderer
   [GeneratedRegex(@"^\s*(?:[-*]|(?<number>\d+)[.)])\s+(?<text>.*)$")]
   private static partial Regex ListItemPattern();
 
-  [GeneratedRegex(@"^[A-Za-z0-9+#-]{1,20}")]
-  private static partial Regex LanguagePattern();
+  [GeneratedRegex(@"^(?<language>[A-Za-z0-9+#-]{1,20})?(?:\s+(?<source>[A-Za-z0-9_./-]{1,200})\s*$)?")]
+  private static partial Regex InfoPattern();
 
   [GeneratedRegex(@"^document:(?<id>\d{1,18})$")]
   private static partial Regex DocumentSourcePattern();
