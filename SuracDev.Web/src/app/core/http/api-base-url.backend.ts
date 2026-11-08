@@ -1,7 +1,9 @@
 import { FetchBackend, HttpBackend, HttpEvent, HttpRequest } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, REQUEST } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api-base-url.token';
+
+const FORWARDED_FOR = 'X-Forwarded-For';
 
 /**
  * Server-only HTTP backend that sends every `/api/...` request to the API container. Angular's
@@ -14,16 +16,24 @@ import { API_BASE_URL } from './api-base-url.token';
  * blob bodies with `new Uint8Array(body)`, which yields nothing for a Blob, so the browser would
  * hydrate with empty responses. The cache restores the bytes as a Blob in the browser, and the
  * server's FileReader shim reads the ArrayBuffer (docs/gotchas.md).
+ *
+ * API requests carry the page request's X-Forwarded-For on, as nginx built it. Without it the API
+ * would see every server-rendered request as coming from the web container, and the per-client
+ * rate limit on application links would throttle all visitors together.
  */
 @Injectable()
 export class ApiBaseUrlBackend implements HttpBackend {
   private readonly fetchBackend = inject(FetchBackend);
   private readonly apiBaseUrl = inject(API_BASE_URL);
+  private readonly forwardedFor = inject(REQUEST, { optional: true })?.headers.get(FORWARDED_FOR) ?? null;
 
   handle(request: HttpRequest<unknown>): Observable<HttpEvent<unknown>> {
     const url = toApiUrl(request.url, this.apiBaseUrl);
     const responseType = request.responseType === 'blob' ? 'arraybuffer' : request.responseType;
-    return this.fetchBackend.handle(request.clone({ url, responseType }));
+    const isApiRequest = url !== request.url;
+    const setHeaders: Record<string, string> =
+      isApiRequest && this.forwardedFor ? { [FORWARDED_FOR]: this.forwardedFor } : {};
+    return this.fetchBackend.handle(request.clone({ url, responseType, setHeaders }));
   }
 }
 
