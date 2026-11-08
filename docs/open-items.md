@@ -14,24 +14,22 @@ the admin:
       written in the first person as problem, solution, implementation.
 - [ ] Würth IT station: 1Plus and the sales backend services are the main work, the other bullets
       are side projects from the work notes; location is empty. Confirm or trim.
-- [ ] Orga-Soft station follows the apprenticeship reference (09/2021, not 06/2021 as in the CV).
-- [ ] Fact bar: "8 own applications in production" and "1,0 vocational school" are derived, check
-      both.
-- [ ] Privacy page: name hosting provider and location (placeholder in the text).
+- [ ] Fact bar: "8 own applications in production" counts SK Sulzfeld, Kassensturz, Pi Dev Center,
+      Cycle Tracker, Trading Lab, Music Sorter, the homelab launcher and surac.dev itself. Confirm
+      the count or name fewer. The vocational school cell now shows the certificate's average 1,3
+      "with award" (it said 1,0; only the subject grades are all "sehr gut").
 - [ ] Abitur entry: the CV has only the year; start date is a placeholder (07/2016).
 - [ ] LinkedIn URL, availability line (both empty).
-- [ ] Applications: Würth IT is set to "Angebot"; the other eleven from the cover letters stay
-      "Versendet" and appear in the Monday reminder until their status is set.
 - [ ] Orga-Soft: only the apprenticeship reference exists (Paperless has no separate reference
       letter for 06–10/2024). Request one if wanted; AERA's final reference is uploaded.
 - [ ] "Über mich": a chess photo is missing (Immich had only screenshots of games).
-- [ ] Create one application link per profile and open it, including a document download.
 - [ ] Admin password additionally in Vaultwarden? (today only in Credential Manager
       `Claude:SuracDevAdmin`).
 
 ## Manual steps (maintainer)
 
 - [ ] VPS provider: sign the data processing agreement; wait for the order to appear in the panel.
+      The privacy page already names dogado GmbH, Dortmund, and states that the agreement exists.
 - [ ] Cloudflare: add the zone `surac.dev` (free plan), switch the nameservers at the registrar,
       keep records "DNS only"; a zone-scoped API token for the maintainer's DNS tooling.
 - [ ] Cloudflare Email Routing: `leonard@surac.dev` → private mailbox. The site already shows this
