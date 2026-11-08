@@ -139,6 +139,40 @@ describe('app-home-page', () => {
     ).toEqual(['01 Profil', '02 Werdegang', '03 Projekte', '04 Kenntnisse', '05 Arbeitsweise', '06 Kontakt']);
   });
 
+  it('follows the section order, greeting and downloads of an application link', async () => {
+    await render(HomePage, {
+      providers: providers().providers,
+      inputs: {
+        audience: {
+          sections: ['Hero', 'Facts', 'Projects', 'WorkingMode', 'Skills', 'Career', 'Intro', 'Contact'],
+          greeting: 'Für das Team Backend',
+          cvHref: '/api/links/abc/cv.pdf?locale=de',
+          documents: [{ label: 'Anschreiben', href: '/api/links/abc/documents/3?locale=de' }],
+        },
+      },
+    });
+    await screen.findByRole('heading', { level: 1 });
+
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent?.trim()),
+    ).toEqual(['01 Projekte', '02 Arbeitsweise', '03 Kenntnisse', '04 Werdegang', '05 Profil', '06 Kontakt']);
+    expect(screen.getByText('Für das Team Backend')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Lebenslauf (PDF)' })).toHaveAttribute(
+      'href',
+      '/api/links/abc/cv.pdf?locale=de',
+    );
+    expect(
+      within(screen.getByRole('list', { name: 'Unterlagen' })).getByRole('link', { name: 'Anschreiben' }),
+    ).toHaveAttribute('href', '/api/links/abc/documents/3?locale=de');
+  });
+
+  it('shows no greeting and no document list on the open site', async () => {
+    await render(HomePage, { providers: providers().providers });
+    await screen.findByRole('heading', { level: 1 });
+
+    expect(screen.queryByRole('list', { name: 'Unterlagen' })).not.toBeInTheDocument();
+  });
+
   it('fills career, projects, skills and contact from the API', async () => {
     await render(HomePage, { providers: providers().providers });
     await screen.findByRole('heading', { level: 1 });

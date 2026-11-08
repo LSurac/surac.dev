@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   LegalPageKey,
+  PublicApplicationLink,
+  PublicApplicationLinksClient,
   PublicCareerClient,
   PublicCaseStudy,
   PublicEducation,
@@ -34,6 +36,7 @@ export class PublicContent {
   private readonly projects = inject(PublicProjectsClient);
   private readonly skills = inject(PublicSkillsClient);
   private readonly legal = inject(PublicLegalClient);
+  private readonly links = inject(PublicApplicationLinksClient);
 
   profile(locale: Locale): Observable<PublicProfile> {
     return this.profiles.get(locale);
@@ -61,5 +64,10 @@ export class PublicContent {
 
   legalPage(key: LegalPageKey, locale: Locale): Observable<PublicLegalPage> {
     return this.legal.get(key, locale);
+  }
+
+  /** Opens an application link; the API records the opening and answers 404 for inactive links. */
+  applicationLink(token: string, locale: Locale): Observable<PublicApplicationLink> {
+    return this.links.get(token, locale);
   }
 }

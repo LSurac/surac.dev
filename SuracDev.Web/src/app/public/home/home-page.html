@@ -1,3 +1,7 @@
+@if (greeting(); as text) {
+  <p class="meta home__greeting">{{ text }}</p>
+}
+
 @if (hero(); as person) {
   <ui-hero
     [name]="person.name"
@@ -14,93 +18,95 @@
   <ui-fact-bar [facts]="facts()" />
 }
 
-@if (intro(); as text) {
-  <section class="section">
-    <ui-section-heading
-      [number]="numbers()['profile']"
-      [title]="strings().sections.profile"
-      anchor="profil"
-    />
-    <div class="prose">
-      <p class="lede">{{ text }}</p>
-      @for (note of profileNotes(); track $index) {
-        <p class="meta">{{ note }}</p>
-      }
-    </div>
-  </section>
+@if (documents().length > 0) {
+  <ui-download-list [label]="strings().applicationLink.documents" [items]="documents()" />
 }
 
-@if (hasCareer()) {
-  <section class="section">
-    <ui-section-heading
-      [number]="numbers()['career']"
-      [title]="strings().sections.career"
-      anchor="werdegang"
-    />
-    <div>
-      <p class="kicker home__subheading">{{ strings().sections.experiences }}</p>
-      <ui-timeline [label]="strings().sections.experiences" [entries]="experiences()" />
-      <p class="kicker home__subheading">{{ strings().sections.education }}</p>
-      <ui-timeline [label]="strings().sections.education" [entries]="education()" />
-    </div>
-  </section>
-}
-
-@if (projects().length > 0) {
-  <section class="section">
-    <ui-section-heading
-      [number]="numbers()['projects']"
-      [title]="strings().sections.projects"
-      anchor="projekte"
-    />
-    <div class="home__projects">
-      @for (project of projects(); track project.id) {
-        <ui-project-card
-          [title]="project.title"
-          [teaser]="project.teaser"
-          [status]="project.status"
-          [period]="project.period"
-          [stackTags]="project.stackTags"
-          [caseStudyPath]="project.caseStudyPath"
-          [caseStudyLabel]="strings().projects.caseStudy"
-          [links]="project.links"
-        />
-      }
-    </div>
-  </section>
-}
-
-@if (skillGroups().length > 0) {
-  <section class="section">
-    <ui-section-heading
-      [number]="numbers()['skills']"
-      [title]="strings().sections.skills"
-      anchor="kenntnisse"
-    />
-    <ui-skill-columns [groups]="skillGroups()" [sinceLabel]="strings().skills.since" />
-  </section>
-}
-
-<section class="section">
-  <ui-section-heading
-    [number]="numbers()['workingMode']"
-    [title]="strings().sections.workingMode"
-    anchor="arbeitsweise"
-  />
-  <div class="prose">
-    @for (paragraph of strings().workingMode.paragraphs; track $index) {
-      <p>{{ paragraph }}</p>
+@for (section of bodySections(); track section) {
+  @switch (section) {
+    @case ('Intro') {
+      <section class="section">
+        <ui-section-heading [number]="numbers()['Intro']" [title]="strings().sections.profile" anchor="profil" />
+        <div class="prose">
+          <p class="lede">{{ intro() }}</p>
+          @for (note of profileNotes(); track $index) {
+            <p class="meta">{{ note }}</p>
+          }
+        </div>
+      </section>
     }
-    <p>
-      <a [href]="repositoryUrl" rel="noopener">{{ strings().workingMode.repository }}</a>
-    </p>
-  </div>
-</section>
+    @case ('Career') {
+      <section class="section">
+        <ui-section-heading
+          [number]="numbers()['Career']"
+          [title]="strings().sections.career"
+          anchor="werdegang"
+        />
+        <div>
+          <p class="kicker home__subheading">{{ strings().sections.experiences }}</p>
+          <ui-timeline [label]="strings().sections.experiences" [entries]="experiences()" />
+          <p class="kicker home__subheading">{{ strings().sections.education }}</p>
+          <ui-timeline [label]="strings().sections.education" [entries]="education()" />
+        </div>
+      </section>
+    }
+    @case ('Projects') {
+      <section class="section">
+        <ui-section-heading
+          [number]="numbers()['Projects']"
+          [title]="strings().sections.projects"
+          anchor="projekte"
+        />
+        <div class="home__projects">
+          @for (project of projects(); track project.id) {
+            <ui-project-card
+              [title]="project.title"
+              [teaser]="project.teaser"
+              [status]="project.status"
+              [period]="project.period"
+              [stackTags]="project.stackTags"
+              [caseStudyPath]="project.caseStudyPath"
+              [caseStudyLabel]="strings().projects.caseStudy"
+              [links]="project.links"
+            />
+          }
+        </div>
+      </section>
+    }
+    @case ('Skills') {
+      <section class="section">
+        <ui-section-heading
+          [number]="numbers()['Skills']"
+          [title]="strings().sections.skills"
+          anchor="kenntnisse"
+        />
+        <ui-skill-columns [groups]="skillGroups()" [sinceLabel]="strings().skills.since" />
+      </section>
+    }
+    @case ('WorkingMode') {
+      <section class="section">
+        <ui-section-heading
+          [number]="numbers()['WorkingMode']"
+          [title]="strings().sections.workingMode"
+          anchor="arbeitsweise"
+        />
+        <div class="prose">
+          @for (paragraph of strings().workingMode.paragraphs; track $index) {
+            <p>{{ paragraph }}</p>
+          }
+          <p>
+            <a [href]="repositoryUrl" rel="noopener">{{ strings().workingMode.repository }}</a>
+          </p>
+        </div>
+      </section>
+    }
+  }
+}
 
 @if (hero(); as person) {
   <section class="section">
     <ui-section-heading
-      [number]="numbers()['contact']"
+      [number]="numbers()['Contact']"
       [title]="strings().sections.contact"
       anchor="kontakt"
     />

@@ -1,0 +1,10 @@
+<div class="downloads">
+  <p class="kicker downloads__label" aria-hidden="true">{{ label() }}</p>
+  <ul class="downloads__list" [attr.aria-label]="label()">
+    @for (item of items(); track item.href) {
+      <li>
+        <a [href]="item.href" download>{{ item.label }}</a>
+      </li>
+    }
+  </ul>
+</div>

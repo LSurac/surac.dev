@@ -5,6 +5,7 @@ import {
   PublicExperience,
   PublicProfile,
   PublicProjectCard,
+  SiteSection,
 } from '../../api/generated/public.client';
 import { formatPeriod } from '../../core/format/period';
 import { UiStrings, uiStrings } from '../../core/i18n/ui-strings';
@@ -15,6 +16,7 @@ import { Fact } from '../../ui/fact-bar/fact';
 import { UiFactBar } from '../../ui/fact-bar/fact-bar';
 import { HeroDownload, HeroLink, UiHero } from '../../ui/hero/hero';
 import { ProjectCardLink, UiProjectCard } from '../../ui/project-card/project-card';
+import { DownloadItem, UiDownloadList } from '../../ui/download-list/download-list';
 import { UiSectionHeading } from '../../ui/section-heading/section-heading';
 import { SkillColumn, UiSkillColumns } from '../../ui/skill-columns/skill-columns';
 import { TimelineEntry, UiTimeline } from '../../ui/timeline/timeline';
@@ -22,6 +24,36 @@ import { valueOf } from '../content/load-state';
 import { documentUrl, PublicContent } from '../content/public-content';
 
 const DESCRIPTION_LENGTH = 160;
+
+/**
+ * The section order of the open site, mirrored from `SectionOrder` in the API
+ * (Shared/Application/Audience). Every profile opens with hero and fact bar and closes with
+ * contact; only the sections in between move.
+ */
+export const PUBLIC_SECTIONS: readonly SiteSection[] = [
+  'Hero',
+  'Facts',
+  'Intro',
+  'Career',
+  'Projects',
+  'Skills',
+  'WorkingMode',
+  'Contact',
+];
+
+/** The sections between the fact bar and the contact section, the ones a profile reorders. */
+const BODY_SECTIONS: readonly SiteSection[] = ['Intro', 'Career', 'Projects', 'Skills', 'WorkingMode'];
+
+/**
+ * What an application link changes on the start page (docs/decisions.md, "One site, three
+ * audience profiles"): the section order, a greeting and the downloads. Never the content.
+ */
+export interface LinkAudience {
+  readonly sections: readonly SiteSection[];
+  readonly greeting: string | null;
+  readonly cvHref: string;
+  readonly documents: readonly DownloadItem[];
+}
 
 /** A featured project prepared for its card. */
 interface ProjectCardView {
@@ -36,13 +68,14 @@ interface ProjectCardView {
 }
 
 /**
- * The start page in the public section order (Shared/Application/Audience in the API): hero, fact
- * bar, profile, career, featured projects, skills, working mode, contact. HR-first: name, role,
- * location and contact are above the fold (docs/decisions.md).
+ * The start page: hero, fact bar, then profile, career, featured projects, skills and working mode
+ * in the order of the audience, then contact. HR-first: name, role, location and contact are above
+ * the fold (docs/decisions.md). Without an audience it is the open site in the public order; an
+ * application link passes its own order, greeting and downloads.
  */
 @Component({
   selector: 'app-home-page',
-  imports: [UiFactBar, UiHero, UiProjectCard, UiSectionHeading, UiSkillColumns, UiTimeline],
+  imports: [UiDownloadList, UiFactBar, UiHero, UiProjectCard, UiSectionHeading, UiSkillColumns, UiTimeline],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +86,8 @@ export class HomePage {
 
   /** Bound from the route data by withComponentInputBinding. */
   readonly locale = input<Locale>('de');
+  /** Set by the application-link page; null on the open site. */
+  readonly audience = input<LinkAudience | null>(null);
 
   protected readonly strings = computed(() => uiStrings(this.locale()));
   protected readonly repositoryUrl = SOURCE_REPOSITORY_URL;
@@ -80,12 +115,14 @@ export class HomePage {
 
   protected readonly profile = computed(() => valueOf(this.profileResource));
   protected readonly profileLinks = computed(() => toProfileLinks(this.profile()));
-  /** The public CV in the page language; the server names the file (Lebenslauf_… / CV_…). */
+  /** The CV in the page language, the link's own when there is one; the server names the file. */
   protected readonly cvDownload = computed<HeroDownload>(() => ({
     label: this.strings().hero.cv,
-    href: `/api/public/cv.pdf?locale=${this.locale()}`,
+    href: this.audience()?.cvHref ?? `/api/public/cv.pdf?locale=${this.locale()}`,
     fileName: '',
   }));
+  protected readonly greeting = computed(() => this.audience()?.greeting ?? null);
+  protected readonly documents = computed(() => this.audience()?.documents ?? []);
   protected readonly hero = computed(() => {
     const profile = this.profile();
     if (!profile) {
@@ -132,11 +169,16 @@ export class HomePage {
   );
   protected readonly hasCareer = computed(() => this.experiences().length + this.education().length > 0);
 
+  /** The reorderable sections with content, in the audience's order. */
+  protected readonly bodySections = computed(() =>
+    (this.audience()?.sections ?? PUBLIC_SECTIONS).filter(
+      (section) => BODY_SECTIONS.includes(section) && this.isShown(section),
+    ),
+  );
+
   /** Numbers follow the sections actually shown, so a hidden section leaves no gap. */
   protected readonly numbers = computed(() => {
-    const shown = ['profile', 'career', 'projects', 'skills', 'workingMode', 'contact'].filter((key) =>
-      this.isShown(key),
-    );
+    const shown: SiteSection[] = [...this.bodySections(), 'Contact'];
     return Object.fromEntries(shown.map((key, index) => [key, String(index + 1).padStart(2, '0')]));
   });
 
@@ -155,15 +197,15 @@ export class HomePage {
     });
   }
 
-  private isShown(key: string): boolean {
-    switch (key) {
-      case 'profile':
-        return !!this.profile()?.intro;
-      case 'career':
+  private isShown(section: SiteSection): boolean {
+    switch (section) {
+      case 'Intro':
+        return !!this.intro();
+      case 'Career':
         return this.hasCareer();
-      case 'projects':
+      case 'Projects':
         return this.projects().length > 0;
-      case 'skills':
+      case 'Skills':
         return this.skillGroups().length > 0;
       default:
         return true;

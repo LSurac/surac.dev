@@ -23,6 +23,11 @@ describe('locale', () => {
     expect(switchLocaleUrl('/en', 'en')).toBe('/en');
   });
 
+  it('keeps an application link and its token when switching', () => {
+    expect(switchLocaleUrl('/b/abc_DEF-123', 'en')).toBe('/en/b/abc_DEF-123');
+    expect(switchLocaleUrl('/en/b/abc_DEF-123', 'de')).toBe('/b/abc_DEF-123');
+  });
+
   it('translates the section segments that differ between the locales', () => {
     expect(switchLocaleUrl('/projekte/x?view=1#top', 'en')).toBe('/en/projects/x?view=1#top');
     expect(switchLocaleUrl('/en/projects/x', 'de')).toBe('/projekte/x');

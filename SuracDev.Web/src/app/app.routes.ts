@@ -8,6 +8,8 @@ import { HomePage } from './public/home/home-page';
  */
 const caseStudy = () => import('./public/case-study/case-study-page').then((m) => m.CaseStudyPage);
 const legal = () => import('./public/legal/legal-page').then((m) => m.LegalPage);
+const applicationLink = () =>
+  import('./public/application-link/application-link-page').then((m) => m.ApplicationLinkPage);
 
 export const routes: Routes = [
   { path: '', component: HomePage, data: { locale: 'de' } },
@@ -18,6 +20,8 @@ export const routes: Routes = [
   { path: 'datenschutz', loadComponent: legal, data: { locale: 'de', pageKey: 'Privacy' } },
   { path: 'en/impressum', loadComponent: legal, data: { locale: 'en', pageKey: 'Imprint' } },
   { path: 'en/datenschutz', loadComponent: legal, data: { locale: 'en', pageKey: 'Privacy' } },
+  { path: 'b/:token', loadComponent: applicationLink, data: { locale: 'de' } },
+  { path: 'en/b/:token', loadComponent: applicationLink, data: { locale: 'en' } },
   { path: 'admin', loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes) },
   ...(isDevMode()
     ? [

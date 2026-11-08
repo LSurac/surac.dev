@@ -59,6 +59,7 @@ export interface UiStrings {
     readonly caseStudy: string;
   };
   readonly legal: { readonly updated: string; readonly provider: string };
+  readonly applicationLink: { readonly documents: string };
   readonly notFound: { readonly title: string; readonly text: string; readonly home: string };
   readonly unavailable: { readonly title: string; readonly text: string };
 }
@@ -115,6 +116,7 @@ const de: UiStrings = {
     caseStudy: 'Fallstudie',
   },
   legal: { updated: 'Stand', provider: 'Anbieter' },
+  applicationLink: { documents: 'Unterlagen' },
   notFound: {
     title: 'Seite nicht gefunden',
     text: 'Diese Seite gibt es nicht oder nicht mehr.',
@@ -178,6 +180,7 @@ const en: UiStrings = {
     caseStudy: 'Case study',
   },
   legal: { updated: 'Updated', provider: 'Provider' },
+  applicationLink: { documents: 'Documents' },
   notFound: {
     title: 'Page not found',
     text: 'This page does not exist or no longer exists.',

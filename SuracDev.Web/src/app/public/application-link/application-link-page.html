@@ -1,0 +1,7 @@
+@if (failure() === 'not-found') {
+  <app-not-found-page />
+} @else if (failure() === 'unavailable') {
+  <app-unavailable-notice />
+} @else if (audience(); as audience) {
+  <app-home-page [locale]="locale()" [audience]="audience" />
+}
