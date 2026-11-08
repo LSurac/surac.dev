@@ -31,6 +31,9 @@ public static class TelemetryExtensions
         {
           // Health probes and static noise never become spans.
           options.Filter = httpContext => !httpContext.Request.Path.StartsWithSegments("/api/health");
+          // Application-link tokens are capabilities and never reach the telemetry store.
+          options.EnrichWithHttpRequest = (activity, request) =>
+            activity.SetTag("url.path", TelemetryRedaction.Path(request.Path.Value ?? string.Empty));
         })
         .AddHttpClientInstrumentation()
         .AddOtlpExporter());
