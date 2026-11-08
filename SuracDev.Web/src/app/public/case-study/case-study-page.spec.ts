@@ -59,6 +59,25 @@ describe('case study page', () => {
     expect(screen.getByRole('link', { name: 'Zur Startseite' })).toHaveAttribute('href', '/');
   });
 
+  it('tells the story in order: problem, role, solution, decisions, outcome', async () => {
+    await renderPage(() => of(study));
+
+    await screen.findByRole('heading', { level: 1 });
+
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent?.trim()),
+    ).toEqual(['Problem', 'Meine Rolle', 'Fallstudie', 'Abschnitt', 'Entscheidungen', 'Ergebnis']);
+  });
+
+  it('opens the live product in a new tab', async () => {
+    await renderPage(() => of(study));
+
+    const live = await screen.findByRole('link', { name: 'Live ansehen' });
+
+    expect(live).toHaveAttribute('target', '_blank');
+    expect(live).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('loads the English version and links back to the English start page', async () => {
     const { projects } = await renderPage(() => of(study), 'en');
 

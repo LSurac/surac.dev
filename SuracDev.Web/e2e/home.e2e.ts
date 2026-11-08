@@ -143,6 +143,27 @@ test.describe('start page', () => {
     expect(xml).toContain('hreflang="en" href="https://surac.dev/en/projects/beispielprojekt"');
   });
 
+  test('opens every link to another site in a new tab', async ({ page }) => {
+    for (const path of ['/', '/en', '/ueber-mich', '/projekte/beispielprojekt', '/impressum']) {
+      await page.goto(path);
+      await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+      const external = await page.locator('a[href^="http"]').evaluateAll((links) =>
+        links
+          .filter((link) => new URL((link as HTMLAnchorElement).href).origin !== location.origin)
+          .map((link) => ({
+            href: (link as HTMLAnchorElement).href,
+            target: link.getAttribute('target'),
+            rel: link.getAttribute('rel') ?? '',
+          })),
+      );
+      expect(external.length, path).toBeGreaterThan(0);
+      for (const link of external) {
+        expect(link.target, `${path} ${link.href}`).toBe('_blank');
+        expect(link.rel, `${path} ${link.href}`).toContain('noopener');
+      }
+    }
+  });
+
   test('allows every inline script of the server render in the CSP', async ({ request }) => {
     const allowed = cspScriptSources();
 

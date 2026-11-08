@@ -14,7 +14,7 @@
       <p class="meta">{{ stackLine() }}</p>
       <p class="meta study__links">
         @for (link of links(); track link.href) {
-          <a [href]="link.href" rel="noopener">{{ link.label }}</a>
+          <a [href]="link.href" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
         }
       </p>
     </header>
@@ -33,18 +33,6 @@
       </section>
     }
 
-    @if (decisions().length > 0) {
-      <section class="section">
-        <h2 class="study__label">{{ strings().caseStudy.decisions }}</h2>
-        <dl class="study__decisions">
-          @for (decision of decisions(); track $index) {
-            <dt>{{ decision.title }}</dt>
-            <dd>{{ decision.tradeOff }}</dd>
-          }
-        </dl>
-      </section>
-    }
-
     @if (study.caseStudyHtml) {
       <section class="section">
         <h2 class="study__label">{{ strings().caseStudy.caseStudy }}</h2>
@@ -57,6 +45,18 @@
             </figure>
           }
         </div>
+      </section>
+    }
+
+    @if (decisions().length > 0) {
+      <section class="section">
+        <h2 class="study__label">{{ strings().caseStudy.decisions }}</h2>
+        <dl class="study__decisions">
+          @for (decision of decisions(); track $index) {
+            <dt>{{ decision.title }}</dt>
+            <dd>{{ decision.tradeOff }}</dd>
+          }
+        </dl>
       </section>
     }
 

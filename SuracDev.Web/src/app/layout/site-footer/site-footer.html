@@ -2,7 +2,7 @@
   <nav class="footer__links" [attr.aria-label]="strings().footer.imprint">
     <a [routerLink]="prefix() + '/impressum'">{{ strings().footer.imprint }}</a>
     <a [routerLink]="prefix() + '/datenschutz'">{{ strings().footer.privacy }}</a>
-    <a [href]="sourceUrl" rel="noopener">{{ strings().footer.sourceCode }}</a>
+    <a [href]="sourceUrl" target="_blank" rel="noopener noreferrer">{{ strings().footer.sourceCode }}</a>
   </nav>
   <p class="footer__updated">{{ strings().footer.lastUpdated }}: {{ updatedOn() }}</p>
 </footer>

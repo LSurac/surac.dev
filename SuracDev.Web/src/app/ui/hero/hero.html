@@ -13,7 +13,7 @@
     @if (links().length > 0) {
       <p class="meta hero__links">
         @for (link of links(); track link.href) {
-          <a [href]="link.href" rel="me noopener">{{ link.label }}</a>
+          <a [href]="link.href" target="_blank" rel="me noopener noreferrer">{{ link.label }}</a>
         }
       </p>
     }

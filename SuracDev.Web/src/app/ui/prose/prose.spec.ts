@@ -26,6 +26,18 @@ describe('ui-prose', () => {
     expect(container.querySelector('pre code.language-csharp')).toHaveTextContent('public void Revoke();');
   });
 
+  it('keeps external links opening in a new tab', async () => {
+    await render(UiProse, {
+      inputs: {
+        html: '<p><a href="https://sk-sulzfeld.de" target="_blank" rel="noopener noreferrer">Verein</a></p>',
+      },
+    });
+
+    const link = screen.getByRole('link', { name: 'Verein' });
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('still strips anything a sanitizer would remove', async () => {
     const { container } = await render(UiProse, {
       inputs: { html: '<p onclick="alert(1)">Text</p><script>alert(2)</script>' },

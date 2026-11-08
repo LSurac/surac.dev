@@ -107,7 +107,9 @@
             <p>{{ paragraph }}</p>
           }
           <p>
-            <a [href]="repositoryUrl" rel="noopener">{{ strings().workingMode.repository }}</a>
+            <a [href]="repositoryUrl" target="_blank" rel="noopener noreferrer">{{
+              strings().workingMode.repository
+            }}</a>
           </p>
         </div>
       </section>
@@ -127,7 +129,7 @@
       <p class="home__contact">
         <a [href]="'mailto:' + person.email">{{ person.email }}</a>
         @for (link of profileLinks(); track link.href) {
-          <a [href]="link.href" rel="me noopener">{{ link.label }}</a>
+          <a [href]="link.href" target="_blank" rel="me noopener noreferrer">{{ link.label }}</a>
         }
       </p>
       <p class="meta">{{ person.location }}</p>
