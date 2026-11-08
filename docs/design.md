@@ -85,6 +85,18 @@ a font file means a new version suffix.
   hero.
 - Timeline: date column (grotesk 14px muted) + entry; dotted rules between entries.
 - Skills: three columns, lists with hairline rows, "since year" right-aligned in muted grotesk.
+- About page: the numbered section grid of the start page; serif text beside a captioned photo in a
+  4:5 frame (the frame reserves the space, so nothing shifts while it loads). The photo's side
+  alternates from section to section; on phones it sits above the text. Photos show the maintainer,
+  his cats or his things, never other identifiable people.
+- Case study order follows the story: problem, own role, solution and implementation (the case
+  study text with its code excerpt), decisions with trade-offs, outcome.
+
+## Links
+
+Links to other sites open in a new tab with `rel="noopener noreferrer"`, in templates and in the
+Markdown the API renders; site paths and `mailto:` open in place. An E2E test checks every link to
+another origin on the main pages.
 
 ## Interaction and motion
 
