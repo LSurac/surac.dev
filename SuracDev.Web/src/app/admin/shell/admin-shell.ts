@@ -24,6 +24,8 @@ export class AdminShell {
     { label: adminStrings.nav.skills, path: '/admin/kenntnisse' },
     { label: adminStrings.nav.legal, path: '/admin/rechtstexte' },
     { label: adminStrings.nav.documents, path: '/admin/dokumente' },
+    { label: adminStrings.nav.applications, path: '/admin/bewerbungen' },
+    { label: adminStrings.nav.statistics, path: '/admin/statistik' },
   ];
 
   protected async logout(): Promise<void> {

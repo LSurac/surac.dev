@@ -43,6 +43,14 @@ export const adminRoutes: Routes = [
         path: 'dokumente',
         loadComponent: () => import('./documents/document-manager').then((m) => m.DocumentManager),
       },
+      {
+        path: 'bewerbungen',
+        loadComponent: () => import('./applications/application-editor').then((m) => m.ApplicationEditor),
+      },
+      {
+        path: 'statistik',
+        loadComponent: () => import('./statistics/statistics-page').then((m) => m.StatisticsPage),
+      },
     ],
   },
 ];

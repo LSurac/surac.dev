@@ -1,0 +1,69 @@
+<h1 class="editor__heading">{{ text.heading }}</h1>
+
+<ui-error-summary [title]="strings.form.loadFailed" [messages]="loadErrors()" />
+
+<ui-fact-bar [facts]="facts()" />
+
+<table class="stats">
+  <caption class="editor__section">
+    {{
+      text.pipeline
+    }}
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">{{ text.status }}</th>
+      <th scope="col" class="stats__number">{{ text.count }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (entry of pipeline(); track entry.status) {
+      <tr>
+        <th scope="row">{{ entry.status }}</th>
+        <td class="stats__number">{{ entry.count }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<div class="stats__scroll">
+  <table class="stats">
+    <caption class="editor__section">
+      {{
+        text.activity
+      }}
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">{{ text.company }}</th>
+        <th scope="col">{{ text.position }}</th>
+        <th scope="col">{{ text.status }}</th>
+        <th scope="col" class="stats__number">{{ text.links }}</th>
+        <th scope="col" class="stats__number">{{ text.opens }}</th>
+        <th scope="col" class="stats__number">{{ text.pdfDownloads }}</th>
+        <th scope="col" class="stats__number">{{ text.documentDownloads }}</th>
+        <th scope="col">{{ text.firstOpened }}</th>
+        <th scope="col">{{ text.timeToFirstOpen }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of activity(); track row.id) {
+        <tr>
+          <th scope="row">{{ row.company }}</th>
+          <td>{{ row.position }}</td>
+          <td>{{ row.status }}</td>
+          <td class="stats__number">{{ row.links }}</td>
+          <td class="stats__number">{{ row.opens }}</td>
+          <td class="stats__number">{{ row.pdfDownloads }}</td>
+          <td class="stats__number">{{ row.documentDownloads }}</td>
+          <td>{{ row.firstOpened }}</td>
+          <td>{{ row.timeToFirstOpen }}</td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="9" class="editor__meta">{{ text.empty }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

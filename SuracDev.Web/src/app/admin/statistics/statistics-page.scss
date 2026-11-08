@@ -1,0 +1,37 @@
+.stats {
+  width: 100%;
+  margin-bottom: var(--space-6);
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 14px;
+
+  caption {
+    text-align: left;
+  }
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3) var(--space-2) 0;
+    border-bottom: 1px dotted var(--color-rule);
+    text-align: left;
+    vertical-align: baseline;
+  }
+
+  thead th {
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  tbody th {
+    font-weight: 600;
+  }
+}
+
+.stats__number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats__scroll {
+  overflow-x: auto;
+}

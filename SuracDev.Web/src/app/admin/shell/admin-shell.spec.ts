@@ -30,6 +30,8 @@ describe('admin shell', () => {
       ['Kenntnisse', '/admin/kenntnisse'],
       ['Rechtstexte', '/admin/rechtstexte'],
       ['Dokumente', '/admin/dokumente'],
+      ['Bewerbungen', '/admin/bewerbungen'],
+      ['Statistik', '/admin/statistik'],
     ]) {
       expect(screen.getByRole('link', { name })).toHaveAttribute('href', href);
     }

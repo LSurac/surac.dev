@@ -1,0 +1,81 @@
+<h1 class="editor__heading">{{ text.heading }}</h1>
+
+<div class="editor__layout">
+  <ui-entity-list
+    [items]="listItems()"
+    [selectedId]="selectedId()"
+    [label]="text.list"
+    [createLabel]="text.create"
+    (selected)="select($event)"
+    (created)="startNew()"
+  />
+
+  <div>
+    <ui-error-summary [title]="strings.form.saveFailed" [messages]="problem().messages" />
+
+    @if (selection() !== null) {
+      <form class="editor" [formGroup]="form" (ngSubmit)="save()">
+        <h2 class="editor__section">{{ text.details }}</h2>
+        <div class="editor__grid">
+          <ui-field [label]="text.company" controlId="company" [errors]="errorsFor('company')">
+            <input id="company" formControlName="company" />
+          </ui-field>
+          <ui-field [label]="text.position" controlId="position" [errors]="errorsFor('position')">
+            <input id="position" formControlName="position" />
+          </ui-field>
+          <ui-field [label]="text.jobAdUrl" controlId="jobAdUrl" [errors]="errorsFor('jobAdUrl')">
+            <input id="jobAdUrl" type="url" formControlName="jobAdUrl" />
+          </ui-field>
+          <ui-field
+            [label]="text.appliedOn"
+            controlId="appliedOn"
+            [hint]="text.appliedOnHint"
+            [errors]="errorsFor('appliedOn')"
+          >
+            <input id="appliedOn" type="date" formControlName="appliedOn" />
+          </ui-field>
+          <ui-field [label]="text.status" controlId="status" [errors]="errorsFor('status')">
+            <select id="status" formControlName="status">
+              @for (status of statuses; track status) {
+                <option [value]="status">{{ text.statuses[status] }}</option>
+              }
+            </select>
+          </ui-field>
+        </div>
+        <ui-field
+          [label]="text.notes"
+          controlId="notes"
+          [hint]="text.notesHint"
+          [errors]="errorsFor('notes')"
+        >
+          <textarea id="notes" formControlName="notes" rows="6"></textarea>
+        </ui-field>
+
+        <div class="editor__actions">
+          <ui-button [label]="strings.form.save" variant="primary" type="submit" [disabled]="saving()" />
+          @if (selectedId() !== null && !confirmingDelete()) {
+            <button type="button" class="editor__delete" (click)="askToDelete()">
+              {{ strings.form.delete }}
+            </button>
+          }
+          @if (confirmingDelete()) {
+            <p class="editor__confirm">{{ strings.form.confirmDelete }}</p>
+            <button type="button" class="editor__delete" (click)="remove()">
+              {{ strings.form.deleteForGood }}
+            </button>
+            <button type="button" class="editor__add" (click)="cancelDelete()">
+              {{ strings.form.cancel }}
+            </button>
+          }
+          @if (saved()) {
+            <p class="editor__saved" role="status">{{ strings.form.saved }}</p>
+          }
+        </div>
+      </form>
+    }
+
+    @if (selectedId(); as applicationId) {
+      <app-application-links [applicationId]="applicationId" />
+    }
+  </div>
+</div>

@@ -1,0 +1,117 @@
+<section class="links">
+  <h2 class="editor__section">{{ text.heading }}</h2>
+
+  <ui-error-summary [title]="strings.form.saveFailed" [messages]="problem().messages" />
+
+  @if (created(); as addresses) {
+    <div class="links__created" role="status">
+      <p>{{ text.created }}</p>
+      <ui-field [label]="text.addressDe" controlId="created-de">
+        <input id="created-de" [value]="addresses.de" readonly />
+      </ui-field>
+      <ui-field [label]="text.addressEn" controlId="created-en">
+        <input id="created-en" [value]="addresses.en" readonly />
+      </ui-field>
+    </div>
+  }
+
+  <ul class="links__list" [attr.aria-label]="text.list">
+    @for (row of rows(); track row.id) {
+      <li class="links__item">
+        <span class="editor__meta">{{ row.summary }}</span>
+        @if (!row.isRevoked) {
+          <button type="button" class="editor__add" (click)="edit(row.id)">{{ text.edit }}</button>
+          @if (confirmingRevoke() === row.id) {
+            <p class="editor__confirm">{{ text.confirmRevoke }}</p>
+            <button type="button" class="editor__delete" (click)="revoke(row.id)">
+              {{ text.revokeForGood }}
+            </button>
+            <button type="button" class="editor__add" (click)="cancelRevoke()">
+              {{ strings.form.cancel }}
+            </button>
+          } @else {
+            <button type="button" class="editor__delete" (click)="askToRevoke(row.id)">
+              {{ text.revoke }}
+            </button>
+          }
+        }
+      </li>
+    } @empty {
+      <li class="editor__meta">{{ text.none }}</li>
+    }
+  </ul>
+
+  @if (editing() === null) {
+    <button type="button" class="editor__add" (click)="startNew()">{{ text.create }}</button>
+  } @else {
+    <form class="editor" [formGroup]="form" (ngSubmit)="save()">
+      <h3 class="editor__section">{{ editing() === 'new' ? text.formNew : text.formEdit }}</h3>
+      <div class="editor__grid">
+        <ui-field
+          [label]="text.profile"
+          controlId="link-profile"
+          [hint]="text.profileHint"
+          [errors]="errorsFor('profile')"
+        >
+          <select id="link-profile" formControlName="profile">
+            @for (profile of profiles; track profile) {
+              <option [value]="profile">{{ text.profiles[profile] }}</option>
+            }
+          </select>
+        </ui-field>
+        <ui-field
+          [label]="text.expiresAt"
+          controlId="link-expiresAt"
+          [hint]="text.expiresHint"
+          [errors]="errorsFor('expiresAt')"
+        >
+          <input id="link-expiresAt" type="date" formControlName="expiresAt" />
+        </ui-field>
+        <ui-field
+          [label]="text.greetingDe"
+          controlId="link-greetingDe"
+          [hint]="text.greetingHint"
+          [errors]="errorsFor('greetingDe')"
+        >
+          <input id="link-greetingDe" formControlName="greetingDe" />
+        </ui-field>
+        <ui-field [label]="text.greetingEn" controlId="link-greetingEn" [errors]="errorsFor('greetingEn')">
+          <input id="link-greetingEn" formControlName="greetingEn" />
+        </ui-field>
+      </div>
+      <label class="editor__check">
+        <input type="checkbox" formControlName="unlockFullPdf" />
+        {{ text.unlockFullPdf }}
+      </label>
+
+      <fieldset class="links__documents">
+        <legend class="editor__meta">{{ text.documents }} – {{ text.documentsHint }}</legend>
+        @for (document of linkOnlyDocuments(); track document.id) {
+          <label class="editor__check">
+            <input
+              type="checkbox"
+              [checked]="isAttached(document.id)"
+              (change)="toggleDocument(document.id)"
+            />
+            {{ document.label }}
+          </label>
+        } @empty {
+          <p class="editor__meta">{{ text.noDocuments }}</p>
+        }
+        @for (message of errorsFor('documentIds'); track $index) {
+          <p class="editor__confirm">{{ message }}</p>
+        }
+      </fieldset>
+
+      <div class="editor__actions">
+        <ui-button
+          [label]="editing() === 'new' ? text.submitCreate : strings.form.save"
+          variant="primary"
+          type="submit"
+          [disabled]="saving()"
+        />
+        <button type="button" class="editor__add" (click)="cancel()">{{ strings.form.cancel }}</button>
+      </div>
+    </form>
+  }
+</section>
