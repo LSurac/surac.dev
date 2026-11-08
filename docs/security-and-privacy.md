@@ -13,8 +13,7 @@ Public endpoints (`[AllowAnonymous]`, on the `public` OpenAPI document):
 
 - `GET /api/health`
 - `GET /api/public/profile`, `/experiences`, `/education`, `/projects` (`?featured=true`),
-  `/projects/{slug}`, `/skills`, `/legal/{key}` — all read-only, locale via query; `/interests`
-  follows in phase 3
+  `/projects/{slug}`, `/skills`, `/interests`, `/legal/{key}` — all read-only, locale via query
 - `GET /api/public/documents/{id}` — public documents only (profile photo, case-study images);
   link-only documents answer 404 like missing ones
 - `GET /api/public/cv.pdf` (the `Public` variant)

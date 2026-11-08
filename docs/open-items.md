@@ -45,7 +45,12 @@ What is in flight or waiting on a manual step. Close items here when done; the p
 - [x] CV `Full` variant (phone, address) for application links.
 - [x] Application links and the mini ATS: admin API and UI, `/b/<token>` view in both locales,
       link events, statistics page, E2E flows 3 and 4 (phase 2, 2026-11-08).
-- [ ] Interests page and complete English translations (phase 3).
+- [x] Interests ("Über mich") page with admin editor, both locales (phase 3, 2026-11-08).
+- [x] Code excerpts with source caption in case studies (phase 3, 2026-11-08).
+- [ ] Complete English translations of the real content and English PDF review by a native
+      speaker (maintainer, content work).
+- [ ] Performance pass (LCP, bundle, Lighthouse) and ntfy reminders: deferred, see
+      `docs/roadmap.md`.
 - [ ] CSP hash/nonce for Angular's SSR inline state; document in gotchas once solved.
 - [ ] Initial bundle is 392.7 kB against a 320 kB warning and 400 kB error budget (385 kB before
       phase 2; the lazy link page shares `HomePage` with the eager start page, which costs chunk

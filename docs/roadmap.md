@@ -32,12 +32,15 @@ this phase.
 
 ## Phase 3 — Personality and polish
 
-- Interests ("Über mich") page with images.
-- Complete English translations and English PDF review by a native speaker.
-- Curated code excerpts in case studies.
+- Interests ("Über mich") page with images. *(built 2026-11-08)*
+- Complete English translations and English PDF review by a native speaker. *(content work of the
+  maintainer; the code shows untranslated fields in the admin)*
+- Curated code excerpts in case studies. *(built 2026-11-08: fences with a source path)*
 - Performance pass: LCP under 1.5 s on a mid-range phone, initial bundle under 150 kB, Lighthouse
-  100/100/100/100 for the start page.
-- ntfy reminders for applications without a reply after 14 days (optional).
+  100/100/100/100 for the start page. *(deferred by the maintainer, 2026-11-08; the 150 kB target
+  still needs a definition: raw or transferred)*
+- ntfy reminders for applications without a reply after 14 days (optional). *(deferred until after
+  go-live: needs a secret and a route from production to the homelab ntfy)*
 
 ## Later, maybe
 

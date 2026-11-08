@@ -58,7 +58,7 @@ A project card plus its case study.
 | `LiveUrl`, `RepositoryUrl` (nullable) | |
 | `StackTags` (ordered list of strings) | Rendered as a stack line, never as bars. |
 | `SortOrder`, `IsFeatured`, `IsVisible` | Featured projects appear on the start page (max 5). |
-| Translations: `Title`, `Teaser`, `Problem`, `MyRole`, `Outcome`, `CaseStudyMarkdown` | The case study is Markdown with a restricted renderer (headings, lists, links, images from documents, fenced code). |
+| Translations: `Title`, `Teaser`, `Problem`, `MyRole`, `Outcome`, `CaseStudyMarkdown` | The case study is Markdown with a restricted renderer (headings, lists, links, images from documents, fenced code). A fence with a path after the language (```` ```csharp Domains/X/Y.cs ````) is a code excerpt captioned with the file it comes from. |
 | `Decisions` (ordered, translated): `Title`, `TradeOff` | Two or three per project. |
 | `Images` (ordered): `DocumentId`, translated `Caption` | |
 
@@ -143,5 +143,6 @@ maintained in one place.
 The seeder runs after migrations and only fills empty tables: one admin user without a password,
 one profile with neutral example content ("Max Mustermann"-style, clearly marked as example) and a
 full fact bar, one career station, one education entry, one featured example project, two skill
-groups, the two legal pages with placeholder text, all in both locales. It never contains the
+groups, one example interest for the "Über mich" page, the two legal pages with placeholder text,
+all in both locales. It never contains the
 maintainer's real data.
