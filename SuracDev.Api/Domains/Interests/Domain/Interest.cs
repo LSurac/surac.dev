@@ -24,7 +24,7 @@ public sealed record InterestTexts(string? Title, string? Body)
   public bool IsEmpty => string.IsNullOrWhiteSpace(Title) && string.IsNullOrWhiteSpace(Body);
 }
 
-/// <summary>One section of the "Über mich" page (phase 3). Never shown on the start page.</summary>
+/// <summary>One section of the "Über mich" page. Never shown on the start page.</summary>
 public sealed class Interest
 {
   private readonly List<InterestTranslation> translations = [];

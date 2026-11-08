@@ -26,7 +26,7 @@ public sealed record ApplicationDetails(
   string? Notes);
 
 /// <summary>
-/// One application to one employer: the maintainer's mini ATS (phase 2). Admin only; its links are
+/// One application to one employer: the maintainer's mini ATS. Admin only; its links are
 /// separate entities so that revoking or expiring one never touches the application.
 /// </summary>
 public sealed class Application
