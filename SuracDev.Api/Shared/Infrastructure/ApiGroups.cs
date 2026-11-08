@@ -14,4 +14,7 @@ public static class ApiGroups
 public static class RateLimitPolicies
 {
   public const string Login = "login";
+
+  /// <summary>Application-link resolution: makes guessing tokens pointless on top of the 128-bit key space.</summary>
+  public const string Link = "link";
 }

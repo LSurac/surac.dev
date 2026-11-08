@@ -64,9 +64,13 @@ public sealed class ApplicationLink
     return link;
   }
 
-  /// <summary>Changes profile, greetings, expiry and the PDF unlock; the expiry must lie in the future.</summary>
+  /// <summary>
+  /// Changes profile, greetings, expiry and the PDF unlock; the expiry must lie in the future. A
+  /// revoked link stays as it was revoked: reviving it would reopen a URL the admin closed.
+  /// </summary>
   public void Update(LinkSettings settings, DateTimeOffset now)
   {
+    EnsureNotRevoked();
     if (settings.ExpiresAt <= now)
     {
       throw new DomainValidationException("expiresAt", "Must lie in the future.");
@@ -89,16 +93,30 @@ public sealed class ApplicationLink
   public string? GreetingFor(Locale locale)
     => locale == Locale.English && !string.IsNullOrWhiteSpace(GreetingEn) ? GreetingEn : GreetingDe;
 
-  /// <summary>Replaces the unlocked documents; only link-only documents can be attached.</summary>
+  /// <summary>
+  /// Replaces the unlocked documents; only link-only documents can be attached. Documents that stay
+  /// attached keep their join row, so a save does not delete and re-add the same key.
+  /// </summary>
   public void AttachDocuments(IReadOnlyList<Document> attached)
   {
+    EnsureNotRevoked();
     if (attached.Any(document => document.Visibility != DocumentVisibility.LinkOnly))
     {
-      throw new DomainValidationException("documents", "Only link-only documents can be attached to a link.");
+      throw new DomainValidationException("documentIds", "Only link-only documents can be attached to a link.");
     }
 
-    documents.Clear();
-    documents.AddRange(attached.Select(document => new ApplicationLinkDocument(Id, document.Id)));
+    var wanted = attached.Select(document => document.Id).ToHashSet();
+    documents.RemoveAll(joined => !wanted.Contains(joined.DocumentId));
+    var kept = documents.Select(joined => joined.DocumentId).ToHashSet();
+    documents.AddRange(wanted.Where(id => !kept.Contains(id)).Select(id => new ApplicationLinkDocument(Id, id)));
+  }
+
+  private void EnsureNotRevoked()
+  {
+    if (IsRevoked)
+    {
+      throw new DomainConflictException("The link is revoked and can no longer be changed.");
+    }
   }
 }
 

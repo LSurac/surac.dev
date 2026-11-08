@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using SuracDev.Api.Data;
+using SuracDev.Api.Domains.Applications.Application;
 using SuracDev.Api.Domains.Career.Application;
 using SuracDev.Api.Domains.Documents.Application;
 using SuracDev.Api.Domains.Identity.Application;
@@ -49,6 +50,9 @@ builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<SkillService>();
 builder.Services.AddScoped<LegalPageService>();
 builder.Services.AddScoped<CvService>();
+builder.Services.AddScoped<ApplicationService>();
+builder.Services.AddScoped<ApplicationLinkService>();
+builder.Services.AddScoped<LinkAccessService>();
 builder.Services.AddSingleton(TimeProvider.System);
 
 // Behind the web container's nginx (staging) or Caddy → nginx (production) the client address only
@@ -107,6 +111,14 @@ builder.Services.AddRateLimiter(options =>
     {
       PermitLimit = 10,
       Window = TimeSpan.FromMinutes(15),
+      QueueLimit = 0,
+    }));
+  options.AddPolicy(RateLimitPolicies.Link, httpContext => RateLimitPartition.GetFixedWindowLimiter(
+    httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+    _ => new FixedWindowRateLimiterOptions
+    {
+      PermitLimit = 30,
+      Window = TimeSpan.FromMinutes(1),
       QueueLimit = 0,
     }));
 });

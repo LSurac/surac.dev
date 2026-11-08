@@ -46,6 +46,17 @@ public sealed class ApplicationLinkTests
   }
 
   [Fact]
+  public void A_revoked_link_cannot_be_changed_or_given_documents()
+  {
+    var link = NewLink();
+
+    link.Revoke();
+
+    Assert.Throws<DomainConflictException>(() => link.Update(Settings, Now));
+    Assert.Throws<DomainConflictException>(() => link.AttachDocuments([]));
+  }
+
+  [Fact]
   public void The_expiry_must_lie_in_the_future()
   {
     var exception = Assert.Throws<DomainValidationException>(() => NewLink(Settings with { ExpiresAt = Now }));

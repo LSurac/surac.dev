@@ -119,6 +119,20 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
     return Open(document);
   }
 
+  /// <summary>Opens a document for an application link, but only one the link has attached.</summary>
+  /// <exception cref="DomainNotFoundException">The link has no such document; others are indistinguishable from missing ones.</exception>
+  public async Task<DocumentContent> OpenAttachedAsync(long linkId, long id, CancellationToken cancellationToken)
+  {
+    var attached = await dbContext.ApplicationLinks
+      .Where(link => link.Id == linkId)
+      .SelectMany(link => link.Documents)
+      .AnyAsync(document => document.DocumentId == id, cancellationToken);
+    var document = attached
+      ? await dbContext.Documents.AsNoTracking().SingleOrDefaultAsync(d => d.Id == id, cancellationToken)
+      : null;
+    return document is null ? throw new DomainNotFoundException($"Document {id} does not exist.") : Open(document);
+  }
+
   /// <summary>Opens any document for the admin.</summary>
   /// <exception cref="DomainNotFoundException">No document has this id.</exception>
   public async Task<DocumentContent> OpenAdminAsync(long id, CancellationToken cancellationToken)
