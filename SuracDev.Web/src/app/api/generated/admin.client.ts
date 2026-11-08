@@ -1563,6 +1563,504 @@ export class AdminLegalPagesClient {
 @Injectable({
   providedIn: 'root',
 })
+export class AdminInterestsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists every interest, including hidden ones, in page order.
+   * @return All interests with both locales.
+   */
+  list(): Observable<AdminInterest[]> {
+    let url_ = this.baseUrl + '/api/admin/interests';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminInterest[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminInterest[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminInterest[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminInterest[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Creates an interest.
+   * @param form The new interest.
+   * @return Created; Location points to the new interest.
+   */
+  create(form: InterestForm): Observable<AdminInterest> {
+    let url_ = this.baseUrl + '/api/admin/interests';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processCreate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processCreate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminInterest>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminInterest>;
+        }),
+      );
+  }
+
+  protected processCreate(response: HttpResponseBase): Observable<AdminInterest> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 201) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result201: any = null;
+          result201 =
+            _responseText === '' ? null : (JSON.parse(_responseText, this.jsonParseReviver) as AdminInterest);
+          return _observableOf(result201);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field (kind, imageDocumentId, de.title).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one interest for the editor.
+   * @param id The interest's identifier.
+   * @return The interest with both locales.
+   */
+  get(id: number): Observable<AdminInterest> {
+    let url_ = this.baseUrl + '/api/admin/interests/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminInterest>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminInterest>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminInterest> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === '' ? null : (JSON.parse(_responseText, this.jsonParseReviver) as AdminInterest);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No interest has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces an interest with the given fields.
+   * @param id The interest's identifier.
+   * @param form The complete interest.
+   * @return Saved.
+   */
+  update(id: number, form: InterestForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/interests/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No interest has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Deletes an interest with its translations; its image stays in the documents.
+   * @param id The interest's identifier.
+   * @return Deleted.
+   */
+  delete(id: number): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/interests/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({}),
+    };
+
+    return this.http
+      .request('delete', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processDelete(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processDelete(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processDelete(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No interest has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthClient {
   private http: HttpClient;
   private baseUrl: string;
@@ -4939,6 +5437,51 @@ export interface LegalTextsForm {
   title?: string | undefined;
   /** Required in German; restricted Markdown subset. */
   bodyMarkdown?: string | undefined;
+}
+
+/** An interest for the admin editor, both locales side by side. Read with GET, written with PUT. */
+export interface AdminInterest {
+  /** The interest's identifier. */
+  id?: number;
+  /** The topic; Unknown is rejected. */
+  kind?: InterestKind;
+  /** Position on the page, ascending. */
+  sortOrder?: number;
+  /** Whether the open site shows it. */
+  isVisible?: boolean;
+  /** A public image document, or null. */
+  imageDocumentId?: number | undefined;
+  /** The German texts; the title is required. */
+  de?: InterestTextsForm;
+  /** The English texts, or null; empty fields fall back to German. */
+  en?: InterestTextsForm | undefined;
+}
+
+/** The topic of an interest. Stored as int; Unknown is never written and values are frozen. */
+export type InterestKind = 'Unknown' | 'Music' | 'Chess' | 'Homelab' | 'Family' | 'Other';
+
+/** The texts of an interest in one locale. */
+export interface InterestTextsForm {
+  /** The heading. */
+  title?: string | undefined;
+  /** Markdown: headings, lists, links, emphasis. */
+  body?: string | undefined;
+}
+
+/** An interest as the admin saves it, for POST and PUT. */
+export interface InterestForm {
+  /** The topic; Unknown is rejected. */
+  kind?: InterestKind;
+  /** Position on the page, ascending. */
+  sortOrder?: number;
+  /** Whether the open site shows it. */
+  isVisible?: boolean;
+  /** A public image document, or null for none. */
+  imageDocumentId?: number | undefined;
+  /** The German texts; the title is required. */
+  de?: InterestTextsForm;
+  /** The English texts, or null to remove them. */
+  en?: InterestTextsForm | undefined;
 }
 
 /** Whether a password exists yet; the login screen uses it to label the first login. */

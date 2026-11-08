@@ -677,6 +677,106 @@ export class PublicLegalClient {
 @Injectable({
   providedIn: 'root',
 })
+export class PublicInterestsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists the visible interests in page order.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The visible interests; an empty list when there are none.
+   */
+  list(locale?: string | undefined): Observable<PublicInterest[]> {
+    let url_ = this.baseUrl + '/api/public/interests?';
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicInterest[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicInterest[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<PublicInterest[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicInterest[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class HealthClient {
   private http: HttpClient;
   private baseUrl: string;
@@ -1663,6 +1763,27 @@ export interface ImprintContact {
   /** The contact address. */
   email?: string;
 }
+
+/** A section of the "Über mich" page as the open site shows it, in one locale. */
+export interface PublicInterest {
+  /** The interest's identifier. */
+  id?: number;
+  /** The topic; the site may style sections by it, never hide them. */
+  kind?: InterestKind;
+  /** The heading, in the requested locale or German. */
+  title?: string;
+  /** The body rendered from the restricted Markdown, or null when there is none. */
+  bodyHtml?: string | undefined;
+  /** A public image, served by GET /api/public/documents/{id}; null when none is set. */
+  imageDocumentId?: number | undefined;
+  /** The image's alternative text: its document label, or the title when the image has no label. */
+  imageAlt?: string | undefined;
+  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  fallbackFields?: string[];
+}
+
+/** The topic of an interest. Stored as int; Unknown is never written and values are frozen. */
+export type InterestKind = 'Unknown' | 'Music' | 'Chess' | 'Homelab' | 'Family' | 'Other';
 
 export interface HealthResponse {
   status?: string;

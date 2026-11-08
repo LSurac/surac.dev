@@ -347,6 +347,53 @@
         }
       }
     },
+    "/api/public/interests": {
+      "get": {
+        "tags": [
+          "PublicInterests"
+        ],
+        "summary": "Lists the visible interests in page order.",
+        "description": "Ordered by sort order, then by creation. Hidden interests are never listed. The body is\nrendered from the restricted Markdown to HTML. Texts fall back to German field by field; each\ninterest's fallbackFields names the fields that did.",
+        "operationId": "PublicInterests_List",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The visible interests; an empty list when there are none.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicInterest"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -1266,6 +1313,73 @@
             "description": "The contact address."
           }
         }
+      },
+      "PublicInterest": {
+        "type": "object",
+        "description": "A section of the \"Über mich\" page as the open site shows it, in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The interest's identifier.",
+            "format": "int64"
+          },
+          "kind": {
+            "description": "The topic; the site may style sections by it, never hide them.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InterestKind"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "The heading, in the requested locale or German."
+          },
+          "bodyHtml": {
+            "type": "string",
+            "description": "The body rendered from the restricted Markdown, or null when there is none.",
+            "nullable": true
+          },
+          "imageDocumentId": {
+            "type": "integer",
+            "description": "A public image, served by GET /api/public/documents/{id}; null when none is set.",
+            "format": "int64",
+            "nullable": true
+          },
+          "imageAlt": {
+            "type": "string",
+            "description": "The image's alternative text: its document label, or the title when the image has no label.",
+            "nullable": true
+          },
+          "fallbackFields": {
+            "type": "array",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "InterestKind": {
+        "type": "string",
+        "description": "The topic of an interest. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Music",
+          "Chess",
+          "Homelab",
+          "Family",
+          "Other"
+        ],
+        "enum": [
+          "Unknown",
+          "Music",
+          "Chess",
+          "Homelab",
+          "Family",
+          "Other"
+        ]
       },
       "HealthResponse": {
         "type": "object",

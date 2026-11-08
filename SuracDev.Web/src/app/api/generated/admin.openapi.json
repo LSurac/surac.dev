@@ -780,6 +780,262 @@
         }
       }
     },
+    "/api/admin/interests": {
+      "get": {
+        "tags": [
+          "AdminInterests"
+        ],
+        "summary": "Lists every interest, including hidden ones, in page order.",
+        "operationId": "AdminInterests_List",
+        "responses": {
+          "200": {
+            "description": "All interests with both locales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminInterest"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminInterests"
+        ],
+        "summary": "Creates an interest.",
+        "description": "The German title and a known kind are required; en: null creates the interest without\nEnglish texts, which then fall back to German. The image must be a public image document.",
+        "operationId": "AdminInterests_Create",
+        "requestBody": {
+          "x-name": "form",
+          "description": "The new interest.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterestForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created; Location points to the new interest.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminInterest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field (kind, imageDocumentId, de.title).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/interests/{id}": {
+      "get": {
+        "tags": [
+          "AdminInterests"
+        ],
+        "summary": "Reads one interest for the editor.",
+        "operationId": "AdminInterests_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The interest's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The interest with both locales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminInterest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No interest has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminInterests"
+        ],
+        "summary": "Replaces an interest with the given fields.",
+        "description": "Full replacement: fields left out are cleared. en: null removes the English texts.",
+        "operationId": "AdminInterests_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The interest's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The complete interest.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterestForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No interest has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminInterests"
+        ],
+        "summary": "Deletes an interest with its translations; its image stays in the documents.",
+        "description": "To take an interest off the site without losing it, set isVisible to false instead.",
+        "operationId": "AdminInterests_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The interest's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No interest has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/state": {
       "get": {
         "tags": [
@@ -3051,6 +3307,142 @@
             "type": "string",
             "description": "Required in German; restricted Markdown subset.",
             "nullable": true
+          }
+        }
+      },
+      "AdminInterest": {
+        "type": "object",
+        "description": "An interest for the admin editor, both locales side by side. Read with GET, written with PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The interest's identifier.",
+            "format": "int64"
+          },
+          "kind": {
+            "description": "The topic; Unknown is rejected.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InterestKind"
+              }
+            ]
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Position on the page, ascending.",
+            "format": "int32"
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Whether the open site shows it."
+          },
+          "imageDocumentId": {
+            "type": "integer",
+            "description": "A public image document, or null.",
+            "format": "int64",
+            "nullable": true
+          },
+          "de": {
+            "description": "The German texts; the title is required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InterestTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null; empty fields fall back to German.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InterestTextsForm"
+              }
+            ]
+          }
+        }
+      },
+      "InterestKind": {
+        "type": "string",
+        "description": "The topic of an interest. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Music",
+          "Chess",
+          "Homelab",
+          "Family",
+          "Other"
+        ],
+        "enum": [
+          "Unknown",
+          "Music",
+          "Chess",
+          "Homelab",
+          "Family",
+          "Other"
+        ]
+      },
+      "InterestTextsForm": {
+        "type": "object",
+        "description": "The texts of an interest in one locale.",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The heading.",
+            "nullable": true
+          },
+          "body": {
+            "type": "string",
+            "description": "Markdown: headings, lists, links, emphasis.",
+            "nullable": true
+          }
+        }
+      },
+      "InterestForm": {
+        "type": "object",
+        "description": "An interest as the admin saves it, for POST and PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "description": "The topic; Unknown is rejected.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InterestKind"
+              }
+            ]
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "Position on the page, ascending.",
+            "format": "int32"
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Whether the open site shows it."
+          },
+          "imageDocumentId": {
+            "type": "integer",
+            "description": "A public image document, or null for none.",
+            "format": "int64",
+            "nullable": true
+          },
+          "de": {
+            "description": "The German texts; the title is required.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InterestTextsForm"
+              }
+            ]
+          },
+          "en": {
+            "description": "The English texts, or null to remove them.",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InterestTextsForm"
+              }
+            ]
           }
         }
       },
