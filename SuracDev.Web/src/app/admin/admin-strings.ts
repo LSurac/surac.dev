@@ -160,7 +160,8 @@ export const adminStrings = {
     myRole: 'Meine Rolle',
     outcome: 'Ergebnis',
     caseStudyMarkdown: 'Fallstudie (Markdown)',
-    markdownHint: 'Überschriften mit ##, Listen mit -, Code in ```, Bilder mit ![Text](document:<id>).',
+    markdownHint:
+      'Überschriften mit ##, Listen mit -, Code in ```sprache, als Ausschnitt mit Herkunft ```csharp Pfad/Datei.cs, Bilder mit ![Text](document:<id>).',
     decisionTitleDe: 'Entscheidung (Deutsch)',
     decisionTradeOffDe: 'Abwägung (Deutsch)',
     decisionTitleEn: 'Entscheidung (English)',
