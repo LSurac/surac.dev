@@ -25,12 +25,14 @@ public sealed class TelemetryRedactionTests(PostgresFixture postgres)
   [PostgresFact]
   public async Task Request_spans_never_carry_the_token_of_an_application_link()
   {
-    var stopped = new ConcurrentBag<Activity>();
+    // Collected at start: the request activity stops only after the response has reached the client,
+    // but its path is rewritten synchronously while it starts.
+    var started = new ConcurrentBag<Activity>();
     using var listener = new ActivityListener
     {
       ShouldListenTo = source => source.Name == "Microsoft.AspNetCore",
       Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-      ActivityStopped = stopped.Add,
+      ActivityStarted = started.Add,
     };
     ActivitySource.AddActivityListener(listener);
     await using var factory = new ApiFactory(
@@ -41,7 +43,7 @@ public sealed class TelemetryRedactionTests(PostgresFixture postgres)
 
     await client.GetAsync($"/api/links/{token}/cv.pdf?locale=de");
 
-    var span = Assert.Single(stopped, activity => Describe(activity).Contains("/api/links/", StringComparison.Ordinal));
+    var span = Assert.Single(started, activity => Describe(activity).Contains("/api/links/", StringComparison.Ordinal));
     Assert.Equal("/api/links/{token}/cv.pdf", span.GetTagItem("url.path"));
     Assert.DoesNotContain(token, Describe(span), StringComparison.Ordinal);
   }
