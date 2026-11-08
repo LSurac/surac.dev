@@ -15,7 +15,9 @@ trim_trailing_whitespace = false
 [*.ps1]
 end_of_line = crlf
 
+# C# allows 120: the API code never followed 110; long generic signatures and LINQ chains read worse broken earlier.
 [*.cs]
+max_line_length = 120
 csharp_style_namespace_declarations = file_scoped:warning
 csharp_prefer_braces = true:warning
 csharp_style_prefer_primary_constructors = true:suggestion
