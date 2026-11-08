@@ -105,3 +105,44 @@ public sealed record PublicApplicationLink(
 /// <param name="FileName">The file name it downloads under.</param>
 /// <param name="Kind">Certificate, cover letter or other.</param>
 public sealed record PublicLinkDocument(long Id, string Label, string FileName, DocumentKind Kind);
+
+/// <summary>
+/// The statistics page: the status pipeline, the response rate and the link activity per
+/// application. Built from link events only, so it knows nothing about visitors.
+/// </summary>
+/// <param name="SentCount">Applications in any status except <c>Draft</c>.</param>
+/// <param name="RespondedCount">Sent applications with a reply, interview, offer or rejection.</param>
+/// <param name="ResponseRate">Responded divided by sent, from 0 to 1; null when nothing was sent.</param>
+/// <param name="Pipeline">Every status in pipeline order with its count, zeros included.</param>
+/// <param name="Applications">The activity per application, newest application first.</param>
+public sealed record ApplicationStatistics(
+  int SentCount,
+  int RespondedCount,
+  double? ResponseRate,
+  IReadOnlyList<StatusCount> Pipeline,
+  IReadOnlyList<ApplicationActivity> Applications);
+
+/// <summary>What happened on the links of one application.</summary>
+/// <param name="ApplicationId">The application's identifier.</param>
+/// <param name="Company">The employer.</param>
+/// <param name="Position">The advertised job title.</param>
+/// <param name="Status">Where the application stands.</param>
+/// <param name="AppliedOn">The day it was sent, if it was.</param>
+/// <param name="LinkCount">How many links were created for it, revoked ones included.</param>
+/// <param name="Opens">How often its links were opened.</param>
+/// <param name="PdfDownloads">How often the CV was downloaded through them.</param>
+/// <param name="DocumentDownloads">How often attached documents were downloaded.</param>
+/// <param name="FirstOpenedAt">The first opening of any of its links, or null.</param>
+/// <param name="MinutesToFirstOpen">Whole minutes from the first link's creation to the first opening, or null.</param>
+public sealed record ApplicationActivity(
+  long ApplicationId,
+  string Company,
+  string Position,
+  ApplicationStatus Status,
+  DateOnly? AppliedOn,
+  int LinkCount,
+  int Opens,
+  int PdfDownloads,
+  int DocumentDownloads,
+  DateTimeOffset? FirstOpenedAt,
+  int? MinutesToFirstOpen);

@@ -53,6 +53,7 @@ builder.Services.AddScoped<CvService>();
 builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<ApplicationLinkService>();
 builder.Services.AddScoped<LinkAccessService>();
+builder.Services.AddScoped<ApplicationStatisticsService>();
 builder.Services.AddSingleton(TimeProvider.System);
 
 // Behind the web container's nginx (staging) or Caddy → nginx (production) the client address only
