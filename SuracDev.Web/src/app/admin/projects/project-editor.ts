@@ -18,6 +18,7 @@ import { UiErrorSummary } from '../../ui/error-summary/error-summary';
 import { UiField } from '../../ui/field/field';
 import { UiLocalePair } from '../../ui/locale-pair/locale-pair';
 import { adminStrings } from '../admin-strings';
+import { imageOptionLabel, isPublicImage } from '../forms/public-images';
 import { isUntranslated, linesToText, textToLines } from '../forms/lines';
 import { SaveProblem, toProblem } from '../forms/problem';
 
@@ -132,7 +133,7 @@ export class ProjectEditor implements OnInit {
   }
 
   protected imageLabel(document: AdminDocument): string {
-    return document.labelDe ? `${document.labelDe} (${document.fileName})` : (document.fileName ?? '');
+    return imageOptionLabel(document);
   }
 
   protected untranslated(key: TextKey): string | null {
@@ -349,8 +350,4 @@ function toDecision(row: DecisionGroup['value']): DecisionForm {
 
 function toImage(row: ImageGroup['value']): ImageForm {
   return { documentId: row.documentId ?? undefined, captionDe: row.captionDe, captionEn: row.captionEn };
-}
-
-function isPublicImage(document: AdminDocument): boolean {
-  return document.visibility === 'Public' && (document.contentType ?? '').startsWith('image/');
 }

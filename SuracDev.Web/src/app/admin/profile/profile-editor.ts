@@ -14,6 +14,7 @@ import { UiErrorSummary } from '../../ui/error-summary/error-summary';
 import { UiField } from '../../ui/field/field';
 import { UiLocalePair } from '../../ui/locale-pair/locale-pair';
 import { adminStrings } from '../admin-strings';
+import { imageOptionLabel, isPublicImage } from '../forms/public-images';
 import { isUntranslated, linesToText, textToLines } from '../forms/lines';
 import { SaveProblem, toProblem } from '../forms/problem';
 
@@ -92,7 +93,7 @@ export class ProfileEditor implements OnInit {
   }
 
   protected photoLabel(document: AdminDocument): string {
-    return document.labelDe ? `${document.labelDe} (${document.fileName})` : (document.fileName ?? '');
+    return imageOptionLabel(document);
   }
 
   protected removeLabel(index: number): string {
@@ -177,8 +178,4 @@ function toTextValue(texts: ProfileTextsForm | undefined): Required<Record<TextK
     intro: texts?.intro ?? '',
     availabilityLine: texts?.availabilityLine ?? '',
   };
-}
-
-function isPublicImage(document: AdminDocument): boolean {
-  return document.visibility === 'Public' && (document.contentType ?? '').startsWith('image/');
 }

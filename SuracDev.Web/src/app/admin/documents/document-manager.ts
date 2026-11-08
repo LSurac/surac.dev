@@ -12,6 +12,7 @@ import { EntityListItem, UiEntityList } from '../../ui/entity-list/entity-list';
 import { UiErrorSummary } from '../../ui/error-summary/error-summary';
 import { UiField } from '../../ui/field/field';
 import { adminStrings } from '../admin-strings';
+import { isPublicImage } from '../forms/public-images';
 import { SaveProblem, toProblem } from '../forms/problem';
 
 type Selection = number | 'upload' | null;
@@ -90,7 +91,7 @@ export class DocumentManager implements OnInit {
   }
 
   protected isPublicImage(document: AdminDocument): boolean {
-    return document.visibility === 'Public' && (document.contentType ?? '').startsWith('image/');
+    return isPublicImage(document);
   }
 
   protected sizeLabel(document: AdminDocument): string {
