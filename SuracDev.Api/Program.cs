@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -56,13 +57,20 @@ builder.Services.AddScoped<LinkAccessService>();
 builder.Services.AddScoped<ApplicationStatisticsService>();
 builder.Services.AddSingleton(TimeProvider.System);
 
-// Behind the web container's nginx (staging) or Caddy → nginx (production) the client address only
-// arrives in X-Forwarded-For. The API is never published directly, so every peer is a trusted proxy.
+// The client address arrives in X-Forwarded-For: from nginx on staging, from Caddy → nginx in
+// production, where nginx appends the Docker gateway Caddy connects through. The chain is read
+// from the right for as long as the hop is one of ours (loopback or a Docker network); the first
+// other address is the client. A header forged by a client therefore never gets past its own,
+// untrusted address. Rate limits partition by the result (docs/security-and-privacy.md).
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
   options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+  options.ForwardLimit = null;
   options.KnownIPNetworks.Clear();
   options.KnownProxies.Clear();
+  options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("172.16.0.0/12"));
+  options.KnownProxies.Add(IPAddress.Loopback);
+  options.KnownProxies.Add(IPAddress.IPv6Loopback);
 });
 
 // The Data Protection key ring encrypts the auth cookie. Persisting it keeps logins valid across

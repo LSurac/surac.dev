@@ -30,13 +30,9 @@ What is in flight or waiting on a manual step. Close items here when done; the p
 - [ ] `.env` with the `prod` profile, repository variables `PROD_HOST`, `PROD_HOST_KEY`, secret
       `PROD_DEPLOY_SSH_KEY`, DNS records, first `deploy.ps1 -Production`, then `PROD_DEPLOY_ENABLED`.
 - [ ] Backup pull into the maintainer's offsite chain, uptime monitor, telemetry API key.
-- [ ] Client address behind Caddy: Caddy sets `X-Forwarded-For: <client>`, nginx appends the address
-      it sees (the Docker gateway), and the API's `ForwardedHeaders` reads only the last entry
-      (`ForwardLimit` 1). In production every visitor would share one rate-limit partition, for
-      login and application links alike, so ten wrong logins lock the admin out for everyone. Fix
-      before go-live (nginx `real_ip`/passing Caddy's header through, or `ForwardLimit` 2 with
-      known proxies in production only) and cover it with a test. Staging (no Caddy) is not
-      affected.
+- [x] Client address behind Caddy: the API now reads `X-Forwarded-For` through its own hops
+      (loopback, Docker networks), so every visitor gets their own rate-limit partition in
+      production too (2026-11-08, `ClientAddressTests`).
 
 ## Engineering
 

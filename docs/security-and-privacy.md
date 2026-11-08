@@ -33,9 +33,13 @@ endpoint is on that list. Adding to the list is a deliberate, reviewed act.
   API semantics: 401/403 instead of redirects.
 - Security stamp claim validated on every request; password change rotates it and logs out every
   other device.
-- Login is rate limited per client address (fixed window, 10 attempts per 15 minutes). Behind
-  Caddy, `ForwardedHeaders` restores the client address from `X-Forwarded-For` of the trusted proxy
-  only.
+- Login is rate limited per client address (fixed window, 10 attempts per 15 minutes). The client
+  address comes from `X-Forwarded-For`, read from the right for as long as the hop is one of ours
+  (loopback or a Docker network, `172.16.0.0/12`); the first other address is the client. That
+  covers production (Caddy → nginx, which appends the Docker gateway), staging (nginx only) and
+  server-side renders, and a forged header never gets past the forger's own address.
+  `ClientAddressTests` prove the three chains. Assumption: the compose networks stay inside
+  `172.16.0.0/12`; a network outside it makes every visitor look like the proxy again.
 - Data Protection keys persist on a named volume so cookies survive container rebuilds.
 - No 2FA, no OAuth, no password reset by e-mail (there is one user who can reset via the database).
 

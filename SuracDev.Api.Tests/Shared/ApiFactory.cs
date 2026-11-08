@@ -1,5 +1,8 @@
+using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using SuracDev.Api.Data;
@@ -19,6 +22,9 @@ public sealed class ApiFactory(
 {
   public const string InitialPassword = "correct horse battery";
 
+  /// <summary>Test-only header naming the address the request arrives from; TestServer has none of its own.</summary>
+  public const string PeerAddressHeader = "X-Test-Peer-Address";
+
   /// <summary>A documents folder of this factory's own, removed again on dispose.</summary>
   public string DocumentsPath { get; } = Path.Combine(Path.GetTempPath(), "surac-dev-tests", Guid.NewGuid().ToString("N"));
 
@@ -30,6 +36,7 @@ public sealed class ApiFactory(
     Directory.CreateDirectory(DocumentsPath);
     builder.UseSetting("Documents:StoragePath", DocumentsPath);
     builder.UseSetting("OTEL_EXPORTER_OTLP_ENDPOINT", otlpEndpoint ?? string.Empty);
+    builder.ConfigureServices(services => services.AddSingleton<IStartupFilter, PeerAddressFilter>());
   }
 
   /// <summary>A client whose cookie container holds a fresh admin session (first login sets the password).</summary>
@@ -71,4 +78,23 @@ public sealed class ApiFactory(
       await dbContext.SaveChangesAsync();
       return document.Id;
     });
+}
+
+/// <summary>Sets the connection's remote address from <see cref="ApiFactory.PeerAddressHeader"/> before the app's own middleware runs.</summary>
+internal sealed class PeerAddressFilter : IStartupFilter
+{
+  public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+    => app =>
+    {
+      app.Use((context, nextMiddleware) =>
+      {
+        if (IPAddress.TryParse(context.Request.Headers[ApiFactory.PeerAddressHeader], out var address))
+        {
+          context.Connection.RemoteIpAddress = address;
+        }
+
+        return nextMiddleware(context);
+      });
+      next(app);
+    };
 }
