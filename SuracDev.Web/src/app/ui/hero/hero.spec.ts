@@ -56,6 +56,25 @@ describe('ui-hero', () => {
     );
   });
 
+  it('loads the photo first, because it is the largest element of the first screen', async () => {
+    await render(UiHero, {
+      inputs: {
+        name: 'Max Mustermann',
+        titleLine: 'Entwickler',
+        headline: 'Überschrift',
+        location: 'Musterstadt',
+        email: 'max@example.org',
+        emailLabel: 'E-Mail schreiben',
+        photoUrl: '/api/public/documents/7',
+        photoAlt: 'Porträt',
+      },
+    });
+
+    const photo = screen.getByRole('img', { name: 'Porträt' });
+    expect(photo).toHaveAttribute('fetchpriority', 'high');
+    expect(photo).not.toHaveAttribute('loading', 'lazy');
+  });
+
   it('renders no image slot without a photo', async () => {
     await render(UiHero, { inputs });
 

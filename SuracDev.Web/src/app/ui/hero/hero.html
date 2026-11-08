@@ -19,6 +19,6 @@
     }
   </div>
   @if (photoUrl(); as url) {
-    <img class="hero__photo" [src]="url" [alt]="photoAlt()" width="240" height="300" />
+    <img class="hero__photo" [src]="url" [alt]="photoAlt()" width="240" height="300" fetchpriority="high" />
   }
 </section>
