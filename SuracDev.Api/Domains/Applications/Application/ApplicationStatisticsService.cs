@@ -17,12 +17,24 @@ public sealed class ApplicationStatisticsService(SuracDevDbContext dbContext)
     var applications = await dbContext.Applications.AsNoTracking()
       .OrderByDescending(application => application.CreatedAt)
       .ThenByDescending(application => application.Id)
-      .Select(application => new { application.Id, application.Company, application.Position, application.Status, application.AppliedOn })
+      .Select(application => new
+      {
+        application.Id,
+        application.Company,
+        application.Position,
+        application.Status,
+        application.AppliedOn,
+      })
       .ToListAsync(cancellationToken);
 
     var links = await dbContext.ApplicationLinks.AsNoTracking()
       .GroupBy(link => link.ApplicationId)
-      .Select(group => new { ApplicationId = group.Key, Count = group.Count(), FirstCreatedAt = group.Min(link => link.CreatedAt) })
+      .Select(group => new
+      {
+        ApplicationId = group.Key,
+        Count = group.Count(),
+        FirstCreatedAt = group.Min(link => link.CreatedAt),
+      })
       .ToDictionaryAsync(entry => entry.ApplicationId, cancellationToken);
 
     var events = await (
@@ -35,7 +47,9 @@ public sealed class ApplicationStatisticsService(SuracDevDbContext dbContext)
           Opens = perApplication.Count(e => e.Kind == LinkEventKind.Opened),
           PdfDownloads = perApplication.Count(e => e.Kind == LinkEventKind.PdfDownloaded),
           DocumentDownloads = perApplication.Count(e => e.Kind == LinkEventKind.DocumentDownloaded),
-          FirstOpenedAt = perApplication.Where(e => e.Kind == LinkEventKind.Opened).Min(e => (DateTimeOffset?)e.OccurredAt),
+          FirstOpenedAt = perApplication
+            .Where(e => e.Kind == LinkEventKind.Opened)
+            .Min(e => (DateTimeOffset?)e.OccurredAt),
         })
       .ToDictionaryAsync(entry => entry.ApplicationId, cancellationToken);
 
@@ -59,6 +73,11 @@ public sealed class ApplicationStatisticsService(SuracDevDbContext dbContext)
         ApplicationPipeline.MinutesToFirstOpen(linkStats?.FirstCreatedAt, eventStats?.FirstOpenedAt));
     }).ToList();
 
-    return new ApplicationStatistics(rate.Sent, rate.Responded, rate.Rate, ApplicationPipeline.Count(statuses), activity);
+    return new ApplicationStatistics(
+      rate.Sent,
+      rate.Responded,
+      rate.Rate,
+      ApplicationPipeline.Count(statuses),
+      activity);
   }
 }

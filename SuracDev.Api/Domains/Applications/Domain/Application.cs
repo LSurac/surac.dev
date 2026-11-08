@@ -2,7 +2,8 @@ using SuracDev.Api.Shared.Application.Validation;
 
 namespace SuracDev.Api.Domains.Applications.Domain;
 
-/// <summary>The pipeline of an application. Stored as int; <c>Unknown</c> is never written and values are frozen.</summary>
+/// <summary>The pipeline of an application. Stored as int; <c>Unknown</c> is never written and values are
+/// frozen.</summary>
 public enum ApplicationStatus
 {
   Unknown = 0,

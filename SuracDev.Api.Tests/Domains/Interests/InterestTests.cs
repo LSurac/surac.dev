@@ -6,7 +6,11 @@ namespace SuracDev.Api.Tests.Domains.Interests;
 
 public sealed class InterestTests
 {
-  private static readonly InterestDetails Details = new(InterestKind.Chess, SortOrder: 1, IsVisible: true, ImageDocumentId: null);
+  private static readonly InterestDetails Details = new(
+    InterestKind.Chess,
+    SortOrder: 1,
+    IsVisible: true,
+    ImageDocumentId: null);
 
   [Fact]
   public void A_new_interest_has_a_kind_and_a_german_title()

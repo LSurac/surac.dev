@@ -102,7 +102,10 @@ internal static class ProjectMapping
   public static IReadOnlyList<ImageInput> ToImages(ProjectForm form)
     => form.Images.Select(image => new ImageInput(image.DocumentId, image.CaptionDe, image.CaptionEn)).ToList();
 
-  private static PublicDecision ToPublic(ProjectDecision decision, Locale locale, LocalizedText<ProjectTranslation> parent)
+  private static PublicDecision ToPublic(
+    ProjectDecision decision,
+    Locale locale,
+    LocalizedText<ProjectTranslation> parent)
   {
     var text = new LocalizedText<ProjectDecisionTranslation>(decision.Translations, locale);
     var result = new PublicDecision(

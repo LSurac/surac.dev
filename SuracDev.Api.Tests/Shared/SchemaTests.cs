@@ -123,7 +123,9 @@ public sealed class SchemaTests(PostgresFixture postgres)
       var application = Application.Create(
         new ApplicationDetails("Beispiel AG", "Entwickler", null, null, ApplicationStatus.Draft, null), Now);
       write.AddRange(certificate, application);
-      write.Interests.Add(Interest.Create(new InterestDetails(InterestKind.Chess, 0, true, null), new InterestTexts("Schach", null)));
+      write.Interests.Add(Interest.Create(
+        new InterestDetails(InterestKind.Chess, 0, true, null),
+        new InterestTexts("Schach", null)));
       await write.SaveChangesAsync();
 
       var link = ApplicationLink.Create(
@@ -131,7 +133,12 @@ public sealed class SchemaTests(PostgresFixture postgres)
       write.ApplicationLinks.Add(link);
       await write.SaveChangesAsync();
       link.AttachDocuments([certificate]);
-      write.LinkEvents.Add(LinkEvent.Create(link.Id, LinkEventKind.DocumentDownloaded, Locale.English, certificate.Id, Now));
+      write.LinkEvents.Add(LinkEvent.Create(
+        link.Id,
+        LinkEventKind.DocumentDownloaded,
+        Locale.English,
+        certificate.Id,
+        Now));
       await write.SaveChangesAsync();
       linkId = link.Id;
     }
@@ -168,6 +175,15 @@ public sealed class SchemaTests(PostgresFixture postgres)
 
   private static Document NewDocument(DocumentKind kind, DocumentVisibility visibility, string contentType)
     => Document.Create(
-      new DocumentUpload("datei", contentType, 10, $"x/{Guid.NewGuid():N}", new string('a', 64), kind, visibility, "Label", null),
+      new DocumentUpload(
+        "datei",
+        contentType,
+        10,
+        $"x/{Guid.NewGuid():N}",
+        new string('a', 64),
+        kind,
+        visibility,
+        "Label",
+        null),
       Now);
 }

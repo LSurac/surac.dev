@@ -16,7 +16,10 @@ public sealed class LegalPageService(SuracDevDbContext dbContext, TimeProvider t
   /// postal address and e-mail from the profile, so the address is maintained in one place.
   /// </summary>
   /// <exception cref="DomainNotFoundException">The page does not exist.</exception>
-  public async Task<PublicLegalPage> GetPublicAsync(LegalPageKey key, Locale locale, CancellationToken cancellationToken)
+  public async Task<PublicLegalPage> GetPublicAsync(
+    LegalPageKey key,
+    Locale locale,
+    CancellationToken cancellationToken)
   {
     var page = await FindAsync(key, tracked: false, cancellationToken);
     var text = new LocalizedText<LegalPageTranslation>(page.Translations, locale);

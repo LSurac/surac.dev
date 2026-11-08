@@ -50,7 +50,8 @@ public sealed class AdminApplicationLinksController(ApplicationLinkService linkS
   /// <param name="form">The link's settings.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; the body carries the token, <c>Location</c> points to the link.</response>
-  /// <response code="400">A setting breaks a rule (<c>profile</c>, <c>expiresAt</c>, <c>greetingDe</c>, <c>documentIds</c>).</response>
+  /// <response code="400">A setting breaks a rule (<c>profile</c>, <c>expiresAt</c>, <c>greetingDe</c>,
+  /// <c>documentIds</c>).</response>
   /// <response code="401">Not logged in.</response>
   /// <response code="404">No application has this id.</response>
   [HttpPost]

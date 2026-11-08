@@ -7,7 +7,9 @@ public sealed class MarkdownRendererTests
   [Fact]
   public void Paragraphs_are_separated_by_blank_lines_and_join_their_lines()
   {
-    Assert.Equal("<p>Erste Zeile zweite Zeile</p>\n<p>Neuer Absatz</p>", MarkdownRenderer.ToHtml("Erste Zeile\nzweite Zeile\n\nNeuer Absatz"));
+    Assert.Equal(
+      "<p>Erste Zeile zweite Zeile</p>\n<p>Neuer Absatz</p>",
+      MarkdownRenderer.ToHtml("Erste Zeile\nzweite Zeile\n\nNeuer Absatz"));
   }
 
   [Theory]

@@ -23,8 +23,10 @@ public sealed record AdminDocument(
   string? LabelDe,
   string? LabelEn);
 
-/// <summary>The changeable fields of a document, for <c>PUT</c>. The file itself never changes; upload a new one.</summary>
-/// <param name="Visibility">Certificates and cover letters stay link-only; documents in use on the open site stay public.</param>
+/// <summary>The changeable fields of a document, for <c>PUT</c>. The file itself never changes; upload a new
+/// one.</summary>
+/// <param name="Visibility">Certificates and cover letters stay link-only; documents in use on the open site stay
+/// public.</param>
 /// <param name="LabelDe">Optional German label.</param>
 /// <param name="LabelEn">Optional English label.</param>
 public sealed record DocumentUpdateForm(DocumentVisibility Visibility, string? LabelDe, string? LabelEn);

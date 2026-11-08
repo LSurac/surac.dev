@@ -41,7 +41,9 @@ public sealed class AuthorizationSweepTests(PostgresFixture postgres)
     var endpoints = factory.Services.GetRequiredService<IApiDescriptionGroupCollectionProvider>()
       .ApiDescriptionGroups.Items
       .SelectMany(group => group.Items)
-      .Select(description => (Method: description.HttpMethod ?? "GET", Template: description.RelativePath ?? string.Empty))
+      .Select(description => (
+        Method: description.HttpMethod ?? "GET",
+        Template: description.RelativePath ?? string.Empty))
       .Distinct()
       .ToList();
 

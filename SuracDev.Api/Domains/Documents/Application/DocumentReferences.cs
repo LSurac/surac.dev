@@ -16,7 +16,10 @@ public sealed class DocumentReferences(SuracDevDbContext dbContext)
   /// link-only document or a PDF there would either leak or break.
   /// </summary>
   /// <exception cref="DomainValidationException">An id is unknown, not public or not an image.</exception>
-  public async Task EnsurePublicImagesAsync(IReadOnlyCollection<long> documentIds, string field, CancellationToken cancellationToken)
+  public async Task EnsurePublicImagesAsync(
+    IReadOnlyCollection<long> documentIds,
+    string field,
+    CancellationToken cancellationToken)
   {
     if (documentIds.Count == 0)
     {
@@ -29,7 +32,8 @@ public sealed class DocumentReferences(SuracDevDbContext dbContext)
       .ToListAsync(cancellationToken);
 
     var usable = found
-      .Where(document => document.Visibility == DocumentVisibility.Public && DocumentContentTypes.IsImage(document.ContentType))
+      .Where(document => document.Visibility == DocumentVisibility.Public
+        && DocumentContentTypes.IsImage(document.ContentType))
       .Select(document => document.Id)
       .ToHashSet();
     var unusable = documentIds.Where(id => !usable.Contains(id)).ToList();

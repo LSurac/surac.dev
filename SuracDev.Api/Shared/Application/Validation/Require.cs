@@ -53,7 +53,8 @@ public static class Require
     return required && locale.IsPrimary ? Text(value, key, maxLength) : OptionalText(value, key, maxLength);
   }
 
-  /// <summary>An absolute http(s) URL or <c>null</c>; other schemes (<c>javascript:</c>, <c>ftp:</c>) are rejected.</summary>
+  /// <summary>An absolute http(s) URL or <c>null</c>; other schemes (<c>javascript:</c>, <c>ftp:</c>) are
+  /// rejected.</summary>
   public static string? OptionalUrl(string? value, string field)
   {
     var text = OptionalText(value, field, TextLimits.Url);

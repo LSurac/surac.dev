@@ -10,7 +10,8 @@ namespace SuracDev.Api.Domains.Skills.Application;
 /// <summary>The use cases of skill groups: the public skills section and the admin's CRUD.</summary>
 public sealed class SkillService(SuracDevDbContext dbContext)
 {
-  /// <summary>Every group with its skills, in display order, in <paramref name="locale"/> with German fallback.</summary>
+  /// <summary>Every group with its skills, in display order, in <paramref name="locale"/> with German
+  /// fallback.</summary>
   public async Task<IReadOnlyList<PublicSkillGroup>> ListPublicAsync(Locale locale, CancellationToken cancellationToken)
   {
     var groups = await Complete(dbContext.SkillGroups.AsNoTracking()).ToListAsync(cancellationToken);
@@ -30,7 +31,8 @@ public sealed class SkillService(SuracDevDbContext dbContext)
     => ToAdmin(await FindAsync(id, tracked: false, cancellationToken));
 
   /// <summary>Creates a group with its skills and returns it as stored.</summary>
-  /// <exception cref="DomainValidationException">A name is missing, a year is implausible or a skill appears twice.</exception>
+  /// <exception cref="DomainValidationException">A name is missing, a year is implausible or a skill appears
+  /// twice.</exception>
   public async Task<AdminSkillGroup> CreateAsync(SkillGroupForm form, CancellationToken cancellationToken)
   {
     var group = SkillGroup.Create(form.SortOrder, form.NameDe, form.NameEn);
@@ -42,7 +44,8 @@ public sealed class SkillService(SuracDevDbContext dbContext)
 
   /// <summary>Replaces a group's names, position and skills.</summary>
   /// <exception cref="DomainNotFoundException">No group has this id.</exception>
-  /// <exception cref="DomainValidationException">A name is missing, a year is implausible or a skill appears twice.</exception>
+  /// <exception cref="DomainValidationException">A name is missing, a year is implausible or a skill appears
+  /// twice.</exception>
   public async Task UpdateAsync(long id, SkillGroupForm form, CancellationToken cancellationToken)
   {
     var group = await FindAsync(id, tracked: true, cancellationToken);
@@ -83,7 +86,8 @@ public sealed class SkillService(SuracDevDbContext dbContext)
     var skills = group.Skills.Select(skill => new PublicSkill(
         skill.Name,
         skill.SinceYear,
-        new LocalizedText<SkillTranslation>(skill.Translations, locale).Text(t => t.Qualifier, nameof(PublicSkill.Qualifier))))
+        new LocalizedText<SkillTranslation>(skill.Translations, locale)
+          .Text(t => t.Qualifier, nameof(PublicSkill.Qualifier))))
       .ToList();
     return new PublicSkillGroup(group.Id, name, skills, text.FallbackFields);
   }
@@ -102,5 +106,7 @@ public sealed class SkillService(SuracDevDbContext dbContext)
         .ToList());
 
   private static IReadOnlyList<SkillInput> ToInput(SkillGroupForm form)
-    => form.Skills.Select(skill => new SkillInput(skill.Name, skill.SinceYear, skill.QualifierDe, skill.QualifierEn)).ToList();
+    => form.Skills
+      .Select(skill => new SkillInput(skill.Name, skill.SinceYear, skill.QualifierDe, skill.QualifierEn))
+      .ToList();
 }

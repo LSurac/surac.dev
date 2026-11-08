@@ -71,7 +71,8 @@ public static class CvFormat
     return details.Count == 0 ? name : $"{name} ({string.Join(", ", details)})";
   }
 
-  /// <summary>"Lebenslauf_Max_Mustermann.pdf" / "CV_Max_Mustermann.pdf": ASCII only, safe for every mail client.</summary>
+  /// <summary>"Lebenslauf_Max_Mustermann.pdf" / "CV_Max_Mustermann.pdf": ASCII only, safe for every mail
+  /// client.</summary>
   public static string FileName(string fullName, Locale locale)
   {
     var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)

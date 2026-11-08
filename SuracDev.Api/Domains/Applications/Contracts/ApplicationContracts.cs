@@ -55,7 +55,8 @@ public sealed record ApplicationLinkForm(
   bool UnlockFullPdf,
   IReadOnlyList<long> DocumentIds);
 
-/// <summary>An application link in the admin area. The clear token is not part of it; it exists only once, at creation.</summary>
+/// <summary>An application link in the admin area. The clear token is not part of it; it exists only once, at
+/// creation.</summary>
 /// <param name="Id">The link's identifier.</param>
 /// <param name="ApplicationId">The application the link belongs to.</param>
 /// <param name="Profile">The audience the link is made for.</param>

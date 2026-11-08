@@ -1,6 +1,7 @@
 namespace SuracDev.Api.Domains.Applications.Domain;
 
-/// <summary>How many sent applications got a response, and the rate; <c>Rate</c> is null when nothing was sent.</summary>
+/// <summary>How many sent applications got a response, and the rate; <c>Rate</c> is null when nothing was
+/// sent.</summary>
 public sealed record ResponseRate(int Sent, int Responded, double? Rate);
 
 /// <summary>The number of applications in one status.</summary>
@@ -19,7 +20,10 @@ public static class ApplicationPipeline
 
   /// <summary>Whether the employer has answered an application in <paramref name="status"/>.</summary>
   public static bool HasResponse(ApplicationStatus status)
-    => status is ApplicationStatus.Replied or ApplicationStatus.Interview or ApplicationStatus.Offer or ApplicationStatus.Rejected;
+    => status is ApplicationStatus.Replied
+      or ApplicationStatus.Interview
+      or ApplicationStatus.Offer
+      or ApplicationStatus.Rejected;
 
   /// <summary>The response rate over the given statuses.</summary>
   public static ResponseRate ResponseRate(IReadOnlyCollection<ApplicationStatus> statuses)

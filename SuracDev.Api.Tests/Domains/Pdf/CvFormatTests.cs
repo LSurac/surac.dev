@@ -12,7 +12,9 @@ public sealed class CvFormatTests
 
     Assert.Equal("09/2022 – heute", CvFormat.Period(start, null, Locale.German));
     Assert.Equal("09/2022 – present", CvFormat.Period(start, null, Locale.English));
-    Assert.Equal("09/2019 – 06/2022", CvFormat.Period(new DateOnly(2019, 9, 1), new DateOnly(2022, 6, 30), Locale.German));
+    Assert.Equal(
+      "09/2019 – 06/2022",
+      CvFormat.Period(new DateOnly(2019, 9, 1), new DateOnly(2022, 6, 30), Locale.German));
   }
 
   [Fact]

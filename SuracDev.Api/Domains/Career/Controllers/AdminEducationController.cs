@@ -43,7 +43,8 @@ public sealed class AdminEducationController(EducationService educationService) 
   /// <param name="form">The new entry.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; <c>Location</c> points to the new entry.</response>
-  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>institution</c>, <c>endDate</c>, <c>de.degree</c>).</response>
+  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>institution</c>, <c>endDate</c>,
+  /// <c>de.degree</c>).</response>
   /// <response code="401">Not logged in.</response>
   [HttpPost]
   [ProducesResponseType<AdminEducation>(StatusCodes.Status201Created)]

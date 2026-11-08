@@ -22,7 +22,8 @@ public sealed class LinkAccessService(
   DocumentService documentService,
   TimeProvider timeProvider)
 {
-  /// <summary>The link's greeting, section order and downloads in <paramref name="locale"/>; records an opening.</summary>
+  /// <summary>The link's greeting, section order and downloads in <paramref name="locale"/>; records an
+  /// opening.</summary>
   /// <exception cref="DomainNotFoundException">The token names no active link.</exception>
   public async Task<PublicApplicationLink> OpenAsync(string token, Locale locale, CancellationToken cancellationToken)
   {
@@ -43,7 +44,8 @@ public sealed class LinkAccessService(
       documents.Select(document => ToPublic(document, locale)).ToList());
   }
 
-  /// <summary>The CV the link unlocks: the full variant with <c>UnlockFullPdf</c>, the public one otherwise; records a download.</summary>
+  /// <summary>The CV the link unlocks: the full variant with <c>UnlockFullPdf</c>, the public one otherwise; records a
+  /// download.</summary>
   /// <exception cref="DomainNotFoundException">The token names no active link.</exception>
   public async Task<CvFile> RenderCvAsync(string token, Locale locale, CancellationToken cancellationToken)
   {
@@ -56,8 +58,13 @@ public sealed class LinkAccessService(
   }
 
   /// <summary>A document attached to the link; records a download.</summary>
-  /// <exception cref="DomainNotFoundException">The token names no active link, or the link has no such document.</exception>
-  public async Task<DocumentContent> OpenDocumentAsync(string token, long documentId, Locale locale, CancellationToken cancellationToken)
+  /// <exception cref="DomainNotFoundException">The token names no active link, or the link has no such
+  /// document.</exception>
+  public async Task<DocumentContent> OpenDocumentAsync(
+    string token,
+    long documentId,
+    Locale locale,
+    CancellationToken cancellationToken)
   {
     var link = await FindActiveAsync(token, cancellationToken);
     var content = await documentService.OpenAttachedAsync(link.Id, documentId, cancellationToken);

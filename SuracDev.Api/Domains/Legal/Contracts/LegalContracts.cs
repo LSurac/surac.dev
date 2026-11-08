@@ -8,7 +8,8 @@ namespace SuracDev.Api.Domains.Legal.Contracts;
 /// <param name="BodyHtml">The body rendered from the restricted Markdown subset; safe to bind as inner HTML.</param>
 /// <param name="UpdatedAt">When the shown locale last changed ("Stand").</param>
 /// <param name="Contact">The provider identification from the profile; only on the Impressum (§ 5 DDG).</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicLegalPage(
   LegalPageKey Key,
   string Title,

@@ -51,7 +51,8 @@ public sealed class AdminLegalPagesController(LegalPageService legalPageService)
   /// <param name="form">Both locales.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="204">Saved.</response>
-  /// <response code="400">A field breaks a rule (<c>de.title</c>, <c>de.bodyMarkdown</c>) or the key is not supported.</response>
+  /// <response code="400">A field breaks a rule (<c>de.title</c>, <c>de.bodyMarkdown</c>) or the key is not
+  /// supported.</response>
   /// <response code="401">Not logged in.</response>
   [HttpPut("{key}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -36,7 +36,9 @@ public sealed class HostingModesTests(PostgresFixture postgres)
   public async Task Telemetry_is_wired_only_when_an_OTLP_endpoint_is_configured()
   {
     await using var silent = new ApiFactory(await postgres.CreateDatabaseAsync());
-    await using var exporting = new ApiFactory(await postgres.CreateDatabaseAsync(), otlpEndpoint: "http://127.0.0.1:4317");
+    await using var exporting = new ApiFactory(
+      await postgres.CreateDatabaseAsync(),
+      otlpEndpoint: "http://127.0.0.1:4317");
     using var silentClient = silent.CreateClient();
     using var exportingClient = exporting.CreateClient();
 

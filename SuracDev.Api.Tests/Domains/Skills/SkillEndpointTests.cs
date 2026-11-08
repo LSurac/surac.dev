@@ -47,7 +47,8 @@ public sealed class SkillEndpointTests(PostgresFixture postgres)
 
     var created = await admin.PostAsJsonAsync("/api/admin/skill-groups", Operations);
     var updated = await admin.PutAsJsonAsync(
-      created.Headers.Location, Operations with { NameEn = "Operations", Skills = [new SkillForm("Linux", 2020, null, null)] });
+      created.Headers.Location,
+      Operations with { NameEn = "Operations", Skills = [new SkillForm("Linux", 2020, null, null)] });
     var read = await admin.GetFromJsonAsync<AdminSkillGroup>(created.Headers.Location);
     var deleted = await admin.DeleteAsync(created.Headers.Location);
     var all = await admin.GetFromJsonAsync<List<AdminSkillGroup>>("/api/admin/skill-groups");
@@ -68,7 +69,10 @@ public sealed class SkillEndpointTests(PostgresFixture postgres)
 
     var response = await admin.PostAsJsonAsync(
       "/api/admin/skill-groups",
-      Operations with { Skills = [new SkillForm("Docker", null, null, null), new SkillForm("docker", null, null, null)] });
+      Operations with
+      {
+        Skills = [new SkillForm("Docker", null, null, null), new SkillForm("docker", null, null, null)],
+      });
     var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

@@ -99,7 +99,9 @@ public static partial class MarkdownRenderer
   private static string ReadList(string[] lines, ref int index, bool ordered)
   {
     var items = new StringBuilder();
-    while (index < lines.Length && ListItemText(lines[index], out var itemOrdered) is { } text && itemOrdered == ordered)
+    while (index < lines.Length
+      && ListItemText(lines[index], out var itemOrdered) is { } text
+      && itemOrdered == ordered)
     {
       items.Append("<li>").Append(Inline(text)).Append("</li>\n");
       index++;

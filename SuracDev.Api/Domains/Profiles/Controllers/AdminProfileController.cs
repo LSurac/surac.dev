@@ -41,7 +41,8 @@ public sealed class AdminProfileController(ProfileService profileService) : Cont
   /// <param name="profile">The complete profile.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="204">Saved.</response>
-  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>de.headline</c>, <c>facts</c>, <c>photoDocumentId</c>).</response>
+  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>de.headline</c>, <c>facts</c>,
+  /// <c>photoDocumentId</c>).</response>
   /// <response code="401">Not logged in.</response>
   [HttpPut]
   [ProducesResponseType(StatusCodes.Status204NoContent)]

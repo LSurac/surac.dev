@@ -90,7 +90,12 @@ public sealed class ProfileEndpointTests(PostgresFixture postgres)
 
     var put = await admin.PutAsJsonAsync(
       "/api/admin/profile",
-      current! with { FullName = "Erika Musterfrau", De = current.De with { Headline = "Neue Überschrift." }, En = null });
+      current! with
+      {
+        FullName = "Erika Musterfrau",
+        De = current.De with { Headline = "Neue Überschrift." },
+        En = null,
+      });
     using var client = factory.CreateClient();
     var german = await client.GetFromJsonAsync<PublicProfile>("/api/public/profile");
     var saved = await admin.GetFromJsonAsync<AdminProfile>("/api/admin/profile");
@@ -108,7 +113,9 @@ public sealed class ProfileEndpointTests(PostgresFixture postgres)
     using var admin = await factory.CreateLoggedInClientAsync();
     var current = await admin.GetFromJsonAsync<AdminProfile>("/api/admin/profile");
 
-    var response = await admin.PutAsJsonAsync("/api/admin/profile", current! with { De = current.De with { Headline = " " } });
+    var response = await admin.PutAsJsonAsync(
+      "/api/admin/profile",
+      current! with { De = current.De with { Headline = " " } });
     var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

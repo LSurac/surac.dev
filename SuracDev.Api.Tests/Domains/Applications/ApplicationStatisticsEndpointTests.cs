@@ -16,8 +16,14 @@ public sealed class ApplicationStatisticsEndpointTests(PostgresFixture postgres)
     using var admin = await factory.CreateLoggedInClientAsync();
     var opened = await CreateApplicationAsync(admin);
     var quiet = await CreateApplicationAsync(admin);
-    await admin.PutAsJsonAsync($"/api/admin/applications/{quiet}", NewApplication with { Status = ApplicationStatus.Draft }, ApiJson.Options);
-    await admin.PutAsJsonAsync($"/api/admin/applications/{opened}", NewApplication with { Status = ApplicationStatus.Interview }, ApiJson.Options);
+    await admin.PutAsJsonAsync(
+      $"/api/admin/applications/{quiet}",
+      NewApplication with { Status = ApplicationStatus.Draft },
+      ApiJson.Options);
+    await admin.PutAsJsonAsync(
+      $"/api/admin/applications/{opened}",
+      NewApplication with { Status = ApplicationStatus.Interview },
+      ApiJson.Options);
     var first = await CreateLinkAsync(admin, opened, NewLink);
     var second = await CreateLinkAsync(admin, opened, NewLink);
 
@@ -28,7 +34,9 @@ public sealed class ApplicationStatisticsEndpointTests(PostgresFixture postgres)
       await visitor.GetAsync($"/api/links/{second.Token}/cv.pdf");
     }
 
-    var statistics = await admin.GetFromJsonAsync<ApplicationStatistics>("/api/admin/application-statistics", ApiJson.Options);
+    var statistics = await admin.GetFromJsonAsync<ApplicationStatistics>(
+      "/api/admin/application-statistics",
+      ApiJson.Options);
 
     Assert.Equal(1, statistics!.SentCount);
     Assert.Equal(1, statistics.RespondedCount);

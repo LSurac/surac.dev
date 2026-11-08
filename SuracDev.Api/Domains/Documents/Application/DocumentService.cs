@@ -37,7 +37,8 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
   /// Stores an upload: the type is detected from the first bytes, the file is written under a
   /// random name and hashed, then the row is saved. A rejected upload leaves no file behind.
   /// </summary>
-  /// <exception cref="DomainValidationException">Empty, too large, of a type not allowed, or breaking a kind/visibility rule.</exception>
+  /// <exception cref="DomainValidationException">Empty, too large, of a type not allowed, or breaking a kind/visibility
+  /// rule.</exception>
   public async Task<AdminDocument> UploadAsync(
     IFormFile file,
     DocumentKind kind,
@@ -48,7 +49,9 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
   {
     if (file.Length is <= 0 or > Document.MaxSizeBytes)
     {
-      throw new DomainValidationException("file", $"The file must be between 1 byte and {Document.MaxSizeBytes / 1024 / 1024} MB.");
+      throw new DomainValidationException(
+        "file",
+        $"The file must be between 1 byte and {Document.MaxSizeBytes / 1024 / 1024} MB.");
     }
 
     await using var stream = file.OpenReadStream();
@@ -59,7 +62,16 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
     try
     {
       var document = Document.Create(
-        new DocumentUpload(file.FileName, contentType, stored.SizeBytes, stored.RelativePath, stored.Sha256, kind, visibility, labelDe, labelEn),
+        new DocumentUpload(
+          file.FileName,
+          contentType,
+          stored.SizeBytes,
+          stored.RelativePath,
+          stored.Sha256,
+          kind,
+          visibility,
+          labelDe,
+          labelEn),
         timeProvider.GetUtcNow());
       dbContext.Documents.Add(document);
       await dbContext.SaveChangesAsync(cancellationToken);
@@ -76,13 +88,17 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
   /// <summary>Changes labels and visibility. A document shown on the open site stays public.</summary>
   /// <exception cref="DomainNotFoundException">No document has this id.</exception>
   /// <exception cref="DomainValidationException">The visibility breaks a kind rule.</exception>
-  /// <exception cref="DomainConflictException">The document is in use on the open site and would become link-only.</exception>
+  /// <exception cref="DomainConflictException">The document is in use on the open site and would become
+  /// link-only.</exception>
   public async Task UpdateAsync(long id, DocumentUpdateForm form, CancellationToken cancellationToken)
   {
     var document = await FindAsync(id, cancellationToken);
-    if (form.Visibility != DocumentVisibility.Public && document.IsPublic && await IsShownPubliclyAsync(id, cancellationToken))
+    if (form.Visibility != DocumentVisibility.Public
+      && document.IsPublic
+      && await IsShownPubliclyAsync(id, cancellationToken))
     {
-      throw new DomainConflictException("The document is shown on the open site (profile photo, project or interest image).");
+      throw new DomainConflictException(
+        "The document is shown on the open site (profile photo, project or interest image).");
     }
 
     document.ChangeVisibility(form.Visibility);
@@ -92,7 +108,8 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
 
   /// <summary>Deletes the row and then the file.</summary>
   /// <exception cref="DomainNotFoundException">No document has this id.</exception>
-  /// <exception cref="DomainConflictException">The document is still referenced by the profile, a project, an interest or a link.</exception>
+  /// <exception cref="DomainConflictException">The document is still referenced by the profile, a project, an interest
+  /// or a link.</exception>
   public async Task DeleteAsync(long id, CancellationToken cancellationToken)
   {
     var document = await FindAsync(id, cancellationToken);
@@ -101,7 +118,8 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
       .AnyAsync(attached => attached.DocumentId == id, cancellationToken);
     if (attachedToLink || await IsShownPubliclyAsync(id, cancellationToken))
     {
-      throw new DomainConflictException("The document is still in use; remove it from the profile, projects, interests and links first.");
+      throw new DomainConflictException(
+        "The document is still in use; remove it from the profile, projects, interests and links first.");
     }
 
     dbContext.Documents.Remove(document);
@@ -110,7 +128,8 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
   }
 
   /// <summary>Opens a public document for the open site.</summary>
-  /// <exception cref="DomainNotFoundException">No public document has this id; link-only ones are indistinguishable from missing ones.</exception>
+  /// <exception cref="DomainNotFoundException">No public document has this id; link-only ones are indistinguishable
+  /// from missing ones.</exception>
   public async Task<DocumentContent> OpenPublicAsync(long id, CancellationToken cancellationToken)
   {
     var document = await dbContext.Documents.AsNoTracking()
@@ -120,7 +139,8 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
   }
 
   /// <summary>Opens a document for an application link, but only one the link has attached.</summary>
-  /// <exception cref="DomainNotFoundException">The link has no such document; others are indistinguishable from missing ones.</exception>
+  /// <exception cref="DomainNotFoundException">The link has no such document; others are indistinguishable from missing
+  /// ones.</exception>
   public async Task<DocumentContent> OpenAttachedAsync(long linkId, long id, CancellationToken cancellationToken)
   {
     var attached = await dbContext.ApplicationLinks
@@ -139,7 +159,12 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
     => Open(await FindAsync(id, cancellationToken));
 
   private DocumentContent Open(Document document)
-    => new(storage.OpenRead(document.StoragePath), document.ContentType, document.FileName, document.UploadedAt, document.Sha256);
+    => new(
+      storage.OpenRead(document.StoragePath),
+      document.ContentType,
+      document.FileName,
+      document.UploadedAt,
+      document.Sha256);
 
   private async Task<Document> FindAsync(long id, CancellationToken cancellationToken)
     => await dbContext.Documents.Include(document => document.Translations)
@@ -148,7 +173,8 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
 
   private async Task<bool> IsShownPubliclyAsync(long id, CancellationToken cancellationToken)
     => await dbContext.Profiles.AnyAsync(profile => profile.PhotoDocumentId == id, cancellationToken)
-      || await dbContext.Projects.SelectMany(project => project.Images).AnyAsync(image => image.DocumentId == id, cancellationToken)
+      || await dbContext.Projects.SelectMany(project => project.Images)
+        .AnyAsync(image => image.DocumentId == id, cancellationToken)
       || await dbContext.Interests.AnyAsync(interest => interest.ImageDocumentId == id, cancellationToken);
 
   private static async Task<string?> DetectContentTypeAsync(Stream stream, CancellationToken cancellationToken)

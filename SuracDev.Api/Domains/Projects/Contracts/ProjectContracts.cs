@@ -14,7 +14,8 @@ namespace SuracDev.Api.Domains.Projects.Contracts;
 /// <param name="IsFeatured">Shown on the start page.</param>
 /// <param name="Title">Project title.</param>
 /// <param name="Teaser">One or two sentences for the card.</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicProjectCard(
   long Id,
   string Slug,
@@ -42,10 +43,12 @@ public sealed record PublicProjectCard(
 /// <param name="Problem">What had to be solved.</param>
 /// <param name="MyRole">The maintainer's own share.</param>
 /// <param name="Outcome">What came out of it.</param>
-/// <param name="CaseStudyHtml">The case study rendered from the restricted Markdown subset; safe to bind as inner HTML.</param>
+/// <param name="CaseStudyHtml">The case study rendered from the restricted Markdown subset; safe to bind as inner
+/// HTML.</param>
 /// <param name="Decisions">Architectural choices with their trade-offs, in order.</param>
 /// <param name="Images">Screenshots and diagrams, in order.</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicCaseStudy(
   string Slug,
   ProjectStatus Status,

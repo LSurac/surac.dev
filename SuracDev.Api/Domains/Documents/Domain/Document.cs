@@ -15,7 +15,8 @@ public enum DocumentKind
   Other = 5,
 }
 
-/// <summary>Who may download a document. Stored as int; <c>Unknown</c> is never written and values are frozen.</summary>
+/// <summary>Who may download a document. Stored as int; <c>Unknown</c> is never written and values are
+/// frozen.</summary>
 public enum DocumentVisibility
 {
   Unknown = 0,
@@ -87,7 +88,9 @@ public sealed class Document
   {
     if (upload.SizeBytes is <= 0 or > MaxSizeBytes)
     {
-      throw new DomainValidationException("file", $"The file must be between 1 byte and {MaxSizeBytes / 1024 / 1024} MB.");
+      throw new DomainValidationException(
+        "file",
+        $"The file must be between 1 byte and {MaxSizeBytes / 1024 / 1024} MB.");
     }
 
     if (!DocumentContentTypes.All.Contains(upload.ContentType))

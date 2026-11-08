@@ -39,7 +39,10 @@ public sealed class PublicApplicationLinksController(LinkAccessService linkAcces
   [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
-  public Task<PublicApplicationLink> Get(string token, [FromQuery] string locale = "de", CancellationToken cancellationToken = default)
+  public Task<PublicApplicationLink> Get(
+    string token,
+    [FromQuery] string locale = "de",
+    CancellationToken cancellationToken = default)
     => linkAccessService.OpenAsync(token, Locale.Parse(locale), cancellationToken);
 
   /// <summary>Downloads the CV this link unlocks.</summary>
@@ -59,7 +62,10 @@ public sealed class PublicApplicationLinksController(LinkAccessService linkAcces
   [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
-  public async Task<IActionResult> GetCv(string token, [FromQuery] string locale = "de", CancellationToken cancellationToken = default)
+  public async Task<IActionResult> GetCv(
+    string token,
+    [FromQuery] string locale = "de",
+    CancellationToken cancellationToken = default)
   {
     var cv = await linkAccessService.RenderCvAsync(token, Locale.Parse(locale), cancellationToken);
     return File(cv.Content, "application/pdf", cv.FileName);

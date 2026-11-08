@@ -4,7 +4,11 @@ namespace SuracDev.Api.Tests.Shared;
 
 public sealed class LocalizedTextTests
 {
-  private sealed record Texts(Locale Locale, string? Title, string? Summary, IReadOnlyList<string> Bullets) : ITranslation;
+  private sealed record Texts(
+    Locale Locale,
+    string? Title,
+    string? Summary,
+    IReadOnlyList<string> Bullets) : ITranslation;
 
   private static readonly Texts German = new(Locale.German, "Titel", "Zusammenfassung", ["Eins", "Zwei"]);
 

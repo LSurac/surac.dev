@@ -102,12 +102,16 @@ public sealed class SuracDevDbContext(DbContextOptions<SuracDevDbContext> option
         .OnDelete(DeleteBehavior.Cascade);
     });
 
-    MapTranslation<ProfileTranslation>(modelBuilder, "profile_translations", nameof(ProfileTranslation.ProfileId), entity =>
-    {
-      entity.Property(translation => translation.TitleLine).HasMaxLength(TextLimits.Line);
-      entity.Property(translation => translation.Headline).HasMaxLength(TextLimits.Line);
-      entity.Property(translation => translation.AvailabilityLine).HasMaxLength(TextLimits.Line);
-    });
+    MapTranslation<ProfileTranslation>(
+      modelBuilder,
+      "profile_translations",
+      nameof(ProfileTranslation.ProfileId),
+      entity =>
+      {
+        entity.Property(translation => translation.TitleLine).HasMaxLength(TextLimits.Line);
+        entity.Property(translation => translation.Headline).HasMaxLength(TextLimits.Line);
+        entity.Property(translation => translation.AvailabilityLine).HasMaxLength(TextLimits.Line);
+      });
 
     modelBuilder.Entity<ProfileFact>(entity =>
     {
@@ -191,11 +195,15 @@ public sealed class SuracDevDbContext(DbContextOptions<SuracDevDbContext> option
         .HasForeignKey(image => image.ProjectId).OnDelete(DeleteBehavior.Cascade);
     });
 
-    MapTranslation<ProjectTranslation>(modelBuilder, "project_translations", nameof(ProjectTranslation.ProjectId), entity =>
-    {
-      entity.Property(translation => translation.Title).HasMaxLength(TextLimits.Name);
-      entity.Property(translation => translation.Teaser).HasMaxLength(TextLimits.Line);
-    });
+    MapTranslation<ProjectTranslation>(
+      modelBuilder,
+      "project_translations",
+      nameof(ProjectTranslation.ProjectId),
+      entity =>
+      {
+        entity.Property(translation => translation.Title).HasMaxLength(TextLimits.Name);
+        entity.Property(translation => translation.Teaser).HasMaxLength(TextLimits.Line);
+      });
 
     modelBuilder.Entity<ProjectDecision>(entity =>
     {
@@ -350,7 +358,9 @@ public sealed class SuracDevDbContext(DbContextOptions<SuracDevDbContext> option
       entity.ToTable("application_links");
       entity.HasKey(link => link.Id);
       entity.Property(link => link.Id).UseIdentityByDefaultColumn();
-      entity.HasOne<Application>().WithMany().HasForeignKey(link => link.ApplicationId).OnDelete(DeleteBehavior.Cascade);
+      entity.HasOne<Application>().WithMany()
+        .HasForeignKey(link => link.ApplicationId)
+        .OnDelete(DeleteBehavior.Cascade);
       entity.Property(link => link.TokenHash).HasMaxLength(64).IsFixedLength().IsRequired();
       entity.HasIndex(link => link.TokenHash).IsUnique();
       entity.Property(link => link.Profile).HasConversion<int>();

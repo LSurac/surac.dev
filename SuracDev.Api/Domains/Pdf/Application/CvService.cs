@@ -54,7 +54,10 @@ public sealed class CvService(
     return await RenderAsync(locale, privateContact, cancellationToken);
   }
 
-  private async Task<CvFile> RenderAsync(Locale locale, CvPrivateContact? privateContact, CancellationToken cancellationToken)
+  private async Task<CvFile> RenderAsync(
+    Locale locale,
+    CvPrivateContact? privateContact,
+    CancellationToken cancellationToken)
   {
     var profile = await profileService.GetPublicAsync(locale, cancellationToken);
     var experiences = await experienceService.ListPublicAsync(locale, cancellationToken);

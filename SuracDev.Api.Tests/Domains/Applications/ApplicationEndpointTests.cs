@@ -37,7 +37,10 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
 
     var created = await admin.PostAsJsonAsync("/api/admin/applications", NewApplication, ApiJson.Options);
     var location = created.Headers.Location!;
-    var updated = await admin.PutAsJsonAsync(location, NewApplication with { Status = ApplicationStatus.Interview }, ApiJson.Options);
+    var updated = await admin.PutAsJsonAsync(
+      location,
+      NewApplication with { Status = ApplicationStatus.Interview },
+      ApiJson.Options);
     var read = await admin.GetFromJsonAsync<AdminApplication>(location, ApiJson.Options);
     var deleted = await admin.DeleteAsync(location);
     var gone = await admin.GetAsync(location);
@@ -57,8 +60,14 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
     using var admin = await factory.CreateLoggedInClientAsync();
 
-    await admin.PostAsJsonAsync("/api/admin/applications", NewApplication with { Company = "Erste GmbH" }, ApiJson.Options);
-    await admin.PostAsJsonAsync("/api/admin/applications", NewApplication with { Company = "Zweite GmbH" }, ApiJson.Options);
+    await admin.PostAsJsonAsync(
+      "/api/admin/applications",
+      NewApplication with { Company = "Erste GmbH" },
+      ApiJson.Options);
+    await admin.PostAsJsonAsync(
+      "/api/admin/applications",
+      NewApplication with { Company = "Zweite GmbH" },
+      ApiJson.Options);
     var applications = await admin.GetFromJsonAsync<List<AdminApplication>>("/api/admin/applications", ApiJson.Options);
 
     Assert.Equal(["Zweite GmbH", "Erste GmbH"], applications!.Select(application => application.Company));
@@ -71,7 +80,9 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     using var admin = await factory.CreateLoggedInClientAsync();
 
     var response = await admin.PostAsJsonAsync(
-      "/api/admin/applications", NewApplication with { Company = " ", Status = ApplicationStatus.Unknown }, ApiJson.Options);
+      "/api/admin/applications",
+      NewApplication with { Company = " ", Status = ApplicationStatus.Unknown },
+      ApiJson.Options);
     var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -85,10 +96,14 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     using var admin = await factory.CreateLoggedInClientAsync();
     var applicationId = await CreateApplicationAsync(admin);
 
-    var response = await admin.PostAsJsonAsync($"/api/admin/applications/{applicationId}/links", NewLink, ApiJson.Options);
+    var response = await admin.PostAsJsonAsync(
+      $"/api/admin/applications/{applicationId}/links",
+      NewLink,
+      ApiJson.Options);
     var created = await response.Content.ReadFromJsonAsync<CreatedApplicationLink>(ApiJson.Options);
     var listed = await admin.GetStringAsync($"/api/admin/applications/{applicationId}/links");
-    var storedHash = await factory.WithDbContextAsync(db => db.ApplicationLinks.Select(link => link.TokenHash).SingleAsync());
+    var storedHash = await factory.WithDbContextAsync(
+      db => db.ApplicationLinks.Select(link => link.TokenHash).SingleAsync());
 
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     Assert.Equal(22, created!.Token.Length);
@@ -106,7 +121,10 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
 
     var link = await CreateLinkAsync(admin, applicationId, NewLink);
 
-    Assert.InRange(link.Link.ExpiresAt - link.Link.CreatedAt, TimeSpan.FromDays(90), TimeSpan.FromDays(90).Add(TimeSpan.FromSeconds(5)));
+    Assert.InRange(
+      link.Link.ExpiresAt - link.Link.CreatedAt,
+      TimeSpan.FromDays(90),
+      TimeSpan.FromDays(90).Add(TimeSpan.FromSeconds(5)));
     Assert.True(link.Link.IsActive);
   }
 
@@ -116,11 +134,16 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
     using var admin = await factory.CreateLoggedInClientAsync();
     var applicationId = await CreateApplicationAsync(admin);
-    var certificate = await factory.AddDocumentAsync(DocumentKind.Certificate, DocumentVisibility.LinkOnly, DocumentContentTypes.Pdf);
+    var certificate = await factory.AddDocumentAsync(
+      DocumentKind.Certificate,
+      DocumentVisibility.LinkOnly,
+      DocumentContentTypes.Pdf);
     var photo = await factory.AddDocumentAsync();
 
     var rejected = await admin.PostAsJsonAsync(
-      $"/api/admin/applications/{applicationId}/links", NewLink with { DocumentIds = [certificate, photo] }, ApiJson.Options);
+      $"/api/admin/applications/{applicationId}/links",
+      NewLink with { DocumentIds = [certificate, photo] },
+      ApiJson.Options);
     var unknown = await admin.PostAsJsonAsync(
       $"/api/admin/applications/{applicationId}/links", NewLink with { DocumentIds = [987654] }, ApiJson.Options);
     var link = await CreateLinkAsync(admin, applicationId, NewLink with { DocumentIds = [certificate] });
@@ -136,14 +159,25 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
     using var admin = await factory.CreateLoggedInClientAsync();
     var applicationId = await CreateApplicationAsync(admin);
-    var certificate = await factory.AddDocumentAsync(DocumentKind.Certificate, DocumentVisibility.LinkOnly, DocumentContentTypes.Pdf);
-    var coverLetter = await factory.AddDocumentAsync(DocumentKind.CoverLetter, DocumentVisibility.LinkOnly, DocumentContentTypes.Pdf);
+    var certificate = await factory.AddDocumentAsync(
+      DocumentKind.Certificate,
+      DocumentVisibility.LinkOnly,
+      DocumentContentTypes.Pdf);
+    var coverLetter = await factory.AddDocumentAsync(
+      DocumentKind.CoverLetter,
+      DocumentVisibility.LinkOnly,
+      DocumentContentTypes.Pdf);
     var link = await CreateLinkAsync(admin, applicationId, NewLink with { DocumentIds = [certificate] });
     var path = $"/api/admin/applications/{applicationId}/links/{link.Link.Id}";
 
     var updated = await admin.PutAsJsonAsync(
       path,
-      NewLink with { Profile = AudienceProfile.Recruiter, UnlockFullPdf = false, DocumentIds = [certificate, coverLetter] },
+      NewLink with
+      {
+        Profile = AudienceProfile.Recruiter,
+        UnlockFullPdf = false,
+        DocumentIds = [certificate, coverLetter],
+      },
       ApiJson.Options);
     var read = await admin.GetFromJsonAsync<AdminApplicationLink>(path, ApiJson.Options);
 
@@ -182,7 +216,10 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     var link = await CreateLinkAsync(admin, first, NewLink);
 
     var response = await admin.GetAsync($"/api/admin/applications/{second}/links/{link.Link.Id}");
-    var missingApplication = await admin.PostAsJsonAsync("/api/admin/applications/987654/links", NewLink, ApiJson.Options);
+    var missingApplication = await admin.PostAsJsonAsync(
+      "/api/admin/applications/987654/links",
+      NewLink,
+      ApiJson.Options);
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     Assert.Equal(HttpStatusCode.NotFound, missingApplication.StatusCode);
@@ -194,12 +231,16 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
     using var admin = await factory.CreateLoggedInClientAsync();
     var applicationId = await CreateApplicationAsync(admin);
-    var certificate = await factory.AddDocumentAsync(DocumentKind.Certificate, DocumentVisibility.LinkOnly, DocumentContentTypes.Pdf);
+    var certificate = await factory.AddDocumentAsync(
+      DocumentKind.Certificate,
+      DocumentVisibility.LinkOnly,
+      DocumentContentTypes.Pdf);
     await CreateLinkAsync(admin, applicationId, NewLink with { DocumentIds = [certificate] });
 
     await admin.DeleteAsync($"/api/admin/applications/{applicationId}");
     var links = await factory.WithDbContextAsync(db => db.ApplicationLinks.CountAsync());
-    var attachments = await factory.WithDbContextAsync(db => db.ApplicationLinks.SelectMany(link => link.Documents).CountAsync());
+    var attachments = await factory.WithDbContextAsync(
+      db => db.ApplicationLinks.SelectMany(link => link.Documents).CountAsync());
 
     Assert.Equal(0, links);
     Assert.Equal(0, attachments);
@@ -212,7 +253,10 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
     return (await response.Content.ReadFromJsonAsync<AdminApplication>(ApiJson.Options))!.Id;
   }
 
-  public static async Task<CreatedApplicationLink> CreateLinkAsync(HttpClient admin, long applicationId, ApplicationLinkForm form)
+  public static async Task<CreatedApplicationLink> CreateLinkAsync(
+    HttpClient admin,
+    long applicationId,
+    ApplicationLinkForm form)
   {
     var response = await admin.PostAsJsonAsync($"/api/admin/applications/{applicationId}/links", form, ApiJson.Options);
     response.EnsureSuccessStatusCode();

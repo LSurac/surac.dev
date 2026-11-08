@@ -7,7 +7,8 @@ namespace SuracDev.Api.Shared.Application.Localization;
 /// </summary>
 public static class TranslationList
 {
-  /// <summary>Creates, updates or (for an empty English set) removes the translation of <paramref name="locale"/>.</summary>
+  /// <summary>Creates, updates or (for an empty English set) removes the translation of
+  /// <paramref name="locale"/>.</summary>
   public static void Set<TTranslation>(
     List<TTranslation> translations,
     Locale locale,

@@ -63,7 +63,8 @@ public sealed class ProfileService(SuracDevDbContext dbContext, DocumentReferenc
   }
 
   /// <summary>Replaces the whole profile; creates it when the row is missing.</summary>
-  /// <exception cref="DomainValidationException">A field breaks a profile rule or the photo is not a public image.</exception>
+  /// <exception cref="DomainValidationException">A field breaks a profile rule or the photo is not a public
+  /// image.</exception>
   public async Task SaveAsync(AdminProfile form, CancellationToken cancellationToken)
   {
     var photo = form.PhotoDocumentId is { } photoId ? [photoId] : Array.Empty<long>();
@@ -96,7 +97,9 @@ public sealed class ProfileService(SuracDevDbContext dbContext, DocumentReferenc
       .Include(profile => profile.Translations)
       .Include(profile => profile.Facts.OrderBy(fact => fact.SortOrder)).ThenInclude(fact => fact.Translations)
       .AsSplitQuery();
-    return (tracked ? query : query.AsNoTracking()).OrderBy(profile => profile.Id).FirstOrDefaultAsync(cancellationToken);
+    return (tracked ? query : query.AsNoTracking())
+      .OrderBy(profile => profile.Id)
+      .FirstOrDefaultAsync(cancellationToken);
   }
 
   private static PublicFact ToPublic(ProfileFact fact, Locale locale, LocalizedText<ProfileTranslation> parent)

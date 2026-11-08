@@ -13,7 +13,8 @@ namespace SuracDev.Api.Domains.Interests.Application;
 /// <summary>The use cases of the "Über mich" page: the public sections and the admin's CRUD.</summary>
 public sealed class InterestService(SuracDevDbContext dbContext, DocumentReferences documentReferences)
 {
-  /// <summary>Visible interests in page order, in <paramref name="locale"/> with German fallback and rendered Markdown.</summary>
+  /// <summary>Visible interests in page order, in <paramref name="locale"/> with German fallback and rendered
+  /// Markdown.</summary>
   public async Task<IReadOnlyList<PublicInterest>> ListPublicAsync(Locale locale, CancellationToken cancellationToken)
   {
     var interests = await Ordered(dbContext.Interests.AsNoTracking().Include(interest => interest.Translations))
@@ -45,7 +46,8 @@ public sealed class InterestService(SuracDevDbContext dbContext, DocumentReferen
     => ToAdmin(await FindAsync(id, tracked: false, cancellationToken));
 
   /// <summary>Creates an interest and returns it as stored.</summary>
-  /// <exception cref="DomainValidationException">A field breaks an interest rule or the image is not a public image.</exception>
+  /// <exception cref="DomainValidationException">A field breaks an interest rule or the image is not a public
+  /// image.</exception>
   public async Task<AdminInterest> CreateAsync(InterestForm form, CancellationToken cancellationToken)
   {
     await EnsureImageAsync(form, cancellationToken);
@@ -58,7 +60,8 @@ public sealed class InterestService(SuracDevDbContext dbContext, DocumentReferen
 
   /// <summary>Replaces an interest with the given fields.</summary>
   /// <exception cref="DomainNotFoundException">No interest has this id.</exception>
-  /// <exception cref="DomainValidationException">A field breaks an interest rule or the image is not a public image.</exception>
+  /// <exception cref="DomainValidationException">A field breaks an interest rule or the image is not a public
+  /// image.</exception>
   public async Task UpdateAsync(long id, InterestForm form, CancellationToken cancellationToken)
   {
     await EnsureImageAsync(form, cancellationToken);
@@ -94,7 +97,10 @@ public sealed class InterestService(SuracDevDbContext dbContext, DocumentReferen
       ?? throw new DomainNotFoundException($"Interest {id} does not exist.");
   }
 
-  private static PublicInterest ToPublic(Interest interest, Locale locale, IReadOnlyDictionary<long, string?> imageLabels)
+  private static PublicInterest ToPublic(
+    Interest interest,
+    Locale locale,
+    IReadOnlyDictionary<long, string?> imageLabels)
   {
     var text = new LocalizedText<InterestTranslation>(interest.Translations, locale);
     var title = text.Text(t => t.Title, nameof(PublicInterest.Title))!;

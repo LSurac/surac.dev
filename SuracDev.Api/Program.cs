@@ -37,7 +37,10 @@ if (string.IsNullOrWhiteSpace(connectionString) && !isOpenApiGeneration)
 builder.Services.AddDbContext<SuracDevDbContext>(options =>
   options.UseNpgsql(
     connectionString ?? "Host=localhost;Database=suracdev_openapi;Username=openapi;Password=openapi",
-    npgsql => npgsql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorCodesToAdd: null)));
+    npgsql => npgsql.EnableRetryOnFailure(
+      maxRetryCount: 5,
+      maxRetryDelay: TimeSpan.FromSeconds(10),
+      errorCodesToAdd: null)));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SuracDevSeeder>();

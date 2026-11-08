@@ -44,7 +44,8 @@ public sealed class AdminExperiencesController(ExperienceService experienceServi
   /// <param name="form">The new station.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; <c>Location</c> points to the new station.</response>
-  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>company</c>, <c>endDate</c>, <c>de.roleTitle</c>).</response>
+  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>company</c>, <c>endDate</c>,
+  /// <c>de.roleTitle</c>).</response>
   /// <response code="401">Not logged in.</response>
   [HttpPost]
   [ProducesResponseType<AdminExperience>(StatusCodes.Status201Created)]

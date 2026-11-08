@@ -10,7 +10,8 @@ namespace SuracDev.Api.Domains.Career.Contracts;
 /// <param name="Summary">One paragraph about the station.</param>
 /// <param name="Bullets">Short achievement lines in display order.</param>
 /// <param name="StackLine">The technologies used, as one line.</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicExperience(
   long Id,
   string Company,
@@ -83,7 +84,8 @@ public sealed record ExperienceTextsForm(
 /// <param name="Grade">Free-text grade ("1,8"), if given.</param>
 /// <param name="Degree">The degree, in the requested locale or German.</param>
 /// <param name="Summary">Optional paragraph.</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicEducation(
   long Id,
   string Institution,

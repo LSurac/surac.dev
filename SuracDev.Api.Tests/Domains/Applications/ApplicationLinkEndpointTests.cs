@@ -27,11 +27,16 @@ public sealed class ApplicationLinkEndpointTests(PostgresFixture postgres)
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
     using var admin = await factory.CreateLoggedInClientAsync();
     var certificate = await UploadAsync(admin, "zeugnis.pdf", DocumentKind.Certificate);
-    var link = await CreateLinkAsync(admin, await CreateApplicationAsync(admin), NewLink with { DocumentIds = [certificate] });
+    var link = await CreateLinkAsync(
+      admin,
+      await CreateApplicationAsync(admin),
+      NewLink with { DocumentIds = [certificate] });
 
     using var client = factory.CreateClient();
     var german = await client.GetFromJsonAsync<PublicApplicationLink>($"/api/links/{link.Token}", ApiJson.Options);
-    var english = await client.GetFromJsonAsync<PublicApplicationLink>($"/api/links/{link.Token}?locale=en", ApiJson.Options);
+    var english = await client.GetFromJsonAsync<PublicApplicationLink>(
+      $"/api/links/{link.Token}?locale=en",
+      ApiJson.Options);
 
     Assert.Equal("Für das Team Backend", german!.Greeting);
     Assert.Equal("Für das Team Backend", english!.Greeting);
@@ -122,7 +127,10 @@ public sealed class ApplicationLinkEndpointTests(PostgresFixture postgres)
     using var admin = await factory.CreateLoggedInClientAsync();
     var attached = await UploadAsync(admin, "zeugnis.pdf", DocumentKind.Certificate);
     var other = await UploadAsync(admin, "anschreiben.pdf", DocumentKind.CoverLetter);
-    var link = await CreateLinkAsync(admin, await CreateApplicationAsync(admin), NewLink with { DocumentIds = [attached] });
+    var link = await CreateLinkAsync(
+      admin,
+      await CreateApplicationAsync(admin),
+      NewLink with { DocumentIds = [attached] });
 
     using var client = factory.CreateClient();
     var delivered = await client.GetAsync($"/api/links/{link.Token}/documents/{attached}");

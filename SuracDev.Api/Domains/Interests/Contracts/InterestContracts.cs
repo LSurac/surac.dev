@@ -7,9 +7,12 @@ namespace SuracDev.Api.Domains.Interests.Contracts;
 /// <param name="Kind">The topic; the site may style sections by it, never hide them.</param>
 /// <param name="Title">The heading, in the requested locale or German.</param>
 /// <param name="BodyHtml">The body rendered from the restricted Markdown, or null when there is none.</param>
-/// <param name="ImageDocumentId">A public image, served by <c>GET /api/public/documents/{id}</c>; null when none is set.</param>
-/// <param name="ImageAlt">The image's alternative text: its document label, or the title when the image has no label.</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="ImageDocumentId">A public image, served by <c>GET /api/public/documents/{id}</c>; null when none is
+/// set.</param>
+/// <param name="ImageAlt">The image's alternative text: its document label, or the title when the image has no
+/// label.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicInterest(
   long Id,
   InterestKind Kind,
@@ -19,7 +22,8 @@ public sealed record PublicInterest(
   string? ImageAlt,
   IReadOnlyList<string> FallbackFields);
 
-/// <summary>An interest for the admin editor, both locales side by side. Read with <c>GET</c>, written with <c>PUT</c>.</summary>
+/// <summary>An interest for the admin editor, both locales side by side. Read with <c>GET</c>, written with
+/// <c>PUT</c>.</summary>
 /// <param name="Id">The interest's identifier.</param>
 /// <param name="Kind">The topic; <c>Unknown</c> is rejected.</param>
 /// <param name="SortOrder">Position on the page, ascending.</param>

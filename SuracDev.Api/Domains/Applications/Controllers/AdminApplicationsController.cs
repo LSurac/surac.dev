@@ -5,7 +5,8 @@ using SuracDev.Api.Shared.Infrastructure;
 
 namespace SuracDev.Api.Domains.Applications.Controllers;
 
-/// <summary>Applications in the admin area, the maintainer's mini ATS: list, read, create, replace and delete.</summary>
+/// <summary>Applications in the admin area, the maintainer's mini ATS: list, read, create, replace and
+/// delete.</summary>
 [ApiController]
 [Route("api/admin/applications")]
 [ApiExplorerSettings(GroupName = ApiGroups.Admin)]
@@ -40,7 +41,8 @@ public sealed class AdminApplicationsController(ApplicationService applicationSe
   /// <param name="form">The new application.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; <c>Location</c> points to the new application.</response>
-  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>company</c>, <c>status</c>, <c>jobAdUrl</c>).</response>
+  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>company</c>, <c>status</c>,
+  /// <c>jobAdUrl</c>).</response>
   /// <response code="401">Not logged in.</response>
   [HttpPost]
   [ProducesResponseType<AdminApplication>(StatusCodes.Status201Created)]

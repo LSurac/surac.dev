@@ -43,7 +43,8 @@ public sealed class AdminInterestsController(InterestService interestService) : 
   /// <param name="form">The new interest.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; <c>Location</c> points to the new interest.</response>
-  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>kind</c>, <c>imageDocumentId</c>, <c>de.title</c>).</response>
+  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>kind</c>, <c>imageDocumentId</c>,
+  /// <c>de.title</c>).</response>
   /// <response code="401">Not logged in.</response>
   [HttpPost]
   [ProducesResponseType<AdminInterest>(StatusCodes.Status201Created)]

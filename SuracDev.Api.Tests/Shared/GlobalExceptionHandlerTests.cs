@@ -29,7 +29,10 @@ public sealed class GlobalExceptionHandlerTests
   {
     var (handler, problems, context) = Arrange();
 
-    var handled = await handler.TryHandleAsync(context, new DomainConflictException("Already set."), CancellationToken.None);
+    var handled = await handler.TryHandleAsync(
+      context,
+      new DomainConflictException("Already set."),
+      CancellationToken.None);
 
     Assert.True(handled);
     Assert.Equal(StatusCodes.Status409Conflict, context.Response.StatusCode);
@@ -41,7 +44,10 @@ public sealed class GlobalExceptionHandlerTests
   {
     var (handler, problems, context) = Arrange();
 
-    var handled = await handler.TryHandleAsync(context, new DomainNotFoundException("No such thing."), CancellationToken.None);
+    var handled = await handler.TryHandleAsync(
+      context,
+      new DomainNotFoundException("No such thing."),
+      CancellationToken.None);
 
     Assert.True(handled);
     Assert.Equal(StatusCodes.Status404NotFound, context.Response.StatusCode);
@@ -62,7 +68,8 @@ public sealed class GlobalExceptionHandlerTests
   [Theory]
   [InlineData(PostgresErrorCodes.UniqueViolation)]
   [InlineData(PostgresErrorCodes.ForeignKeyViolation)]
-  public async Task Constraint_violations_that_slip_past_the_services_become_409_without_database_details(string sqlState)
+  public async Task Constraint_violations_that_slip_past_the_services_become_409_without_database_details(
+    string sqlState)
   {
     var (handler, problems, context) = Arrange();
     var exception = new DbUpdateException(
@@ -88,10 +95,16 @@ public sealed class GlobalExceptionHandlerTests
     Assert.Null(problems.Written);
   }
 
-  private static (GlobalExceptionHandler Handler, RecordingProblemDetailsService Problems, DefaultHttpContext Context) Arrange()
+  private static (
+    GlobalExceptionHandler Handler,
+    RecordingProblemDetailsService Problems,
+    DefaultHttpContext Context) Arrange()
   {
     var problems = new RecordingProblemDetailsService();
-    return (new GlobalExceptionHandler(problems, NullLogger<GlobalExceptionHandler>.Instance), problems, new DefaultHttpContext());
+    return (
+      new GlobalExceptionHandler(problems, NullLogger<GlobalExceptionHandler>.Instance),
+      problems,
+      new DefaultHttpContext());
   }
 
   private sealed class RecordingProblemDetailsService : IProblemDetailsService

@@ -37,7 +37,9 @@ public sealed class CareerEndpointTests(PostgresFixture postgres)
     using (var admin = await factory.CreateLoggedInClientAsync())
     {
       await admin.PostAsJsonAsync("/api/admin/experiences", NewExperience);
-      await admin.PostAsJsonAsync("/api/admin/experiences", NewExperience with { Company = "Versteckt AG", IsVisible = false });
+      await admin.PostAsJsonAsync(
+        "/api/admin/experiences",
+        NewExperience with { Company = "Versteckt AG", IsVisible = false });
     }
 
     using var client = factory.CreateClient();

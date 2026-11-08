@@ -10,7 +10,8 @@ namespace SuracDev.Api.Domains.Applications.Controllers;
 [Route("api/admin/application-statistics")]
 [ApiExplorerSettings(GroupName = ApiGroups.Admin)]
 [Produces("application/json")]
-public sealed class AdminApplicationStatisticsController(ApplicationStatisticsService statisticsService) : ControllerBase
+public sealed class AdminApplicationStatisticsController(
+  ApplicationStatisticsService statisticsService) : ControllerBase
 {
   /// <summary>Reads the statistics page.</summary>
   /// <remarks>

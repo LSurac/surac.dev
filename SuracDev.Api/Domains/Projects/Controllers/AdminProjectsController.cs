@@ -44,7 +44,8 @@ public sealed class AdminProjectsController(ProjectService projectService) : Con
   /// <param name="form">The new project.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; <c>Location</c> points to the new project.</response>
-  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>slug</c>, <c>status</c>, <c>de.title</c>, <c>images</c>).</response>
+  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>slug</c>, <c>status</c>,
+  /// <c>de.title</c>, <c>images</c>).</response>
   /// <response code="401">Not logged in.</response>
   /// <response code="409">The slug is already used, or five visible projects are already featured.</response>
   [HttpPost]
@@ -70,7 +71,8 @@ public sealed class AdminProjectsController(ProjectService projectService) : Con
   /// <response code="400">A field breaks a rule; the errors are keyed by field.</response>
   /// <response code="401">Not logged in.</response>
   /// <response code="404">No project has this id.</response>
-  /// <response code="409">The slug is used by another project, or five visible projects are already featured.</response>
+  /// <response code="409">The slug is used by another project, or five visible projects are already
+  /// featured.</response>
   [HttpPut("{id:long}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]

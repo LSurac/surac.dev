@@ -22,7 +22,13 @@ public sealed class ProjectEndpointTests(PostgresFixture postgres)
     SortOrder: 1,
     IsFeatured: false,
     IsVisible: true,
-    De: new ProjectTextsForm("Neues Projekt", "Kurzbeschreibung", "Problem", "Rolle", "Ergebnis", "## Abschnitt\n\n**Text**"),
+    De: new ProjectTextsForm(
+      "Neues Projekt",
+      "Kurzbeschreibung",
+      "Problem",
+      "Rolle",
+      "Ergebnis",
+      "## Abschnitt\n\n**Text**"),
     En: new ProjectTextsForm("New project", null, null, null, null, null),
     Decisions: [new DecisionForm(new DecisionTextsForm("Entscheidung", "Abwägung"), null)],
     Images: []);

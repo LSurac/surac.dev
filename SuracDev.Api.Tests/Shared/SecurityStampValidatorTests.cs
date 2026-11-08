@@ -43,7 +43,8 @@ public sealed class SecurityStampValidatorTests
     services.AddDataProtection();
     services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
     // Never reached by these tests: the claims check rejects first.
-    services.AddDbContext<SuracDevDbContext>(options => options.UseNpgsql("Host=localhost;Database=never;Username=never;Password=never"));
+    services.AddDbContext<SuracDevDbContext>(
+      options => options.UseNpgsql("Host=localhost;Database=never;Username=never;Password=never"));
     var provider = services.BuildServiceProvider();
 
     var httpContext = new DefaultHttpContext { RequestServices = provider.CreateScope().ServiceProvider };

@@ -38,7 +38,10 @@ public sealed class InterestEndpointTests(PostgresFixture postgres)
     var photo = await factory.AddDocumentAsync(DocumentKind.Image);
     using (var admin = await factory.CreateLoggedInClientAsync())
     {
-      await admin.PostAsJsonAsync("/api/admin/interests", NewInterest with { ImageDocumentId = photo }, ApiJson.Options);
+      await admin.PostAsJsonAsync(
+        "/api/admin/interests",
+        NewInterest with { ImageDocumentId = photo },
+        ApiJson.Options);
       await admin.PostAsJsonAsync(
         "/api/admin/interests", NewInterest with { Kind = InterestKind.Music, IsVisible = false }, ApiJson.Options);
     }
@@ -65,7 +68,9 @@ public sealed class InterestEndpointTests(PostgresFixture postgres)
     }
 
     using var client = factory.CreateClient();
-    var interests = await client.GetFromJsonAsync<List<PublicInterest>>("/api/public/interests?locale=en", ApiJson.Options);
+    var interests = await client.GetFromJsonAsync<List<PublicInterest>>(
+      "/api/public/interests?locale=en",
+      ApiJson.Options);
     var chess = interests!.Single(interest => interest.Kind == InterestKind.Chess);
 
     Assert.Equal("Chess", chess.Title);
@@ -81,7 +86,10 @@ public sealed class InterestEndpointTests(PostgresFixture postgres)
 
     var created = await admin.PostAsJsonAsync("/api/admin/interests", NewInterest, ApiJson.Options);
     var location = created.Headers.Location!;
-    var updated = await admin.PutAsJsonAsync(location, NewInterest with { En = null, IsVisible = false }, ApiJson.Options);
+    var updated = await admin.PutAsJsonAsync(
+      location,
+      NewInterest with { En = null, IsVisible = false },
+      ApiJson.Options);
     var read = await admin.GetFromJsonAsync<AdminInterest>(location, ApiJson.Options);
     var listed = await admin.GetFromJsonAsync<List<AdminInterest>>("/api/admin/interests", ApiJson.Options);
     var deleted = await admin.DeleteAsync(location);
@@ -101,7 +109,10 @@ public sealed class InterestEndpointTests(PostgresFixture postgres)
   public async Task An_interest_needs_a_german_title_and_a_public_image()
   {
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
-    var certificate = await factory.AddDocumentAsync(DocumentKind.Certificate, DocumentVisibility.LinkOnly, DocumentContentTypes.Pdf);
+    var certificate = await factory.AddDocumentAsync(
+      DocumentKind.Certificate,
+      DocumentVisibility.LinkOnly,
+      DocumentContentTypes.Pdf);
     using var admin = await factory.CreateLoggedInClientAsync();
 
     var untitled = await admin.PostAsJsonAsync(
@@ -112,6 +123,8 @@ public sealed class InterestEndpointTests(PostgresFixture postgres)
     Assert.Equal(HttpStatusCode.BadRequest, untitled.StatusCode);
     Assert.Contains("de.title", (await untitled.Content.ReadFromJsonAsync<ValidationProblemDetails>())!.Errors.Keys);
     Assert.Equal(HttpStatusCode.BadRequest, leaking.StatusCode);
-    Assert.Contains("imageDocumentId", (await leaking.Content.ReadFromJsonAsync<ValidationProblemDetails>())!.Errors.Keys);
+    Assert.Contains(
+      "imageDocumentId",
+      (await leaking.Content.ReadFromJsonAsync<ValidationProblemDetails>())!.Errors.Keys);
   }
 }

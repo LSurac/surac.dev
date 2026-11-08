@@ -27,7 +27,9 @@ public sealed class CvDocumentTests
         locale.IsPrimary ? "Softwareentwickler" : "Software developer",
         "Beispiel GmbH, Musterstadt",
         null,
-        locale.IsPrimary ? ["Erster Beispielpunkt", "Zweiter Beispielpunkt"] : ["First example point", "Second example point"],
+        locale.IsPrimary
+          ? ["Erster Beispielpunkt", "Zweiter Beispielpunkt"]
+          : ["First example point", "Second example point"],
         ".NET · Angular · PostgreSQL"),
     ],
     Education: [new CvEntry("09/2019 – 06/2022", "Fachinformatiker", "Beispiel-Berufsschule", null, [], "1,8")],

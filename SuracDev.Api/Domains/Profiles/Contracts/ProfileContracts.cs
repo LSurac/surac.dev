@@ -9,13 +9,15 @@ namespace SuracDev.Api.Domains.Profiles.Contracts;
 /// <param name="Location">City or region, never a street address.</param>
 /// <param name="GitHubUrl">Link to the GitHub profile, if any.</param>
 /// <param name="LinkedInUrl">Link to the LinkedIn profile, if any.</param>
-/// <param name="PhotoDocumentId">The hero photo, served by <c>GET /api/public/documents/{id}</c>; null when none is set.</param>
+/// <param name="PhotoDocumentId">The hero photo, served by <c>GET /api/public/documents/{id}</c>; null when none is
+/// set.</param>
 /// <param name="TitleLine">The search-term line under the name ("Fullstack-Entwickler · .NET &amp; Angular").</param>
 /// <param name="Headline">The hero sentence.</param>
 /// <param name="Intro">The short profile, three to five sentences.</param>
 /// <param name="AvailabilityLine">An optional availability note.</param>
 /// <param name="Facts">The fact bar, in display order, at most four cells.</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicProfile(
   string FullName,
   string Email,

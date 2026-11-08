@@ -57,7 +57,10 @@ public sealed class PostgresFixture : IAsyncLifetime
 
   private DbContextOptions<SuracDevDbContext> OptionsFor(string database)
   {
-    var connectionString = new NpgsqlConnectionStringBuilder(container.GetConnectionString()) { Database = database }.ConnectionString;
+    var connectionString = new NpgsqlConnectionStringBuilder(container.GetConnectionString())
+    {
+      Database = database,
+    }.ConnectionString;
     return new DbContextOptionsBuilder<SuracDevDbContext>().UseNpgsql(connectionString).Options;
   }
 }

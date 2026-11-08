@@ -4,14 +4,16 @@ namespace SuracDev.Api.Domains.Skills.Contracts;
 /// <param name="Id">Stable identifier, for list keys.</param>
 /// <param name="Name">The group name in the requested locale or German.</param>
 /// <param name="Skills">The skills in display order.</param>
-/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for them.</param>
+/// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
+/// them.</param>
 public sealed record PublicSkillGroup(
   long Id,
   string Name,
   IReadOnlyList<PublicSkill> Skills,
   IReadOnlyList<string> FallbackFields);
 
-/// <summary>A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a level.</summary>
+/// <summary>A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a
+/// level.</summary>
 /// <param name="Name">The technology name; not translated.</param>
 /// <param name="SinceYear">The year since it is used, if given.</param>
 /// <param name="Qualifier">A short qualifier ("Legacy"), in the requested locale or German.</param>

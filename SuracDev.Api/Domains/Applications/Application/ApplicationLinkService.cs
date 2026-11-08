@@ -14,7 +14,9 @@ public sealed class ApplicationLinkService(SuracDevDbContext dbContext, TimeProv
 {
   /// <summary>The links of an application, newest first.</summary>
   /// <exception cref="DomainNotFoundException">No application has this id.</exception>
-  public async Task<IReadOnlyList<AdminApplicationLink>> ListAsync(long applicationId, CancellationToken cancellationToken)
+  public async Task<IReadOnlyList<AdminApplicationLink>> ListAsync(
+    long applicationId,
+    CancellationToken cancellationToken)
   {
     await EnsureApplicationExistsAsync(applicationId, cancellationToken);
     var links = await dbContext.ApplicationLinks.AsNoTracking()
@@ -37,8 +39,12 @@ public sealed class ApplicationLinkService(SuracDevDbContext dbContext, TimeProv
   /// Only the token's hash is stored, so this response is the only place the token ever appears.
   /// </summary>
   /// <exception cref="DomainNotFoundException">No application has this id.</exception>
-  /// <exception cref="DomainValidationException">A setting breaks a link rule or a document is not link-only.</exception>
-  public async Task<CreatedApplicationLink> CreateAsync(long applicationId, ApplicationLinkForm form, CancellationToken cancellationToken)
+  /// <exception cref="DomainValidationException">A setting breaks a link rule or a document is not
+  /// link-only.</exception>
+  public async Task<CreatedApplicationLink> CreateAsync(
+    long applicationId,
+    ApplicationLinkForm form,
+    CancellationToken cancellationToken)
   {
     await EnsureApplicationExistsAsync(applicationId, cancellationToken);
     var now = timeProvider.GetUtcNow();
@@ -52,9 +58,14 @@ public sealed class ApplicationLinkService(SuracDevDbContext dbContext, TimeProv
 
   /// <summary>Replaces a link's settings and documents; the token stays the same.</summary>
   /// <exception cref="DomainNotFoundException">The application has no link with this id.</exception>
-  /// <exception cref="DomainValidationException">A setting breaks a link rule or a document is not link-only.</exception>
+  /// <exception cref="DomainValidationException">A setting breaks a link rule or a document is not
+  /// link-only.</exception>
   /// <exception cref="DomainConflictException">The link is revoked.</exception>
-  public async Task UpdateAsync(long applicationId, long linkId, ApplicationLinkForm form, CancellationToken cancellationToken)
+  public async Task UpdateAsync(
+    long applicationId,
+    long linkId,
+    ApplicationLinkForm form,
+    CancellationToken cancellationToken)
   {
     var link = await FindAsync(applicationId, linkId, cancellationToken);
     var now = timeProvider.GetUtcNow();
@@ -101,7 +112,12 @@ public sealed class ApplicationLinkService(SuracDevDbContext dbContext, TimeProv
   }
 
   private static LinkSettings ToSettings(ApplicationLinkForm form, DateTimeOffset now)
-    => new(form.Profile, form.GreetingDe, form.GreetingEn, form.ExpiresAt ?? now + ApplicationLink.DefaultLifetime, form.UnlockFullPdf);
+    => new(
+      form.Profile,
+      form.GreetingDe,
+      form.GreetingEn,
+      form.ExpiresAt ?? now + ApplicationLink.DefaultLifetime,
+      form.UnlockFullPdf);
 
   private static AdminApplicationLink ToAdmin(ApplicationLink link, DateTimeOffset now)
     => new(

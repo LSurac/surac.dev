@@ -21,7 +21,8 @@ public sealed class LocalizedText<TTranslation>
   private readonly List<string> fallbackFields = [];
 
   /// <summary>Picks the German and the requested translation; German must exist.</summary>
-  /// <exception cref="InvalidOperationException">The entity has no German translation, which the domain never allows.</exception>
+  /// <exception cref="InvalidOperationException">The entity has no German translation, which the domain never
+  /// allows.</exception>
   public LocalizedText(IEnumerable<TTranslation> translations, Locale locale)
   {
     var available = translations.ToList();

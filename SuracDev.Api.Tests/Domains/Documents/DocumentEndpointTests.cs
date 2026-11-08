@@ -46,7 +46,11 @@ public sealed class DocumentEndpointTests(PostgresFixture postgres)
     using var admin = await factory.CreateLoggedInClientAsync();
 
     var disguised = await UploadAsync(
-      admin, Encoding.ASCII.GetBytes("<svg onload=alert(1)>"), "bild.png", DocumentKind.Image, DocumentVisibility.Public);
+      admin,
+      Encoding.ASCII.GetBytes("<svg onload=alert(1)>"),
+      "bild.png",
+      DocumentKind.Image,
+      DocumentVisibility.Public);
     var problem = await disguised.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
     Assert.Equal(HttpStatusCode.BadRequest, disguised.StatusCode);

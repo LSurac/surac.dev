@@ -31,7 +31,9 @@ public sealed class LegalEndpointTests(PostgresFixture postgres)
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
     using var client = factory.CreateClient();
 
-    var page = (await client.GetFromJsonAsync<PublicLegalPage>("/api/public/legal/privacy?locale=en", ApiJson.Options))!;
+    var page = (await client.GetFromJsonAsync<PublicLegalPage>(
+      "/api/public/legal/privacy?locale=en",
+      ApiJson.Options))!;
 
     Assert.Equal("Privacy policy", page.Title);
     Assert.Null(page.Contact);
@@ -79,7 +81,9 @@ public sealed class LegalEndpointTests(PostgresFixture postgres)
     await admin.PutAsJsonAsync(
       "/api/admin/legal-pages/imprint", new LegalPageForm(new LegalTextsForm("Impressum", "Text"), null));
     using var client = factory.CreateClient();
-    var page = (await client.GetFromJsonAsync<PublicLegalPage>("/api/public/legal/imprint?locale=en", ApiJson.Options))!;
+    var page = (await client.GetFromJsonAsync<PublicLegalPage>(
+      "/api/public/legal/imprint?locale=en",
+      ApiJson.Options))!;
     var all = (await admin.GetFromJsonAsync<List<AdminLegalPage>>("/api/admin/legal-pages", ApiJson.Options))!;
 
     Assert.Equal("Impressum", page.Title);

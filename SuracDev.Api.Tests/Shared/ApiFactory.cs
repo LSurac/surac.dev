@@ -26,7 +26,10 @@ public sealed class ApiFactory(
   public const string PeerAddressHeader = "X-Test-Peer-Address";
 
   /// <summary>A documents folder of this factory's own, removed again on dispose.</summary>
-  public string DocumentsPath { get; } = Path.Combine(Path.GetTempPath(), "surac-dev-tests", Guid.NewGuid().ToString("N"));
+  public string DocumentsPath { get; } = Path.Combine(
+    Path.GetTempPath(),
+    "surac-dev-tests",
+    Guid.NewGuid().ToString("N"));
 
   protected override void ConfigureWebHost(IWebHostBuilder builder)
   {
@@ -57,7 +60,8 @@ public sealed class ApiFactory(
     }
   }
 
-  /// <summary>Runs <paramref name="work"/> against the test database, for arranging rows the API cannot create yet.</summary>
+  /// <summary>Runs <paramref name="work"/> against the test database, for arranging rows the API cannot create
+  /// yet.</summary>
   public async Task<T> WithDbContextAsync<T>(Func<SuracDevDbContext, Task<T>> work)
   {
     await using var scope = Services.CreateAsyncScope();
@@ -72,7 +76,16 @@ public sealed class ApiFactory(
     => WithDbContextAsync(async dbContext =>
     {
       var document = Document.Create(
-        new DocumentUpload("datei.png", contentType, 10, $"test/{Guid.NewGuid():N}", new string('a', 64), kind, visibility, null, null),
+        new DocumentUpload(
+          "datei.png",
+          contentType,
+          10,
+          $"test/{Guid.NewGuid():N}",
+          new string('a', 64),
+          kind,
+          visibility,
+          null,
+          null),
         DateTimeOffset.UtcNow);
       dbContext.Documents.Add(document);
       await dbContext.SaveChangesAsync();
@@ -80,7 +93,8 @@ public sealed class ApiFactory(
     });
 }
 
-/// <summary>Sets the connection's remote address from <see cref="ApiFactory.PeerAddressHeader"/> before the app's own middleware runs.</summary>
+/// <summary>Sets the connection's remote address from <see cref="ApiFactory.PeerAddressHeader"/> before the app's own
+/// middleware runs.</summary>
 internal sealed class PeerAddressFilter : IStartupFilter
 {
   public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)

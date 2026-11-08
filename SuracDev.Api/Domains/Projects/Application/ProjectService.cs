@@ -17,7 +17,8 @@ public sealed class ProjectService(SuracDevDbContext dbContext, DocumentReferenc
   /// <summary>How many visible projects the start page features.</summary>
   public const int MaxFeatured = 5;
 
-  /// <summary>Visible project cards in display order; only the featured ones when <paramref name="featuredOnly"/> is set.</summary>
+  /// <summary>Visible project cards in display order; only the featured ones when <paramref name="featuredOnly"/> is
+  /// set.</summary>
   public async Task<IReadOnlyList<PublicProjectCard>> ListPublicAsync(
     Locale locale,
     bool featuredOnly,
@@ -63,7 +64,8 @@ public sealed class ProjectService(SuracDevDbContext dbContext, DocumentReferenc
     => ProjectMapping.ToAdmin(await FindAsync(id, tracked: false, cancellationToken));
 
   /// <summary>Creates a project and returns it as stored.</summary>
-  /// <exception cref="DomainValidationException">A field breaks a project rule or an image is not a public image.</exception>
+  /// <exception cref="DomainValidationException">A field breaks a project rule or an image is not a public
+  /// image.</exception>
   /// <exception cref="DomainConflictException">The slug is taken or a sixth project would be featured.</exception>
   public async Task<AdminProject> CreateAsync(ProjectForm form, CancellationToken cancellationToken)
   {
@@ -77,7 +79,8 @@ public sealed class ProjectService(SuracDevDbContext dbContext, DocumentReferenc
 
   /// <summary>Replaces a project, its decisions and its images.</summary>
   /// <exception cref="DomainNotFoundException">No project has this id.</exception>
-  /// <exception cref="DomainValidationException">A field breaks a project rule or an image is not a public image.</exception>
+  /// <exception cref="DomainValidationException">A field breaks a project rule or an image is not a public
+  /// image.</exception>
   /// <exception cref="DomainConflictException">The slug is taken or a sixth project would be featured.</exception>
   public async Task UpdateAsync(long id, ProjectForm form, CancellationToken cancellationToken)
   {

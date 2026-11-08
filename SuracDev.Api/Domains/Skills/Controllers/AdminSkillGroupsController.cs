@@ -46,7 +46,8 @@ public sealed class AdminSkillGroupsController(SkillService skillService) : Cont
   /// <param name="form">The new group.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; <c>Location</c> points to the new group.</response>
-  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>de.name</c>, <c>skills</c>, <c>skills.sinceYear</c>).</response>
+  /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>de.name</c>, <c>skills</c>,
+  /// <c>skills.sinceYear</c>).</response>
   /// <response code="401">Not logged in.</response>
   [HttpPost]
   [ProducesResponseType<AdminSkillGroup>(StatusCodes.Status201Created)]

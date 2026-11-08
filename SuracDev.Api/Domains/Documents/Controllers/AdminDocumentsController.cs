@@ -41,7 +41,8 @@ public sealed class AdminDocumentsController(DocumentService documentService) : 
   /// <param name="labelEn">Optional English label.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Stored; <c>Location</c> points to the content of the new document.</response>
-  /// <response code="400">The file is empty, too large or of a type not allowed, or kind and visibility do not fit (<c>file</c>, <c>visibility</c>).</response>
+  /// <response code="400">The file is empty, too large or of a type not allowed, or kind and visibility do not fit
+  /// (<c>file</c>, <c>visibility</c>).</response>
   /// <response code="401">Not logged in.</response>
   /// <response code="413">The request is larger than a 10 MB file allows.</response>
   [HttpPost]
@@ -93,7 +94,8 @@ public sealed class AdminDocumentsController(DocumentService documentService) : 
   }
 
   /// <summary>Deletes a document and its file.</summary>
-  /// <remarks>A document still used by the profile, a project, an interest or an application link cannot be deleted.</remarks>
+  /// <remarks>A document still used by the profile, a project, an interest or an application link cannot be
+  /// deleted.</remarks>
   /// <param name="id">The document's identifier.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="204">Deleted.</response>

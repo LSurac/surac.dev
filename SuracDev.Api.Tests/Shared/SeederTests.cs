@@ -67,7 +67,9 @@ public sealed class SeederTests(PostgresFixture postgres)
 
   private async Task<SuracDevDbContext> SeededContextAsync()
   {
-    var options = new DbContextOptionsBuilder<SuracDevDbContext>().UseNpgsql(await postgres.CreateDatabaseAsync()).Options;
+    var options = new DbContextOptionsBuilder<SuracDevDbContext>()
+      .UseNpgsql(await postgres.CreateDatabaseAsync())
+      .Options;
     var dbContext = new SuracDevDbContext(options);
     await new SuracDevSeeder(dbContext, TimeProvider.System).SeedAsync();
     return dbContext;
