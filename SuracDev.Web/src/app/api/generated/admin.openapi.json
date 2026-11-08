@@ -71,7 +71,7 @@
             }
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (de.name, skills, skills.sinceYear).",
+            "description": "A field breaks a rule; the errors are keyed by field (de.name, skills,\n            skills.sinceYear).",
             "content": {
               "application/json": {
                 "schema": {
@@ -326,7 +326,7 @@
             }
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (slug, status, de.title, images).",
+            "description": "A field breaks a rule; the errors are keyed by field (slug, status,\n            de.title, images).",
             "content": {
               "application/json": {
                 "schema": {
@@ -479,7 +479,7 @@
             }
           },
           "409": {
-            "description": "The slug is used by another project, or five visible projects are already featured.",
+            "description": "The slug is used by another project, or five visible projects are already\n            featured.",
             "content": {
               "application/json": {
                 "schema": {
@@ -603,7 +603,7 @@
             "description": "Saved."
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (de.headline, facts, photoDocumentId).",
+            "description": "A field breaks a rule; the errors are keyed by field (de.headline, facts,\n            photoDocumentId).",
             "content": {
               "application/json": {
                 "schema": {
@@ -758,7 +758,7 @@
             "description": "Saved."
           },
           "400": {
-            "description": "A field breaks a rule (de.title, de.bodyMarkdown) or the key is not supported.",
+            "description": "A field breaks a rule (de.title, de.bodyMarkdown) or the key is not\n            supported.",
             "content": {
               "application/json": {
                 "schema": {
@@ -845,7 +845,7 @@
             }
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (kind, imageDocumentId, de.title).",
+            "description": "A field breaks a rule; the errors are keyed by field (kind, imageDocumentId,\n            de.title).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1244,7 +1244,7 @@
             }
           },
           "400": {
-            "description": "The file is empty, too large or of a type not allowed, or kind and visibility do not fit (file, visibility).",
+            "description": "The file is empty, too large or of a type not allowed, or kind and visibility do not fit\n            (file, visibility).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1361,7 +1361,7 @@
           "AdminDocuments"
         ],
         "summary": "Deletes a document and its file.",
-        "description": "A document still used by the profile, a project, an interest or an application link cannot be deleted.",
+        "description": "A document still used by the profile, a project, an interest or an application link cannot be\n            deleted.",
         "operationId": "AdminDocuments_Delete",
         "parameters": [
           {
@@ -1533,7 +1533,7 @@
             }
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (institution, endDate, de.degree).",
+            "description": "A field breaks a rule; the errors are keyed by field (institution, endDate,\n            de.degree).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1789,7 +1789,7 @@
             }
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (company, endDate, de.roleTitle).",
+            "description": "A field breaks a rule; the errors are keyed by field (company, endDate,\n            de.roleTitle).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2082,7 +2082,7 @@
             }
           },
           "400": {
-            "description": "A setting breaks a rule (profile, expiresAt, greetingDe, documentIds).",
+            "description": "A setting breaks a rule (profile, expiresAt, greetingDe,\n            documentIds).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2393,7 +2393,7 @@
             }
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (company, status, jobAdUrl).",
+            "description": "A field breaks a rule; the errors are keyed by field (company, status,\n            jobAdUrl).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3312,7 +3312,7 @@
       },
       "AdminInterest": {
         "type": "object",
-        "description": "An interest for the admin editor, both locales side by side. Read with GET, written with PUT.",
+        "description": "An interest for the admin editor, both locales side by side. Read with GET, written with\n            PUT.",
         "additionalProperties": false,
         "properties": {
           "id": {
@@ -3572,7 +3572,7 @@
       },
       "DocumentVisibility": {
         "type": "string",
-        "description": "Who may download a document. Stored as int; Unknown is never written and values are frozen.",
+        "description": "Who may download a document. Stored as int; Unknown is never written and values are\n            frozen.",
         "x-enumNames": [
           "Unknown",
           "Public",
@@ -3586,11 +3586,11 @@
       },
       "DocumentUpdateForm": {
         "type": "object",
-        "description": "The changeable fields of a document, for PUT. The file itself never changes; upload a new one.",
+        "description": "The changeable fields of a document, for PUT. The file itself never changes; upload a new\n            one.",
         "additionalProperties": false,
         "properties": {
           "visibility": {
-            "description": "Certificates and cover letters stay link-only; documents in use on the open site stay public.",
+            "description": "Certificates and cover letters stay link-only; documents in use on the open site stay\n            public.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/DocumentVisibility"
@@ -3889,7 +3889,7 @@
       },
       "AdminApplicationLink": {
         "type": "object",
-        "description": "An application link in the admin area. The clear token is not part of it; it exists only once, at creation.",
+        "description": "An application link in the admin area. The clear token is not part of it; it exists only once, at\n            creation.",
         "additionalProperties": false,
         "properties": {
           "id": {
@@ -4086,7 +4086,7 @@
       },
       "ApplicationStatus": {
         "type": "string",
-        "description": "The pipeline of an application. Stored as int; Unknown is never written and values are frozen.",
+        "description": "The pipeline of an application. Stored as int; Unknown is never written and values are\n            frozen.",
         "x-enumNames": [
           "Unknown",
           "Draft",

@@ -828,7 +828,7 @@
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }
@@ -837,7 +837,7 @@
       },
       "PublicSkill": {
         "type": "object",
-        "description": "A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a level.",
+        "description": "A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a\n            level.",
         "additionalProperties": false,
         "properties": {
           "name": {
@@ -999,7 +999,7 @@
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }
@@ -1095,7 +1095,7 @@
           },
           "caseStudyHtml": {
             "type": "string",
-            "description": "The case study rendered from the restricted Markdown subset; safe to bind as inner HTML."
+            "description": "The case study rendered from the restricted Markdown subset; safe to bind as inner\n            HTML."
           },
           "decisions": {
             "type": "array",
@@ -1113,7 +1113,7 @@
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }
@@ -1181,7 +1181,7 @@
           },
           "photoDocumentId": {
             "type": "integer",
-            "description": "The hero photo, served by GET /api/public/documents/{id}; null when none is set.",
+            "description": "The hero photo, served by GET /api/public/documents/{id}; null when none is\n            set.",
             "format": "int64",
             "nullable": true
           },
@@ -1212,7 +1212,7 @@
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }
@@ -1271,7 +1271,7 @@
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }
@@ -1343,18 +1343,18 @@
           },
           "imageDocumentId": {
             "type": "integer",
-            "description": "A public image, served by GET /api/public/documents/{id}; null when none is set.",
+            "description": "A public image, served by GET /api/public/documents/{id}; null when none is\n            set.",
             "format": "int64",
             "nullable": true
           },
           "imageAlt": {
             "type": "string",
-            "description": "The image's alternative text: its document label, or the title when the image has no label.",
+            "description": "The image's alternative text: its document label, or the title when the image has no\n            label.",
             "nullable": true
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }
@@ -1443,7 +1443,7 @@
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }
@@ -1496,7 +1496,7 @@
           },
           "fallbackFields": {
             "type": "array",
-            "description": "JSON names of the fields shown in German because the requested locale has no text for them.",
+            "description": "JSON names of the fields shown in German because the requested locale has no text for\n            them.",
             "items": {
               "type": "string"
             }

@@ -186,7 +186,7 @@ export class AdminSkillGroupsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (de.name, skills, skills.sinceYear).',
+            'A field breaks a rule; the errors are keyed by field (de.name, skills,\n            skills.sinceYear).',
             status,
             _responseText,
             _headers,
@@ -686,7 +686,7 @@ export class AdminProjectsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (slug, status, de.title, images).',
+            'A field breaks a rule; the errors are keyed by field (slug, status,\n            de.title, images).',
             status,
             _responseText,
             _headers,
@@ -939,7 +939,7 @@ export class AdminProjectsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
           return throwException(
-            'The slug is used by another project, or five visible projects are already featured.',
+            'The slug is used by another project, or five visible projects are already\n            featured.',
             status,
             _responseText,
             _headers,
@@ -1223,7 +1223,7 @@ export class AdminProfileClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (de.headline, facts, photoDocumentId).',
+            'A field breaks a rule; the errors are keyed by field (de.headline, facts,\n            photoDocumentId).',
             status,
             _responseText,
             _headers,
@@ -1530,7 +1530,7 @@ export class AdminLegalPagesClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule (de.title, de.bodyMarkdown) or the key is not supported.',
+            'A field breaks a rule (de.title, de.bodyMarkdown) or the key is not\n            supported.',
             status,
             _responseText,
             _headers,
@@ -1730,7 +1730,7 @@ export class AdminInterestsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (kind, imageDocumentId, de.title).',
+            'A field breaks a rule; the errors are keyed by field (kind, imageDocumentId,\n            de.title).',
             status,
             _responseText,
             _headers,
@@ -2629,7 +2629,7 @@ export class AdminDocumentsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'The file is empty, too large or of a type not allowed, or kind and visibility do not fit (file, visibility).',
+            'The file is empty, too large or of a type not allowed, or kind and visibility do not fit\n            (file, visibility).',
             status,
             _responseText,
             _headers,
@@ -3186,7 +3186,7 @@ export class AdminEducationClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (institution, endDate, de.degree).',
+            'A field breaks a rule; the errors are keyed by field (institution, endDate,\n            de.degree).',
             status,
             _responseText,
             _headers,
@@ -3688,7 +3688,7 @@ export class AdminExperiencesClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (company, endDate, de.roleTitle).',
+            'A field breaks a rule; the errors are keyed by field (company, endDate,\n            de.roleTitle).',
             status,
             _responseText,
             _headers,
@@ -4209,7 +4209,7 @@ export class AdminApplicationLinksClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A setting breaks a rule (profile, expiresAt, greetingDe, documentIds).',
+            'A setting breaks a rule (profile, expiresAt, greetingDe,\n            documentIds).',
             status,
             _responseText,
             _headers,
@@ -4760,7 +4760,7 @@ export class AdminApplicationsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (company, status, jobAdUrl).',
+            'A field breaks a rule; the errors are keyed by field (company, status,\n            jobAdUrl).',
             status,
             _responseText,
             _headers,
@@ -5439,7 +5439,7 @@ export interface LegalTextsForm {
   bodyMarkdown?: string | undefined;
 }
 
-/** An interest for the admin editor, both locales side by side. Read with GET, written with PUT. */
+/** An interest for the admin editor, both locales side by side. Read with GET, written with            PUT. */
 export interface AdminInterest {
   /** The interest's identifier. */
   id?: number;
@@ -5530,12 +5530,13 @@ export interface AdminDocument {
 /** What a document is. Stored as int; Unknown is never written and values are frozen. */
 export type DocumentKind = 'Unknown' | 'Photo' | 'Certificate' | 'CoverLetter' | 'Image' | 'Other';
 
-/** Who may download a document. Stored as int; Unknown is never written and values are frozen. */
+/** Who may download a document. Stored as int; Unknown is never written and values are            frozen. */
 export type DocumentVisibility = 'Unknown' | 'Public' | 'LinkOnly';
 
-/** The changeable fields of a document, for PUT. The file itself never changes; upload a new one. */
+/** The changeable fields of a document, for PUT. The file itself never changes; upload a new            one. */
 export interface DocumentUpdateForm {
-  /** Certificates and cover letters stay link-only; documents in use on the open site stay public. */
+  /** Certificates and cover letters stay link-only; documents in use on the open site stay
+            public. */
   visibility?: DocumentVisibility;
   /** Optional German label. */
   labelDe?: string | undefined;
@@ -5651,7 +5652,7 @@ export interface ExperienceForm {
   en?: ExperienceTextsForm | undefined;
 }
 
-/** An application link in the admin area. The clear token is not part of it; it exists only once, at creation. */
+/** An application link in the admin area. The clear token is not part of it; it exists only once, at            creation. */
 export interface AdminApplicationLink {
   /** The link's identifier. */
   id?: number;
@@ -5726,7 +5727,7 @@ export interface AdminApplication {
   updatedAt?: string;
 }
 
-/** The pipeline of an application. Stored as int; Unknown is never written and values are frozen. */
+/** The pipeline of an application. Stored as int; Unknown is never written and values are            frozen. */
 export type ApplicationStatus =
   'Unknown' | 'Draft' | 'Sent' | 'Replied' | 'Interview' | 'Offer' | 'Rejected' | 'Withdrawn';
 

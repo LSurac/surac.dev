@@ -1580,11 +1580,12 @@ export interface PublicSkillGroup {
   name?: string;
   /** The skills in display order. */
   skills?: PublicSkill[];
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
-/** A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a level. */
+/** A skill as the open site shows it: a technology, since when, and an optional qualifier. Never a            level. */
 export interface PublicSkill {
   /** The technology name; not translated. */
   name?: string;
@@ -1640,7 +1641,8 @@ export interface PublicProjectCard {
   title?: string;
   /** One or two sentences for the card. */
   teaser?: string;
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
@@ -1673,13 +1675,15 @@ export interface PublicCaseStudy {
   myRole?: string | undefined;
   /** What came out of it. */
   outcome?: string | undefined;
-  /** The case study rendered from the restricted Markdown subset; safe to bind as inner HTML. */
+  /** The case study rendered from the restricted Markdown subset; safe to bind as inner
+            HTML. */
   caseStudyHtml?: string;
   /** Architectural choices with their trade-offs, in order. */
   decisions?: PublicDecision[];
   /** Screenshots and diagrams, in order. */
   images?: PublicImage[];
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
@@ -1711,7 +1715,8 @@ export interface PublicProfile {
   gitHubUrl?: string | undefined;
   /** Link to the LinkedIn profile, if any. */
   linkedInUrl?: string | undefined;
-  /** The hero photo, served by GET /api/public/documents/{id}; null when none is set. */
+  /** The hero photo, served by GET /api/public/documents/{id}; null when none is
+            set. */
   photoDocumentId?: number | undefined;
   /** The search-term line under the name ("Fullstack-Entwickler · .NET & Angular"). */
   titleLine?: string;
@@ -1723,7 +1728,8 @@ export interface PublicProfile {
   availabilityLine?: string | undefined;
   /** The fact bar, in display order, at most four cells. */
   facts?: PublicFact[];
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
@@ -1747,7 +1753,8 @@ export interface PublicLegalPage {
   updatedAt?: string;
   /** The provider identification from the profile; only on the Impressum (§ 5 DDG). */
   contact?: ImprintContact | undefined;
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
@@ -1774,11 +1781,14 @@ export interface PublicInterest {
   title?: string;
   /** The body rendered from the restricted Markdown, or null when there is none. */
   bodyHtml?: string | undefined;
-  /** A public image, served by GET /api/public/documents/{id}; null when none is set. */
+  /** A public image, served by GET /api/public/documents/{id}; null when none is
+            set. */
   imageDocumentId?: number | undefined;
-  /** The image's alternative text: its document label, or the title when the image has no label. */
+  /** The image's alternative text: its document label, or the title when the image has no
+            label. */
   imageAlt?: string | undefined;
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
@@ -1809,7 +1819,8 @@ export interface PublicExperience {
   bullets?: string[];
   /** The technologies used, as one line. */
   stackLine?: string | undefined;
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
@@ -1831,7 +1842,8 @@ export interface PublicEducation {
   degree?: string;
   /** Optional paragraph. */
   summary?: string | undefined;
-  /** JSON names of the fields shown in German because the requested locale has no text for them. */
+  /** JSON names of the fields shown in German because the requested locale has no text for
+            them. */
   fallbackFields?: string[];
 }
 
