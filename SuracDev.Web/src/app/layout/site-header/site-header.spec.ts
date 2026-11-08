@@ -33,4 +33,21 @@ describe('app-site-header', () => {
       '/en/projects/beispiel',
     );
   });
+
+  it('keeps a visitor of an application link on the link page', async () => {
+    const { fixture } = await render(SiteHeader, {
+      inputs: { locale: 'de' },
+      providers: [provideRouter([{ path: 'b/:token', children: [] }])],
+    });
+
+    await fixture.debugElement.injector.get(Router).navigateByUrl('/b/abc_DEF-123');
+    fixture.detectChanges();
+
+    expect(await screen.findByRole('link', { name: 'Projekte' })).toHaveAttribute(
+      'href',
+      '/b/abc_DEF-123#projekte',
+    );
+    expect(screen.getByRole('link', { name: 'Leonard Surac' })).toHaveAttribute('href', '/b/abc_DEF-123');
+    expect(screen.getByRole('link', { name: 'English' })).toHaveAttribute('href', '/en/b/abc_DEF-123');
+  });
 });
