@@ -22,6 +22,7 @@ export class AdminShell {
     { label: adminStrings.nav.education, path: '/admin/ausbildung' },
     { label: adminStrings.nav.projects, path: '/admin/projekte' },
     { label: adminStrings.nav.skills, path: '/admin/kenntnisse' },
+    { label: adminStrings.nav.interests, path: '/admin/ueber-mich' },
     { label: adminStrings.nav.legal, path: '/admin/rechtstexte' },
     { label: adminStrings.nav.documents, path: '/admin/dokumente' },
     { label: adminStrings.nav.applications, path: '/admin/bewerbungen' },

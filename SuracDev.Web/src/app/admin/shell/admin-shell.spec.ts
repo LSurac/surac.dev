@@ -28,6 +28,7 @@ describe('admin shell', () => {
       ['Ausbildung', '/admin/ausbildung'],
       ['Projekte', '/admin/projekte'],
       ['Kenntnisse', '/admin/kenntnisse'],
+      ['Über mich', '/admin/ueber-mich'],
       ['Rechtstexte', '/admin/rechtstexte'],
       ['Dokumente', '/admin/dokumente'],
       ['Bewerbungen', '/admin/bewerbungen'],
