@@ -5,16 +5,24 @@ into the document it belongs to (`docs/decisions.md`, `docs/ops-and-deploy.md`, 
 
 ## Acceptance on staging (maintainer)
 
-The staging content was entered on 2026-11-08 from the 2026 CV, the project repositories and the
-cover letters. To check and complete in the admin:
+The staging content was entered on 2026-11-08 from the 2026 CV, the reference letters, the
+maintainer's work notes, the project repositories and the cover letters. To check and complete in
+the admin:
 
 - [ ] Texts in both languages: profile, career, projects and case studies, "Über mich", the
-      "Arbeitsweise" section (`SuracDev.Web/src/app/core/i18n/ui-strings.ts`), the fact bar values.
+      "Arbeitsweise" section (`SuracDev.Web/src/app/core/i18n/ui-strings.ts`).
+- [ ] Würth IT station: the bullets come from the work notes, several of them marked there as
+      "probably own work"; location is empty. Confirm or trim.
+- [ ] Orga-Soft station follows the apprenticeship reference (09/2021, not 06/2021 as in the CV).
+- [ ] Fact bar: "8 own applications in production" and "1,0 vocational school" are derived, check
+      both.
 - [ ] Privacy page: name hosting provider and location (placeholder in the text).
 - [ ] Abitur entry: the CV has only the year; start date is a placeholder (07/2016).
 - [ ] LinkedIn URL, availability line (both empty).
-- [ ] Status of the twelve applications taken from the cover letters (all set to "Versendet"; the
-      weekly reminder lists them until changed).
+- [ ] Applications: Würth IT is set to "Angebot"; the other eleven from the cover letters stay
+      "Versendet" and appear in the Monday reminder until their status is set.
+- [ ] Final AERA reference letter: only a draft exists, so it is not uploaded yet.
+- [ ] "Über mich": a chess photo is missing (Immich had only screenshots of games).
 - [ ] Create one application link per profile and open it, including a document download.
 - [ ] Admin password additionally in Vaultwarden? (today only in Credential Manager
       `Claude:SuracDevAdmin`).
