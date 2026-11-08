@@ -56,3 +56,8 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
 - **Wrapping an XML doc comment changes the OpenAPI documents.** NSwag keeps the line break in the
   description, so `npm run contract:check` fails after a formatting pass over C#; regenerate the
   clients (`npm run api:generate`) in the same push.
+- **Deny by default turns a wrong HTTP method into 401** (2026-11-08, found by a link check on
+  staging: every `HEAD /api/...` answered 401). Routing answers an unmatched method with a 405
+  endpoint that carries no `[AllowAnonymous]`, so the fallback policy challenges first. Public
+  read-only controllers carry `[AnswersHead]`; the application links deliberately do not, because
+  a HEAD there would be recorded as an open or a download.

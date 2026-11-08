@@ -21,6 +21,10 @@ Public endpoints (`[AllowAnonymous]`, on the `public` OpenAPI document):
   token itself
 - `GET /api/auth/state` and `POST /api/auth/login` (rate limited)
 
+The read-only public controllers carry `[AnswersHead]` and answer `HEAD` like `GET` (link checkers,
+monitors). The application-link endpoints do not: every `GET` there is recorded as an open or a
+download, so `HEAD` stays rejected. `HEAD` is routing only and never appears in the OpenAPI documents.
+
 `AuthorizationSweepTests` enumerates every endpoint and asserts 401 for anonymous calls unless the
 endpoint is on that list. Adding to the list is a deliberate, reviewed act.
 
