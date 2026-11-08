@@ -99,6 +99,16 @@ test.describe('start page', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Example interest' })).toBeVisible();
   });
 
+  test('scrolls to a section of the start page when its header link is used on another page', async ({
+    page,
+  }) => {
+    await page.goto('/ueber-mich');
+    await page.getByRole('navigation').getByRole('link', { name: 'Projekte' }).click();
+
+    await expect(page).toHaveURL(/\/#projekte$/);
+    await expect(page.locator('#projekte')).toBeInViewport();
+  });
+
   test('downloads the CV as PDF under the name the server gives it', async ({ page }) => {
     await page.goto('/');
     const [download] = await Promise.all([

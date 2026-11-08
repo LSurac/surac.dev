@@ -1,6 +1,7 @@
+import { ViewportScroller } from '@angular/common';
 import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import { of, throwError } from 'rxjs';
 import {
@@ -220,6 +221,21 @@ describe('app-home-page', () => {
     await screen.findByRole('heading', { level: 1 });
 
     expect(screen.queryByRole('heading', { level: 2, name: /Projekte/ })).not.toBeInTheDocument();
+  });
+
+  it('scrolls to the section named in the address once the content has loaded', async () => {
+    const scroller = { scrollToAnchor: vi.fn(), setOffset: vi.fn(), scrollToPosition: vi.fn() };
+    await render(HomePage, {
+      providers: [
+        ...providers().providers,
+        { provide: ActivatedRoute, useValue: { fragment: of('projekte') } },
+        { provide: ViewportScroller, useValue: scroller },
+      ],
+    });
+
+    await screen.findByRole('heading', { level: 2, name: /Projekte/ });
+
+    await vi.waitFor(() => expect(scroller.scrollToAnchor).toHaveBeenCalledWith('projekte'));
   });
 
   it('tells search engines who this is, in which language', async () => {

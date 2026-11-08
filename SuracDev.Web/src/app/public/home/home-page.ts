@@ -1,5 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { ViewportScroller } from '@angular/common';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  Injector,
+  input,
+} from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import {
   PublicEducation,
   PublicExperience,
@@ -83,6 +94,9 @@ interface ProjectCardView {
 export class HomePage {
   private readonly content = inject(PublicContent);
   private readonly seo = inject(Seo);
+  private readonly scroller = inject(ViewportScroller);
+  private readonly injector = inject(Injector);
+  private readonly fragment = toSignal(inject(ActivatedRoute).fragment, { initialValue: null });
 
   /** Bound from the route data by withComponentInputBinding. */
   readonly locale = input<Locale>('de');
@@ -188,7 +202,29 @@ export class HomePage {
     return Object.fromEntries(shown.map((key, index) => [key, String(index + 1).padStart(2, '0')]));
   });
 
+  /** True once every section's content has arrived (or failed), so every anchor exists. */
+  private readonly contentSettled = computed(
+    () =>
+      ![
+        this.profileResource,
+        this.experiencesResource,
+        this.educationResource,
+        this.projectsResource,
+        this.skillsResource,
+      ].some((resource) => resource.isLoading()),
+  );
+
   constructor() {
+    // The router scrolls to a fragment right after navigating, before the sections exist when the
+    // visitor comes from another page ("Über mich" → "Projekte"). Scroll again once they rendered.
+    effect(() => {
+      const fragment = this.fragment();
+      if (!fragment || !this.contentSettled()) {
+        return;
+      }
+
+      afterNextRender(() => this.scroller.scrollToAnchor(fragment), { injector: this.injector });
+    });
     effect(() => {
       const profile = this.profile();
       if (profile) {
