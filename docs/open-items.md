@@ -10,9 +10,10 @@ maintainer's work notes, the project repositories and the cover letters. To chec
 the admin:
 
 - [ ] Texts in both languages: profile, career, projects and case studies, "Über mich", the
-      "Arbeitsweise" section (`SuracDev.Web/src/app/core/i18n/ui-strings.ts`).
-- [ ] Würth IT station: the bullets come from the work notes, several of them marked there as
-      "probably own work"; location is empty. Confirm or trim.
+      "Arbeitsweise" section (`SuracDev.Web/src/app/core/i18n/ui-strings.ts`). The case studies are
+      written in the first person as problem, solution, implementation.
+- [ ] Würth IT station: 1Plus and the sales backend services are the main work, the other bullets
+      are side projects from the work notes; location is empty. Confirm or trim.
 - [ ] Orga-Soft station follows the apprenticeship reference (09/2021, not 06/2021 as in the CV).
 - [ ] Fact bar: "8 own applications in production" and "1,0 vocational school" are derived, check
       both.
@@ -21,7 +22,8 @@ the admin:
 - [ ] LinkedIn URL, availability line (both empty).
 - [ ] Applications: Würth IT is set to "Angebot"; the other eleven from the cover letters stay
       "Versendet" and appear in the Monday reminder until their status is set.
-- [ ] Final AERA reference letter: only a draft exists, so it is not uploaded yet.
+- [ ] Orga-Soft: only the apprenticeship reference exists (Paperless has no separate reference
+      letter for 06–10/2024). Request one if wanted; AERA's final reference is uploaded.
 - [ ] "Über mich": a chess photo is missing (Immich had only screenshots of games).
 - [ ] Create one application link per profile and open it, including a document download.
 - [ ] Admin password additionally in Vaultwarden? (today only in Credential Manager
