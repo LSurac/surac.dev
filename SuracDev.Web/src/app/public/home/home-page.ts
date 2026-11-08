@@ -169,16 +169,22 @@ export class HomePage {
   );
   protected readonly hasCareer = computed(() => this.experiences().length + this.education().length > 0);
 
-  /** The reorderable sections with content, in the audience's order. */
+  /**
+   * The reorderable sections in the audience's order. The list depends on the order only, never on
+   * loaded content: the browser's first render must produce the same list as the server render, or
+   * hydration pairs the server's section markup with the wrong entries. Empty sections hide inside
+   * their own block instead.
+   */
   protected readonly bodySections = computed(() =>
-    (this.audience()?.sections ?? PUBLIC_SECTIONS).filter(
-      (section) => BODY_SECTIONS.includes(section) && this.isShown(section),
-    ),
+    (this.audience()?.sections ?? PUBLIC_SECTIONS).filter((section) => BODY_SECTIONS.includes(section)),
   );
 
   /** Numbers follow the sections actually shown, so a hidden section leaves no gap. */
   protected readonly numbers = computed(() => {
-    const shown: SiteSection[] = [...this.bodySections(), 'Contact'];
+    const shown: SiteSection[] = [
+      ...this.bodySections().filter((section) => this.isShown(section)),
+      'Contact',
+    ];
     return Object.fromEntries(shown.map((key, index) => [key, String(index + 1).padStart(2, '0')]));
   });
 

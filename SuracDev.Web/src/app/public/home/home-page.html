@@ -25,67 +25,75 @@
 @for (section of bodySections(); track section) {
   @switch (section) {
     @case ('Intro') {
-      <section class="section">
-        <ui-section-heading
-          [number]="numbers()['Intro']"
-          [title]="strings().sections.profile"
-          anchor="profil"
-        />
-        <div class="prose">
-          <p class="lede">{{ intro() }}</p>
-          @for (note of profileNotes(); track $index) {
-            <p class="meta">{{ note }}</p>
-          }
-        </div>
-      </section>
+      @if (intro()) {
+        <section class="section">
+          <ui-section-heading
+            [number]="numbers()['Intro']"
+            [title]="strings().sections.profile"
+            anchor="profil"
+          />
+          <div class="prose">
+            <p class="lede">{{ intro() }}</p>
+            @for (note of profileNotes(); track $index) {
+              <p class="meta">{{ note }}</p>
+            }
+          </div>
+        </section>
+      }
     }
     @case ('Career') {
-      <section class="section">
-        <ui-section-heading
-          [number]="numbers()['Career']"
-          [title]="strings().sections.career"
-          anchor="werdegang"
-        />
-        <div>
-          <p class="kicker home__subheading">{{ strings().sections.experiences }}</p>
-          <ui-timeline [label]="strings().sections.experiences" [entries]="experiences()" />
-          <p class="kicker home__subheading">{{ strings().sections.education }}</p>
-          <ui-timeline [label]="strings().sections.education" [entries]="education()" />
-        </div>
-      </section>
+      @if (hasCareer()) {
+        <section class="section">
+          <ui-section-heading
+            [number]="numbers()['Career']"
+            [title]="strings().sections.career"
+            anchor="werdegang"
+          />
+          <div>
+            <p class="kicker home__subheading">{{ strings().sections.experiences }}</p>
+            <ui-timeline [label]="strings().sections.experiences" [entries]="experiences()" />
+            <p class="kicker home__subheading">{{ strings().sections.education }}</p>
+            <ui-timeline [label]="strings().sections.education" [entries]="education()" />
+          </div>
+        </section>
+      }
     }
     @case ('Projects') {
-      <section class="section">
-        <ui-section-heading
-          [number]="numbers()['Projects']"
-          [title]="strings().sections.projects"
-          anchor="projekte"
-        />
-        <div class="home__projects">
-          @for (project of projects(); track project.id) {
-            <ui-project-card
-              [title]="project.title"
-              [teaser]="project.teaser"
-              [status]="project.status"
-              [period]="project.period"
-              [stackTags]="project.stackTags"
-              [caseStudyPath]="project.caseStudyPath"
-              [caseStudyLabel]="strings().projects.caseStudy"
-              [links]="project.links"
-            />
-          }
-        </div>
-      </section>
+      @if (projects().length > 0) {
+        <section class="section">
+          <ui-section-heading
+            [number]="numbers()['Projects']"
+            [title]="strings().sections.projects"
+            anchor="projekte"
+          />
+          <div class="home__projects">
+            @for (project of projects(); track project.id) {
+              <ui-project-card
+                [title]="project.title"
+                [teaser]="project.teaser"
+                [status]="project.status"
+                [period]="project.period"
+                [stackTags]="project.stackTags"
+                [caseStudyPath]="project.caseStudyPath"
+                [caseStudyLabel]="strings().projects.caseStudy"
+                [links]="project.links"
+              />
+            }
+          </div>
+        </section>
+      }
     }
     @case ('Skills') {
-      <section class="section">
-        <ui-section-heading
-          [number]="numbers()['Skills']"
-          [title]="strings().sections.skills"
-          anchor="kenntnisse"
-        />
-        <ui-skill-columns [groups]="skillGroups()" [sinceLabel]="strings().skills.since" />
-      </section>
+      @if (skillGroups().length > 0) {
+        <section class="section">
+          <ui-section-heading
+            [number]="numbers()['Skills']"
+            [title]="strings().sections.skills"
+            anchor="kenntnisse"
+          />
+          <ui-skill-columns [groups]="skillGroups()" [sinceLabel]="strings().skills.since" />
+        </section>
+      }
     }
     @case ('WorkingMode') {
       <section class="section">
