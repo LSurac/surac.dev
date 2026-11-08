@@ -10,6 +10,7 @@ namespace SuracDev.Api.Domains.Skills.Controllers;
 /// <summary>The skills section of the open site.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public/skills")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 [Produces("application/json")]

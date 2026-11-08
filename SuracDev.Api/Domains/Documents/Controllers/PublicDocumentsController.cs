@@ -9,6 +9,7 @@ namespace SuracDev.Api.Domains.Documents.Controllers;
 /// <summary>Public documents of the open site: the profile photo and the case-study images.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public/documents")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 public sealed class PublicDocumentsController(DocumentService documentService) : ControllerBase

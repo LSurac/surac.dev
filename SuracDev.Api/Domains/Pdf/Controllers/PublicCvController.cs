@@ -9,6 +9,7 @@ namespace SuracDev.Api.Domains.Pdf.Controllers;
 /// <summary>The CV as PDF for the open site.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public/cv.pdf")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 public sealed class PublicCvController(CvService cvService) : ControllerBase

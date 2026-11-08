@@ -10,6 +10,7 @@ namespace SuracDev.Api.Domains.Projects.Controllers;
 /// <summary>Project cards and case studies of the open site.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public/projects")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 [Produces("application/json")]

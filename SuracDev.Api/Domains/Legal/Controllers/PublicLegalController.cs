@@ -11,6 +11,7 @@ namespace SuracDev.Api.Domains.Legal.Controllers;
 /// <summary>Impressum and privacy page of the open site.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public/legal")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 [Produces("application/json")]

@@ -11,6 +11,7 @@ namespace SuracDev.Api.Domains.Health.Controllers;
 /// </summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/health")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 public sealed class HealthController(SuracDevDbContext dbContext) : ControllerBase

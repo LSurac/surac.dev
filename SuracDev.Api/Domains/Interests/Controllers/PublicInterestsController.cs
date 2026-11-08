@@ -10,6 +10,7 @@ namespace SuracDev.Api.Domains.Interests.Controllers;
 /// <summary>The sections of the "Über mich" page of the open site.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public/interests")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 [Produces("application/json")]

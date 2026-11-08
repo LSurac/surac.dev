@@ -10,6 +10,7 @@ namespace SuracDev.Api.Domains.Career.Controllers;
 /// <summary>The career timeline of the open site: career stations and education.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 [Produces("application/json")]

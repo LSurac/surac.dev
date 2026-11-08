@@ -10,6 +10,7 @@ namespace SuracDev.Api.Domains.Profiles.Controllers;
 /// <summary>The person behind the site, as the open site shows it.</summary>
 [ApiController]
 [AllowAnonymous]
+[AnswersHead]
 [Route("api/public/profile")]
 [ApiExplorerSettings(GroupName = ApiGroups.Public)]
 [Produces("application/json")]
