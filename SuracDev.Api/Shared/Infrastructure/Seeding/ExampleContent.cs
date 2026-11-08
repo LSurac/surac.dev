@@ -1,4 +1,5 @@
 using SuracDev.Api.Domains.Career.Domain;
+using SuracDev.Api.Domains.Interests.Domain;
 using SuracDev.Api.Domains.Legal.Domain;
 using SuracDev.Api.Domains.Profiles.Domain;
 using SuracDev.Api.Domains.Projects.Domain;
@@ -164,5 +165,21 @@ internal static class ExampleContent
       now);
 
     return [imprint, privacy];
+  }
+
+  /// <summary>One visible example section of the "Über mich" page, without image.</summary>
+  public static Interest Interest()
+  {
+    var interest = Domains.Interests.Domain.Interest.Create(
+      new InterestDetails(InterestKind.Other, SortOrder: 0, IsVisible: true, ImageDocumentId: null),
+      new InterestTexts(
+        "Beispiel-Interesse",
+        "Beispielinhalt – im Admin-Bereich unter **Über mich** durch echte Abschnitte ersetzen."));
+    interest.SetTexts(
+      Locale.English,
+      new InterestTexts(
+        "Example interest",
+        "Example content – replace it with real sections under **Über mich** in the admin area."));
+    return interest;
   }
 }

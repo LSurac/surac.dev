@@ -23,6 +23,7 @@ public sealed class SuracDevSeeder(SuracDevDbContext dbContext, TimeProvider tim
     await SeedWhenEmptyAsync(dbContext.Educations, () => [ExampleContent.Education()], cancellationToken);
     await SeedWhenEmptyAsync(dbContext.Projects, () => [ExampleContent.Project()], cancellationToken);
     await SeedWhenEmptyAsync(dbContext.SkillGroups, ExampleContent.SkillGroups, cancellationToken);
+    await SeedWhenEmptyAsync(dbContext.Interests, () => [ExampleContent.Interest()], cancellationToken);
     await SeedWhenEmptyAsync(dbContext.LegalPages, () => ExampleContent.LegalPages(now), cancellationToken);
   }
 
