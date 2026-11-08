@@ -519,6 +519,241 @@
           }
         }
       }
+    },
+    "/api/links/{token}": {
+      "get": {
+        "tags": [
+          "PublicApplicationLinks"
+        ],
+        "summary": "Opens an application link.",
+        "description": "Returns what the link changes on the start page: the greeting, the section order of its\naudience profile and the downloads it unlocks. The content itself comes from the public\nendpoints and is the same for everyone. Records an Opened event with time and locale,\nnothing about the visitor.",
+        "operationId": "PublicApplicationLinks_Get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "description": "The link's token from /b/{token}.",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Language of the greeting and document labels, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The link's greeting, sections and downloads.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApplicationLink"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active link has this token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests from this address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/links/{token}/cv.pdf": {
+      "get": {
+        "tags": [
+          "PublicApplicationLinks"
+        ],
+        "summary": "Downloads the CV this link unlocks.",
+        "description": "The full variant with phone and street address when the link unlocks it, the public variant\notherwise; same file names as the open site. Records a PdfDownloaded event.",
+        "operationId": "PublicApplicationLinks_GetCv",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "description": "The link's token.",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Content language, de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The PDF as attachment.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active link has this token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests from this address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/links/{token}/documents/{id}": {
+      "get": {
+        "tags": [
+          "PublicApplicationLinks"
+        ],
+        "summary": "Downloads a document attached to this link.",
+        "description": "Only documents the admin attached to this link are delivered, always as attachment with their\noriginal file name; any other id answers 404. Records a DocumentDownloaded event.",
+        "operationId": "PublicApplicationLinks_GetDocument",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "description": "The link's token.",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The document's identifier from the link's document list.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "The visitor's language, recorded with the event; de (default) or en.",
+            "schema": {
+              "type": "string",
+              "default": "de"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file as attachment.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The locale is not supported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active link has this token, or the link has no such document.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests from this address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1153,6 +1388,110 @@
             }
           }
         }
+      },
+      "PublicApplicationLink": {
+        "type": "object",
+        "description": "What an application link unlocks, in one locale. Content comes from the public endpoints; the\nlink only decides order, greeting and downloads (docs/decisions.md, \"One site, three audience profiles\").",
+        "additionalProperties": false,
+        "properties": {
+          "greeting": {
+            "type": "string",
+            "description": "The greeting in the requested locale or German, or null.",
+            "nullable": true
+          },
+          "sections": {
+            "type": "array",
+            "description": "The start-page sections in the order of the link's profile.",
+            "items": {
+              "$ref": "#/components/schemas/SiteSection"
+            }
+          },
+          "fullCv": {
+            "type": "boolean",
+            "description": "Whether cv.pdf of this link is the full variant with phone and street address."
+          },
+          "documents": {
+            "type": "array",
+            "description": "The documents the link unlocks, for documents/{id} of this link.",
+            "items": {
+              "$ref": "#/components/schemas/PublicLinkDocument"
+            }
+          }
+        }
+      },
+      "SiteSection": {
+        "type": "string",
+        "description": "The sections of the start page. Every profile shows all of them, in its own order.",
+        "x-enumNames": [
+          "Unknown",
+          "Hero",
+          "Facts",
+          "Intro",
+          "Projects",
+          "Career",
+          "Skills",
+          "WorkingMode",
+          "Contact"
+        ],
+        "enum": [
+          "Unknown",
+          "Hero",
+          "Facts",
+          "Intro",
+          "Projects",
+          "Career",
+          "Skills",
+          "WorkingMode",
+          "Contact"
+        ]
+      },
+      "PublicLinkDocument": {
+        "type": "object",
+        "description": "A document unlocked by a link.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The document's identifier within the link.",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string",
+            "description": "The label in the requested locale, German, or the file name when none is set."
+          },
+          "fileName": {
+            "type": "string",
+            "description": "The file name it downloads under."
+          },
+          "kind": {
+            "description": "Certificate, cover letter or other.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DocumentKind"
+              }
+            ]
+          }
+        }
+      },
+      "DocumentKind": {
+        "type": "string",
+        "description": "What a document is. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Photo",
+          "Certificate",
+          "CoverLetter",
+          "Image",
+          "Other"
+        ],
+        "enum": [
+          "Unknown",
+          "Photo",
+          "Certificate",
+          "CoverLetter",
+          "Image",
+          "Other"
+        ]
       }
     }
   }

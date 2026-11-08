@@ -3520,6 +3520,1175 @@ export class AdminExperiencesClient {
   }
 }
 
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminApplicationLinksClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists the links of an application, newest first.
+   * @param applicationId The application's identifier.
+   * @return The links.
+   */
+  list(applicationId: number): Observable<AdminApplicationLink[]> {
+    let url_ = this.baseUrl + '/api/admin/applications/{applicationId}/links';
+    if (applicationId === undefined || applicationId === null)
+      throw new globalThis.Error("The parameter 'applicationId' must be defined.");
+    url_ = url_.replace('{applicationId}', encodeURIComponent('' + applicationId));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminApplicationLink[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminApplicationLink[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminApplicationLink[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminApplicationLink[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No application has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Creates a link and returns its token once.
+   * @param applicationId The application's identifier.
+   * @param form The link's settings.
+   * @return Created; the body carries the token, Location points to the link.
+   */
+  create(applicationId: number, form: ApplicationLinkForm): Observable<CreatedApplicationLink> {
+    let url_ = this.baseUrl + '/api/admin/applications/{applicationId}/links';
+    if (applicationId === undefined || applicationId === null)
+      throw new globalThis.Error("The parameter 'applicationId' must be defined.");
+    url_ = url_.replace('{applicationId}', encodeURIComponent('' + applicationId));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processCreate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processCreate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<CreatedApplicationLink>;
+            }
+          } else return _observableThrow(response_) as any as Observable<CreatedApplicationLink>;
+        }),
+      );
+  }
+
+  protected processCreate(response: HttpResponseBase): Observable<CreatedApplicationLink> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 201) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result201: any = null;
+          result201 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as CreatedApplicationLink);
+          return _observableOf(result201);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A setting breaks a rule (profile, expiresAt, greetingDe, documentIds).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No application has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one link of an application.
+   * @param applicationId The application's identifier.
+   * @param linkId The link's identifier.
+   * @return The link, without its token.
+   */
+  get(applicationId: number, linkId: number): Observable<AdminApplicationLink> {
+    let url_ = this.baseUrl + '/api/admin/applications/{applicationId}/links/{linkId}';
+    if (applicationId === undefined || applicationId === null)
+      throw new globalThis.Error("The parameter 'applicationId' must be defined.");
+    url_ = url_.replace('{applicationId}', encodeURIComponent('' + applicationId));
+    if (linkId === undefined || linkId === null)
+      throw new globalThis.Error("The parameter 'linkId' must be defined.");
+    url_ = url_.replace('{linkId}', encodeURIComponent('' + linkId));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminApplicationLink>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminApplicationLink>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminApplicationLink> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminApplicationLink);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'The application has no link with this id.',
+            status,
+            _responseText,
+            _headers,
+            result404,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces the settings and documents of a link.
+   * @param applicationId The application's identifier.
+   * @param linkId The link's identifier.
+   * @param form The complete settings.
+   * @return Saved.
+   */
+  update(applicationId: number, linkId: number, form: ApplicationLinkForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/applications/{applicationId}/links/{linkId}';
+    if (applicationId === undefined || applicationId === null)
+      throw new globalThis.Error("The parameter 'applicationId' must be defined.");
+    url_ = url_.replace('{applicationId}', encodeURIComponent('' + applicationId));
+    if (linkId === undefined || linkId === null)
+      throw new globalThis.Error("The parameter 'linkId' must be defined.");
+    url_ = url_.replace('{linkId}', encodeURIComponent('' + linkId));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('A setting breaks a rule.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'The application has no link with this id.',
+            status,
+            _responseText,
+            _headers,
+            result404,
+          );
+        }),
+      );
+    } else if (status === 409) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result409: any = null;
+          result409 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('The link is revoked.', status, _responseText, _headers, result409);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Revokes a link for good.
+   * @param applicationId The application's identifier.
+   * @param linkId The link's identifier.
+   * @return Revoked.
+   */
+  revoke(applicationId: number, linkId: number): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/applications/{applicationId}/links/{linkId}/revoke';
+    if (applicationId === undefined || applicationId === null)
+      throw new globalThis.Error("The parameter 'applicationId' must be defined.");
+    url_ = url_.replace('{applicationId}', encodeURIComponent('' + applicationId));
+    if (linkId === undefined || linkId === null)
+      throw new globalThis.Error("The parameter 'linkId' must be defined.");
+    url_ = url_.replace('{linkId}', encodeURIComponent('' + linkId));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({}),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processRevoke(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processRevoke(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processRevoke(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'The application has no link with this id.',
+            status,
+            _responseText,
+            _headers,
+            result404,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminApplicationsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Lists every application, newest first.
+   * @return All applications.
+   */
+  list(): Observable<AdminApplication[]> {
+    let url_ = this.baseUrl + '/api/admin/applications';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processList(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processList(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminApplication[]>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminApplication[]>;
+        }),
+      );
+  }
+
+  protected processList(response: HttpResponseBase): Observable<AdminApplication[]> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminApplication[]);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Creates an application.
+   * @param form The new application.
+   * @return Created; Location points to the new application.
+   */
+  create(form: ApplicationForm): Observable<AdminApplication> {
+    let url_ = this.baseUrl + '/api/admin/applications';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processCreate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processCreate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminApplication>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminApplication>;
+        }),
+      );
+  }
+
+  protected processCreate(response: HttpResponseBase): Observable<AdminApplication> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 201) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result201: any = null;
+          result201 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminApplication);
+          return _observableOf(result201);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field (company, status, jobAdUrl).',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Reads one application.
+   * @param id The application's identifier.
+   * @return The application.
+   */
+  get(id: number): Observable<AdminApplication> {
+    let url_ = this.baseUrl + '/api/admin/applications/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<AdminApplication>;
+            }
+          } else return _observableThrow(response_) as any as Observable<AdminApplication>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<AdminApplication> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as AdminApplication);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No application has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Replaces an application with the given fields.
+   * @param id The application's identifier.
+   * @param form The complete application.
+   * @return Saved.
+   */
+  update(id: number, form: ApplicationForm): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/applications/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(form);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('put', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processUpdate(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processUpdate(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processUpdate(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException(
+            'A field breaks a rule; the errors are keyed by field.',
+            status,
+            _responseText,
+            _headers,
+            result400,
+          );
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No application has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Deletes an application with its links and their statistics.
+   * @param id The application's identifier.
+   * @return Deleted.
+   */
+  delete(id: number): Observable<void> {
+    let url_ = this.baseUrl + '/api/admin/applications/{id}';
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({}),
+    };
+
+    return this.http
+      .request('delete', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processDelete(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processDelete(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<void>;
+            }
+          } else return _observableThrow(response_) as any as Observable<void>;
+        }),
+      );
+  }
+
+  protected processDelete(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return _observableOf(null as any);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No application has this id.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminApplicationStatisticsClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Reads the statistics page.
+   * @return The statistics.
+   */
+  get(): Observable<ApplicationStatistics> {
+    let url_ = this.baseUrl + '/api/admin/application-statistics';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<ApplicationStatistics>;
+            }
+          } else return _observableThrow(response_) as any as Observable<ApplicationStatistics>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<ApplicationStatistics> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ApplicationStatistics);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 401) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result401: any = null;
+          result401 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('Not logged in.', status, _responseText, _headers, result401);
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
 /** A skill group for the admin editor, with both names and its skills. */
 export interface AdminSkillGroup {
   /** The group's identifier. */
@@ -3937,6 +5106,147 @@ export interface ExperienceForm {
   de?: ExperienceTextsForm;
   /** The English texts, or null to remove them. */
   en?: ExperienceTextsForm | undefined;
+}
+
+/** An application link in the admin area. The clear token is not part of it; it exists only once, at creation. */
+export interface AdminApplicationLink {
+  /** The link's identifier. */
+  id?: number;
+  /** The application the link belongs to. */
+  applicationId?: number;
+  /** The audience the link is made for. */
+  profile?: AudienceProfile;
+  /** German greeting, if any. */
+  greetingDe?: string | undefined;
+  /** English greeting, if any. */
+  greetingEn?: string | undefined;
+  /** When the link stops working. */
+  expiresAt?: string;
+  /** Whether the admin has revoked it. */
+  isRevoked?: boolean;
+  /** Whether it opens right now: not revoked and not expired. */
+  isActive?: boolean;
+  /** Whether it delivers the full CV. */
+  unlockFullPdf?: boolean;
+  /** The documents it unlocks. */
+  documentIds?: number[];
+  /** When it was created. */
+  createdAt?: string;
+}
+
+/** Who an application link is made for. Changes order and emphasis, never content. */
+export type AudienceProfile = 'Unknown' | 'Public' | 'Recruiter' | 'TechLead';
+
+/** A new link together with its clear token, which is shown this once and never again. */
+export interface CreatedApplicationLink {
+  /** The capability token; the link's path is /b/{token}. */
+  token?: string;
+  /** The stored link. */
+  link?: AdminApplicationLink;
+}
+
+/** The settings of an application link, for POST and PUT. */
+export interface ApplicationLinkForm {
+  /** The audience the link is made for; decides the section order. */
+  profile?: AudienceProfile;
+  /** Optional one-line German greeting. */
+  greetingDe?: string | undefined;
+  /** Optional one-line English greeting; the German one is used when empty. */
+  greetingEn?: string | undefined;
+  /** Must lie in the future; null sets it to 90 days from now. */
+  expiresAt?: string | undefined;
+  /** Whether the link delivers the full CV with phone and street address. */
+  unlockFullPdf?: boolean;
+  /** The link-only documents the link unlocks. */
+  documentIds?: number[];
+}
+
+/** An application in the admin area. */
+export interface AdminApplication {
+  /** The application's identifier. */
+  id?: number;
+  /** The employer. */
+  company?: string;
+  /** The advertised job title. */
+  position?: string;
+  /** The job ad, if recorded. */
+  jobAdUrl?: string | undefined;
+  /** The day it was sent, if it was. */
+  appliedOn?: string | undefined;
+  /** Where it stands. */
+  status?: ApplicationStatus;
+  /** Private Markdown notes, never shown outside the admin area. */
+  notes?: string | undefined;
+  /** When it was entered. */
+  createdAt?: string;
+  /** When it was last saved. */
+  updatedAt?: string;
+}
+
+/** The pipeline of an application. Stored as int; Unknown is never written and values are frozen. */
+export type ApplicationStatus =
+  'Unknown' | 'Draft' | 'Sent' | 'Replied' | 'Interview' | 'Offer' | 'Rejected' | 'Withdrawn';
+
+/** An application as the admin edits it, for POST and PUT. */
+export interface ApplicationForm {
+  /** Required. */
+  company?: string | undefined;
+  /** Required; the advertised job title. */
+  position?: string | undefined;
+  /** Absolute http(s) URL of the job ad, or null. */
+  jobAdUrl?: string | undefined;
+  /** The day the application was sent; null while it is a draft. */
+  appliedOn?: string | undefined;
+  /** Where the application stands; Unknown is rejected. */
+  status?: ApplicationStatus;
+  /** Private Markdown notes. */
+  notes?: string | undefined;
+}
+
+/** The statistics page: the status pipeline, the response rate and the link activity per application. Built from link events only, so it knows nothing about visitors. */
+export interface ApplicationStatistics {
+  /** Applications in any status except Draft. */
+  sentCount?: number;
+  /** Sent applications with a reply, interview, offer or rejection. */
+  respondedCount?: number;
+  /** Responded divided by sent, from 0 to 1; null when nothing was sent. */
+  responseRate?: number | undefined;
+  /** Every status in pipeline order with its count, zeros included. */
+  pipeline?: StatusCount[];
+  /** The activity per application, newest application first. */
+  applications?: ApplicationActivity[];
+}
+
+/** The number of applications in one status. */
+export interface StatusCount {
+  status?: ApplicationStatus;
+  count?: number;
+}
+
+/** What happened on the links of one application. */
+export interface ApplicationActivity {
+  /** The application's identifier. */
+  applicationId?: number;
+  /** The employer. */
+  company?: string;
+  /** The advertised job title. */
+  position?: string;
+  /** Where the application stands. */
+  status?: ApplicationStatus;
+  /** The day it was sent, if it was. */
+  appliedOn?: string | undefined;
+  /** How many links were created for it, revoked ones included. */
+  linkCount?: number;
+  /** How often its links were opened. */
+  opens?: number;
+  /** How often the CV was downloaded through them. */
+  pdfDownloads?: number;
+  /** How often attached documents were downloaded. */
+  documentDownloads?: number;
+  /** The first opening of any of its links, or null. */
+  firstOpenedAt?: string | undefined;
+  /** Whole minutes from the first link's creation to the first opening, or null. */
+  minutesToFirstOpen?: number | undefined;
 }
 
 export interface FileParameter {

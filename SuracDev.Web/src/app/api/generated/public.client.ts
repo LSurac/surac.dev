@@ -1075,6 +1075,403 @@ export class PublicCareerClient {
   }
 }
 
+@Injectable({
+  providedIn: 'root',
+})
+export class PublicApplicationLinksClient {
+  private http: HttpClient;
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+    this.http = http;
+    this.baseUrl = baseUrl ?? '';
+  }
+
+  /**
+   * Opens an application link.
+   * @param token The link's token from /b/{token}.
+   * @param locale (optional) Language of the greeting and document labels, de (default) or en.
+   * @return The link's greeting, sections and downloads.
+   */
+  get(token: string, locale?: string | undefined): Observable<PublicApplicationLink> {
+    let url_ = this.baseUrl + '/api/links/{token}?';
+    if (token === undefined || token === null)
+      throw new globalThis.Error("The parameter 'token' must be defined.");
+    url_ = url_.replace('{token}', encodeURIComponent('' + token));
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGet(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGet(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<PublicApplicationLink>;
+            }
+          } else return _observableThrow(response_) as any as Observable<PublicApplicationLink>;
+        }),
+      );
+  }
+
+  protected processGet(response: HttpResponseBase): Observable<PublicApplicationLink> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result200: any = null;
+          result200 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as PublicApplicationLink);
+          return _observableOf(result200);
+        }),
+      );
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No active link has this token.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status === 429) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result429: any = null;
+          result429 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'Too many requests from this address.',
+            status,
+            _responseText,
+            _headers,
+            result429,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Downloads the CV this link unlocks.
+   * @param token The link's token.
+   * @param locale (optional) Content language, de (default) or en.
+   * @return The PDF as attachment.
+   */
+  getCv(token: string, locale?: string | undefined): Observable<FileResponse> {
+    let url_ = this.baseUrl + '/api/links/{token}/cv.pdf?';
+    if (token === undefined || token === null)
+      throw new globalThis.Error("The parameter 'token' must be defined.");
+    url_ = url_.replace('{token}', encodeURIComponent('' + token));
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/octet-stream',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGetCv(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGetCv(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<FileResponse>;
+            }
+          } else return _observableThrow(response_) as any as Observable<FileResponse>;
+        }),
+      );
+  }
+
+  protected processGetCv(response: HttpResponseBase): Observable<FileResponse> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200 || status === 206) {
+      const contentDisposition = response.headers ? response.headers.get('content-disposition') : undefined;
+      let fileNameMatch = contentDisposition
+        ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition)
+        : undefined;
+      let fileName =
+        fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+      if (fileName) {
+        fileName = decodeURIComponent(fileName);
+      } else {
+        fileNameMatch = contentDisposition
+          ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition)
+          : undefined;
+        fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+      }
+      return _observableOf({
+        fileName: fileName,
+        data: responseBlob as any,
+        status: status,
+        headers: _headers,
+      });
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException('No active link has this token.', status, _responseText, _headers, result404);
+        }),
+      );
+    } else if (status === 429) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result429: any = null;
+          result429 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'Too many requests from this address.',
+            status,
+            _responseText,
+            _headers,
+            result429,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+
+  /**
+   * Downloads a document attached to this link.
+   * @param token The link's token.
+   * @param id The document's identifier from the link's document list.
+   * @param locale (optional) The visitor's language, recorded with the event; de (default) or en.
+   * @return The file as attachment.
+   */
+  getDocument(token: string, id: number, locale?: string | undefined): Observable<FileResponse> {
+    let url_ = this.baseUrl + '/api/links/{token}/documents/{id}?';
+    if (token === undefined || token === null)
+      throw new globalThis.Error("The parameter 'token' must be defined.");
+    url_ = url_.replace('{token}', encodeURIComponent('' + token));
+    if (id === undefined || id === null) throw new globalThis.Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    if (locale === null) throw new globalThis.Error("The parameter 'locale' cannot be null.");
+    else if (locale !== undefined) url_ += 'locale=' + encodeURIComponent('' + locale) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/octet-stream',
+      }),
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processGetDocument(response_);
+        }),
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processGetDocument(response_ as any);
+            } catch (e) {
+              return _observableThrow(e) as any as Observable<FileResponse>;
+            }
+          } else return _observableThrow(response_) as any as Observable<FileResponse>;
+        }),
+      );
+  }
+
+  protected processGetDocument(response: HttpResponseBase): Observable<FileResponse> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (response as any).error instanceof Blob
+          ? (response as any).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200 || status === 206) {
+      const contentDisposition = response.headers ? response.headers.get('content-disposition') : undefined;
+      let fileNameMatch = contentDisposition
+        ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition)
+        : undefined;
+      let fileName =
+        fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+      if (fileName) {
+        fileName = decodeURIComponent(fileName);
+      } else {
+        fileNameMatch = contentDisposition
+          ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition)
+          : undefined;
+        fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+      }
+      return _observableOf({
+        fileName: fileName,
+        data: responseBlob as any,
+        status: status,
+        headers: _headers,
+      });
+    } else if (status === 400) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result400: any = null;
+          result400 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
+          return throwException('The locale is not supported.', status, _responseText, _headers, result400);
+        }),
+      );
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result404: any = null;
+          result404 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'No active link has this token, or the link has no such document.',
+            status,
+            _responseText,
+            _headers,
+            result404,
+          );
+        }),
+      );
+    } else if (status === 429) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          let result429: any = null;
+          result429 =
+            _responseText === ''
+              ? null
+              : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
+          return throwException(
+            'Too many requests from this address.',
+            status,
+            _responseText,
+            _headers,
+            result429,
+          );
+        }),
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap((_responseText: string) => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        }),
+      );
+    }
+    return _observableOf(null as any);
+  }
+}
+
 /** A skill group of the open site with its skills, in one locale. */
 export interface PublicSkillGroup {
   /** Stable identifier, for list keys. */
@@ -1316,6 +1713,37 @@ export interface PublicEducation {
   /** JSON names of the fields shown in German because the requested locale has no text for them. */
   fallbackFields?: string[];
 }
+
+/** What an application link unlocks, in one locale. Content comes from the public endpoints; the link only decides order, greeting and downloads (docs/decisions.md, "One site, three audience profiles"). */
+export interface PublicApplicationLink {
+  /** The greeting in the requested locale or German, or null. */
+  greeting?: string | undefined;
+  /** The start-page sections in the order of the link's profile. */
+  sections?: SiteSection[];
+  /** Whether cv.pdf of this link is the full variant with phone and street address. */
+  fullCv?: boolean;
+  /** The documents the link unlocks, for documents/{id} of this link. */
+  documents?: PublicLinkDocument[];
+}
+
+/** The sections of the start page. Every profile shows all of them, in its own order. */
+export type SiteSection =
+  'Unknown' | 'Hero' | 'Facts' | 'Intro' | 'Projects' | 'Career' | 'Skills' | 'WorkingMode' | 'Contact';
+
+/** A document unlocked by a link. */
+export interface PublicLinkDocument {
+  /** The document's identifier within the link. */
+  id?: number;
+  /** The label in the requested locale, German, or the file name when none is set. */
+  label?: string;
+  /** The file name it downloads under. */
+  fileName?: string;
+  /** Certificate, cover letter or other. */
+  kind?: DocumentKind;
+}
+
+/** What a document is. Stored as int; Unknown is never written and values are frozen. */
+export type DocumentKind = 'Unknown' | 'Photo' | 'Certificate' | 'CoverLetter' | 'Image' | 'Other';
 
 export interface FileResponse {
   data: Blob;

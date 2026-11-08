@@ -1723,6 +1723,642 @@
           }
         }
       }
+    },
+    "/api/admin/applications/{applicationId}/links": {
+      "get": {
+        "tags": [
+          "AdminApplicationLinks"
+        ],
+        "summary": "Lists the links of an application, newest first.",
+        "description": "The clear tokens are not part of the list; they exist only in the response that created a link.",
+        "operationId": "AdminApplicationLinks_List",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The links.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminApplicationLink"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No application has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminApplicationLinks"
+        ],
+        "summary": "Creates a link and returns its token once.",
+        "description": "The token is 128 random bits in base64url; the link's public path is /b/{token}. Only\nits SHA-256 is stored, so this response is the only chance to copy it. Without\nexpiresAt the link expires after 90 days. Only link-only documents can be attached.",
+        "operationId": "AdminApplicationLinks_Create",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The link's settings.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationLinkForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "201": {
+            "description": "Created; the body carries the token, Location points to the link.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedApplicationLink"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A setting breaks a rule (profile, expiresAt, greetingDe, documentIds).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No application has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/applications/{applicationId}/links/{linkId}": {
+      "get": {
+        "tags": [
+          "AdminApplicationLinks"
+        ],
+        "summary": "Reads one link of an application.",
+        "operationId": "AdminApplicationLinks_Get",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "linkId",
+            "in": "path",
+            "required": true,
+            "description": "The link's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The link, without its token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminApplicationLink"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The application has no link with this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminApplicationLinks"
+        ],
+        "summary": "Replaces the settings and documents of a link.",
+        "description": "The token stays the same. A revoked link cannot be changed; create a new one instead.",
+        "operationId": "AdminApplicationLinks_Update",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "linkId",
+            "in": "path",
+            "required": true,
+            "description": "The link's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The complete settings.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationLinkForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A setting breaks a rule.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The application has no link with this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The link is revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/applications/{applicationId}/links/{linkId}/revoke": {
+      "post": {
+        "tags": [
+          "AdminApplicationLinks"
+        ],
+        "summary": "Revokes a link for good.",
+        "description": "From now on the link answers 404 like one that never existed. Revoking is final and\nidempotent; the link and its statistics stay visible in the admin area.",
+        "operationId": "AdminApplicationLinks_Revoke",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "linkId",
+            "in": "path",
+            "required": true,
+            "description": "The link's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Revoked."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The application has no link with this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/applications": {
+      "get": {
+        "tags": [
+          "AdminApplications"
+        ],
+        "summary": "Lists every application, newest first.",
+        "operationId": "AdminApplications_List",
+        "responses": {
+          "200": {
+            "description": "All applications.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminApplication"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminApplications"
+        ],
+        "summary": "Creates an application.",
+        "description": "Company, position and a known status are required; the job ad must be an absolute http(s) URL.",
+        "operationId": "AdminApplications_Create",
+        "requestBody": {
+          "x-name": "form",
+          "description": "The new application.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created; Location points to the new application.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminApplication"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field (company, status, jobAdUrl).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/applications/{id}": {
+      "get": {
+        "tags": [
+          "AdminApplications"
+        ],
+        "summary": "Reads one application.",
+        "operationId": "AdminApplications_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The application.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminApplication"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No application has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminApplications"
+        ],
+        "summary": "Replaces an application with the given fields.",
+        "description": "Full replacement: fields left out are cleared. The links of the application are not touched.",
+        "operationId": "AdminApplications_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "description": "The complete application.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationForm"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": "Saved."
+          },
+          "400": {
+            "description": "A field breaks a rule; the errors are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No application has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminApplications"
+        ],
+        "summary": "Deletes an application with its links and their statistics.",
+        "description": "The links stop working at once. The attached documents stay; they belong to the documents area.",
+        "operationId": "AdminApplications_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The application's identifier.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No application has this id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/application-statistics": {
+      "get": {
+        "tags": [
+          "AdminApplicationStatistics"
+        ],
+        "summary": "Reads the statistics page.",
+        "description": "The status pipeline with a count per status, the response rate (every status except\nDraft counts as sent; reply, interview, offer and rejection count as a response) and per\napplication its links' openings, downloads and the time from the first link to the first\nopening. Built from link events, which carry no visitor data.",
+        "operationId": "AdminApplicationStatistics_Get",
+        "responses": {
+          "200": {
+            "description": "The statistics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationStatistics"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2856,6 +3492,385 @@
                 "$ref": "#/components/schemas/ExperienceTextsForm"
               }
             ]
+          }
+        }
+      },
+      "AdminApplicationLink": {
+        "type": "object",
+        "description": "An application link in the admin area. The clear token is not part of it; it exists only once, at creation.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The link's identifier.",
+            "format": "int64"
+          },
+          "applicationId": {
+            "type": "integer",
+            "description": "The application the link belongs to.",
+            "format": "int64"
+          },
+          "profile": {
+            "description": "The audience the link is made for.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AudienceProfile"
+              }
+            ]
+          },
+          "greetingDe": {
+            "type": "string",
+            "description": "German greeting, if any.",
+            "nullable": true
+          },
+          "greetingEn": {
+            "type": "string",
+            "description": "English greeting, if any.",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "When the link stops working.",
+            "format": "date-time"
+          },
+          "isRevoked": {
+            "type": "boolean",
+            "description": "Whether the admin has revoked it."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether it opens right now: not revoked and not expired."
+          },
+          "unlockFullPdf": {
+            "type": "boolean",
+            "description": "Whether it delivers the full CV."
+          },
+          "documentIds": {
+            "type": "array",
+            "description": "The documents it unlocks.",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "When it was created.",
+            "format": "date-time"
+          }
+        }
+      },
+      "AudienceProfile": {
+        "type": "string",
+        "description": "Who an application link is made for. Changes order and emphasis, never content.",
+        "x-enumNames": [
+          "Unknown",
+          "Public",
+          "Recruiter",
+          "TechLead"
+        ],
+        "enum": [
+          "Unknown",
+          "Public",
+          "Recruiter",
+          "TechLead"
+        ]
+      },
+      "CreatedApplicationLink": {
+        "type": "object",
+        "description": "A new link together with its clear token, which is shown this once and never again.",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "The capability token; the link's path is /b/{token}."
+          },
+          "link": {
+            "description": "The stored link.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdminApplicationLink"
+              }
+            ]
+          }
+        }
+      },
+      "ApplicationLinkForm": {
+        "type": "object",
+        "description": "The settings of an application link, for POST and PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "description": "The audience the link is made for; decides the section order.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AudienceProfile"
+              }
+            ]
+          },
+          "greetingDe": {
+            "type": "string",
+            "description": "Optional one-line German greeting.",
+            "nullable": true
+          },
+          "greetingEn": {
+            "type": "string",
+            "description": "Optional one-line English greeting; the German one is used when empty.",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "Must lie in the future; null sets it to 90 days from now.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "unlockFullPdf": {
+            "type": "boolean",
+            "description": "Whether the link delivers the full CV with phone and street address."
+          },
+          "documentIds": {
+            "type": "array",
+            "description": "The link-only documents the link unlocks.",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "AdminApplication": {
+        "type": "object",
+        "description": "An application in the admin area.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The application's identifier.",
+            "format": "int64"
+          },
+          "company": {
+            "type": "string",
+            "description": "The employer."
+          },
+          "position": {
+            "type": "string",
+            "description": "The advertised job title."
+          },
+          "jobAdUrl": {
+            "type": "string",
+            "description": "The job ad, if recorded.",
+            "nullable": true
+          },
+          "appliedOn": {
+            "type": "string",
+            "description": "The day it was sent, if it was.",
+            "format": "date",
+            "nullable": true
+          },
+          "status": {
+            "description": "Where it stands.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "description": "Private Markdown notes, never shown outside the admin area.",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "When it was entered.",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "When it was last saved.",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApplicationStatus": {
+        "type": "string",
+        "description": "The pipeline of an application. Stored as int; Unknown is never written and values are frozen.",
+        "x-enumNames": [
+          "Unknown",
+          "Draft",
+          "Sent",
+          "Replied",
+          "Interview",
+          "Offer",
+          "Rejected",
+          "Withdrawn"
+        ],
+        "enum": [
+          "Unknown",
+          "Draft",
+          "Sent",
+          "Replied",
+          "Interview",
+          "Offer",
+          "Rejected",
+          "Withdrawn"
+        ]
+      },
+      "ApplicationForm": {
+        "type": "object",
+        "description": "An application as the admin edits it, for POST and PUT.",
+        "additionalProperties": false,
+        "properties": {
+          "company": {
+            "type": "string",
+            "description": "Required.",
+            "nullable": true
+          },
+          "position": {
+            "type": "string",
+            "description": "Required; the advertised job title.",
+            "nullable": true
+          },
+          "jobAdUrl": {
+            "type": "string",
+            "description": "Absolute http(s) URL of the job ad, or null.",
+            "nullable": true
+          },
+          "appliedOn": {
+            "type": "string",
+            "description": "The day the application was sent; null while it is a draft.",
+            "format": "date",
+            "nullable": true
+          },
+          "status": {
+            "description": "Where the application stands; Unknown is rejected.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "description": "Private Markdown notes.",
+            "nullable": true
+          }
+        }
+      },
+      "ApplicationStatistics": {
+        "type": "object",
+        "description": "The statistics page: the status pipeline, the response rate and the link activity per\napplication. Built from link events only, so it knows nothing about visitors.",
+        "additionalProperties": false,
+        "properties": {
+          "sentCount": {
+            "type": "integer",
+            "description": "Applications in any status except Draft.",
+            "format": "int32"
+          },
+          "respondedCount": {
+            "type": "integer",
+            "description": "Sent applications with a reply, interview, offer or rejection.",
+            "format": "int32"
+          },
+          "responseRate": {
+            "type": "number",
+            "description": "Responded divided by sent, from 0 to 1; null when nothing was sent.",
+            "format": "double",
+            "nullable": true
+          },
+          "pipeline": {
+            "type": "array",
+            "description": "Every status in pipeline order with its count, zeros included.",
+            "items": {
+              "$ref": "#/components/schemas/StatusCount"
+            }
+          },
+          "applications": {
+            "type": "array",
+            "description": "The activity per application, newest application first.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationActivity"
+            }
+          }
+        }
+      },
+      "StatusCount": {
+        "type": "object",
+        "description": "The number of applications in one status.",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApplicationActivity": {
+        "type": "object",
+        "description": "What happened on the links of one application.",
+        "additionalProperties": false,
+        "properties": {
+          "applicationId": {
+            "type": "integer",
+            "description": "The application's identifier.",
+            "format": "int64"
+          },
+          "company": {
+            "type": "string",
+            "description": "The employer."
+          },
+          "position": {
+            "type": "string",
+            "description": "The advertised job title."
+          },
+          "status": {
+            "description": "Where the application stands.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              }
+            ]
+          },
+          "appliedOn": {
+            "type": "string",
+            "description": "The day it was sent, if it was.",
+            "format": "date",
+            "nullable": true
+          },
+          "linkCount": {
+            "type": "integer",
+            "description": "How many links were created for it, revoked ones included.",
+            "format": "int32"
+          },
+          "opens": {
+            "type": "integer",
+            "description": "How often its links were opened.",
+            "format": "int32"
+          },
+          "pdfDownloads": {
+            "type": "integer",
+            "description": "How often the CV was downloaded through them.",
+            "format": "int32"
+          },
+          "documentDownloads": {
+            "type": "integer",
+            "description": "How often attached documents were downloaded.",
+            "format": "int32"
+          },
+          "firstOpenedAt": {
+            "type": "string",
+            "description": "The first opening of any of its links, or null.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minutesToFirstOpen": {
+            "type": "integer",
+            "description": "Whole minutes from the first link's creation to the first opening, or null.",
+            "format": "int32",
+            "nullable": true
           }
         }
       }
