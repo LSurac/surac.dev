@@ -64,6 +64,23 @@ test.describe('start page', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Example project' })).toBeVisible();
   });
 
+  test('opens the about page from the header, rendered on the server, in both languages', async ({
+    page,
+    request,
+  }) => {
+    const html = await (await request.get('/ueber-mich')).text();
+    expect(html).toContain('Beispiel-Interesse');
+
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Über mich' }).click();
+    await expect(page).toHaveURL(/\/ueber-mich$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Über mich' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Beispiel-Interesse' })).toBeVisible();
+    await page.getByRole('link', { name: 'English' }).click();
+    await expect(page).toHaveURL(/\/en\/about$/);
+    await expect(page.getByRole('heading', { level: 2, name: 'Example interest' })).toBeVisible();
+  });
+
   test('downloads the CV as PDF under the name the server gives it', async ({ page }) => {
     await page.goto('/');
     const [download] = await Promise.all([

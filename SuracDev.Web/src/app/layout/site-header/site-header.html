@@ -4,6 +4,7 @@
     @for (section of sections(); track section.fragment) {
       <a [routerLink]="homeUrl()" [fragment]="section.fragment">{{ section.label }}</a>
     }
+    <a [routerLink]="aboutUrl()">{{ strings().nav.about }}</a>
     <a
       class="header__locale"
       [href]="switchUrl()"

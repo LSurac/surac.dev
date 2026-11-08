@@ -28,6 +28,7 @@ export class SiteHeader {
   protected readonly homeUrl = computed(
     () => APPLICATION_LINK_PATH.exec(this.currentUrl())?.[0] ?? (this.locale() === 'de' ? '/' : '/en'),
   );
+  protected readonly aboutUrl = computed(() => (this.locale() === 'de' ? '/ueber-mich' : '/en/about'));
   protected readonly otherLocale = computed<Locale>(() => (this.locale() === 'de' ? 'en' : 'de'));
   protected readonly switchUrl = computed(() => switchLocaleUrl(this.currentUrl(), this.otherLocale()));
   protected readonly sections = computed(() => {

@@ -8,6 +8,7 @@ describe('app-site-header', () => {
 
     expect(screen.getByRole('link', { name: 'Leonard Surac' })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: 'Projekte' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Über mich' })).toHaveAttribute('href', '/ueber-mich');
     expect(screen.getByRole('link', { name: 'English' })).toHaveAttribute('href', '/en');
   });
 
@@ -16,6 +17,7 @@ describe('app-site-header', () => {
 
     expect(screen.getByRole('link', { name: 'Leonard Surac' })).toHaveAttribute('href', '/en');
     expect(screen.getByRole('link', { name: 'Projects' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/en/about');
     expect(screen.getByRole('link', { name: 'Deutsch' })).toHaveAttribute('href', '/');
   });
 

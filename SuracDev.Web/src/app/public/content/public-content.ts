@@ -8,6 +8,8 @@ import {
   PublicCaseStudy,
   PublicEducation,
   PublicExperience,
+  PublicInterest,
+  PublicInterestsClient,
   PublicLegalClient,
   PublicLegalPage,
   PublicProfile,
@@ -36,6 +38,7 @@ export class PublicContent {
   private readonly projects = inject(PublicProjectsClient);
   private readonly skills = inject(PublicSkillsClient);
   private readonly legal = inject(PublicLegalClient);
+  private readonly interestsClient = inject(PublicInterestsClient);
   private readonly links = inject(PublicApplicationLinksClient);
 
   profile(locale: Locale): Observable<PublicProfile> {
@@ -69,5 +72,9 @@ export class PublicContent {
   /** Opens an application link; the API records the opening and answers 404 for inactive links. */
   applicationLink(token: string, locale: Locale): Observable<PublicApplicationLink> {
     return this.links.get(token, locale);
+  }
+
+  interests(locale: Locale): Observable<PublicInterest[]> {
+    return this.interestsClient.list(locale);
   }
 }

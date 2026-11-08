@@ -60,6 +60,7 @@ export interface UiStrings {
   };
   readonly legal: { readonly updated: string; readonly provider: string };
   readonly applicationLink: { readonly documents: string };
+  readonly about: { readonly title: string; readonly lede: string };
   readonly notFound: { readonly title: string; readonly text: string; readonly home: string };
   readonly unavailable: { readonly title: string; readonly text: string };
 }
@@ -117,6 +118,10 @@ const de: UiStrings = {
   },
   legal: { updated: 'Stand', provider: 'Anbieter' },
   applicationLink: { documents: 'Unterlagen' },
+  about: {
+    title: 'Über mich',
+    lede: 'Was mich neben der Arbeit beschäftigt.',
+  },
   notFound: {
     title: 'Seite nicht gefunden',
     text: 'Diese Seite gibt es nicht oder nicht mehr.',
@@ -181,6 +186,10 @@ const en: UiStrings = {
   },
   legal: { updated: 'Updated', provider: 'Provider' },
   applicationLink: { documents: 'Documents' },
+  about: {
+    title: 'About me',
+    lede: 'What keeps me busy besides work.',
+  },
   notFound: {
     title: 'Page not found',
     text: 'This page does not exist or no longer exists.',

@@ -3,8 +3,10 @@ import { buildSitemap } from './sitemap';
 describe('buildSitemap', () => {
   const xml = buildSitemap(['vereinswebsite', 'kassen-tool']);
 
-  it('lists start page, legal pages and every case study with absolute URLs', () => {
+  it('lists start page, about page, legal pages and every case study with absolute URLs', () => {
     expect(xml).toContain('<loc>https://surac.dev/</loc>');
+    expect(xml).toContain('<loc>https://surac.dev/ueber-mich</loc>');
+    expect(xml).toContain('<loc>https://surac.dev/en/about</loc>');
     expect(xml).toContain('<loc>https://surac.dev/en</loc>');
     expect(xml).toContain('<loc>https://surac.dev/impressum</loc>');
     expect(xml).toContain('<loc>https://surac.dev/en/datenschutz</loc>');
@@ -31,6 +33,6 @@ describe('buildSitemap', () => {
   });
 
   it('still lists the fixed pages without any project', () => {
-    expect(buildSitemap([]).match(/<url>/g)).toHaveLength(6);
+    expect(buildSitemap([]).match(/<url>/g)).toHaveLength(8);
   });
 });

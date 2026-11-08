@@ -8,6 +8,7 @@ import { HomePage } from './public/home/home-page';
  */
 const caseStudy = () => import('./public/case-study/case-study-page').then((m) => m.CaseStudyPage);
 const legal = () => import('./public/legal/legal-page').then((m) => m.LegalPage);
+const about = () => import('./public/about/about-page').then((m) => m.AboutPage);
 const applicationLink = () =>
   import('./public/application-link/application-link-page').then((m) => m.ApplicationLinkPage);
 
@@ -16,6 +17,8 @@ export const routes: Routes = [
   { path: 'en', component: HomePage, data: { locale: 'en' } },
   { path: 'projekte/:slug', loadComponent: caseStudy, data: { locale: 'de' } },
   { path: 'en/projects/:slug', loadComponent: caseStudy, data: { locale: 'en' } },
+  { path: 'ueber-mich', loadComponent: about, data: { locale: 'de' } },
+  { path: 'en/about', loadComponent: about, data: { locale: 'en' } },
   { path: 'impressum', loadComponent: legal, data: { locale: 'de', pageKey: 'Imprint' } },
   { path: 'datenschutz', loadComponent: legal, data: { locale: 'de', pageKey: 'Privacy' } },
   { path: 'en/impressum', loadComponent: legal, data: { locale: 'en', pageKey: 'Imprint' } },

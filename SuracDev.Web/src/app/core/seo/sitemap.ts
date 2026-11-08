@@ -6,12 +6,13 @@ type PagePair = Readonly<Record<Locale, string>>;
 
 const FIXED_PAGES: readonly PagePair[] = [
   { de: '/', en: '/en' },
+  { de: '/ueber-mich', en: '/en/about' },
   { de: '/impressum', en: '/en/impressum' },
   { de: '/datenschutz', en: '/en/datenschutz' },
 ];
 
 /**
- * The sitemap of the open site: start page, legal pages and every visible case study, each in both
+ * The sitemap of the open site: start page, about page, legal pages and every visible case study, each in both
  * languages with `xhtml:link` alternates, as search engines expect for translated pages. Pure, so
  * `server.ts` only fetches the slugs and the content is tested here.
  */

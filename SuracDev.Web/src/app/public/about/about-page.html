@@ -1,0 +1,27 @@
+@if (failure()) {
+  <app-unavailable-notice />
+} @else {
+  <header class="hero">
+    <h1>{{ strings().about.title }}</h1>
+    <p class="lede">{{ strings().about.lede }}</p>
+  </header>
+
+  @for (interest of interests(); track interest.id; let first = $first) {
+    <section class="section about__interest">
+      <h2 class="about__title">{{ interest.title }}</h2>
+      <div class="about__body">
+        @if (interest.image; as image) {
+          <img
+            class="about__image"
+            [src]="image.url"
+            [alt]="image.alt"
+            [attr.loading]="first ? null : 'lazy'"
+          />
+        }
+        @if (interest.bodyHtml; as html) {
+          <ui-prose [html]="html" />
+        }
+      </div>
+    </section>
+  }
+}
