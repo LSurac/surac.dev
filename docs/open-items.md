@@ -21,8 +21,6 @@ open in the admin:
 
 ## Production setup (live since 2026-11-09)
 
-- [ ] Staging refresh from production (the homelab's refresh service is being generalised per
-      site).
 
 ## Launch checks (after go-live)
 
