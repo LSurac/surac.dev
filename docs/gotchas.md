@@ -9,6 +9,9 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
   `chmod: /var/lib/postgresql/data: Operation not permitted`, `failed switching to 'postgres'`). Its
   entrypoint runs as root, fixes ownership and drops to `postgres`, so `surac-dev-db` adds back
   `CHOWN`, `DAC_OVERRIDE`, `FOWNER`, `SETGID`, `SETUID`. Staging never started the `prod` profile.
+- **`sudo caddy validate` breaks the next reload** (2026-11-09). Validating opens the log writers,
+  so running it as root creates `/var/log/caddy/surac.dev.access.log` owned by root and the service
+  (user `caddy`) fails to reload with `permission denied`. Validate as `sudo -u caddy`.
 - **`.dev` is HSTS-preloaded.** There is no plain-HTTP `surac.dev`; a Caddy misconfiguration shows
   as a browser refusal, not as a redirect. Test TLS first, everything else second.
 - **Angular 22 SSR answers 400 "Bad Request" for every host it does not know** (2026-11-07, found

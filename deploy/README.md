@@ -4,7 +4,7 @@ Installed by hand on the production host, not by `deploy.ps1` (docs/ops-and-depl
 
 ```bash
 sudo install -m 644 surac-dev.caddy /etc/caddy/sites/surac-dev.caddy
-sudo caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy
+sudo -u caddy caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy
 sudo install -m 755 surac-dev-backup.sh /usr/local/bin/surac-dev-backup
 sudo install -m 755 surac-dev-healthwatch.sh /usr/local/bin/surac-dev-healthwatch
 sudo install -m 644 surac-dev-backup.service surac-dev-backup.timer surac-dev-healthwatch.service surac-dev-healthwatch.timer /etc/systemd/system/
