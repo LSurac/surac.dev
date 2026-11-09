@@ -12,15 +12,9 @@ open in the admin:
 
 ## Manual steps (maintainer)
 
-- [ ] VPS provider: confirm the data processing agreement for this account is signed. The privacy
-      page already names dogado GmbH, Dortmund, and states that the agreement exists.
 - [ ] Current professional photo (web size and print size); staging uses the photo from the CV.
-- [ ] GitHub: pin this repository and set the profile's website to `https://surac.dev` (the CLI
-      token lacks the `user` scope: `gh auth refresh -h github.com -s user`, or in the browser).
-      The profile README exists (`LSurac/LSurac`).
-
-## Production setup (live since 2026-11-09)
-
+- [ ] GitHub: pin this repository on the profile (browser only; GitHub has no API for profile
+      pins). The profile website points to `https://surac.dev` since 2026-11-09.
 
 ## Launch checks (after go-live)
 
@@ -31,4 +25,3 @@ open in the admin:
       (2026-11-09, after HTTPS/HTTP/2; performance 97 to 98, CLS 0, accessibility/best practices/SEO 100
       on all 16 pages). Decide whether the target stands for the throttled profile.
 - [ ] Uptime monitor green for 7 days.
-- [ ] CV PDF in the application folder replaced by the generated one.
