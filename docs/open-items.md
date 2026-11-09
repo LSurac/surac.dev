@@ -14,8 +14,6 @@ open in the admin:
 
 - [ ] VPS provider: confirm the data processing agreement for this account is signed. The privacy
       page already names dogado GmbH, Dortmund, and states that the agreement exists.
-- [ ] Search Console: the domain property `surac.dev` has its DNS TXT record; confirm it in the
-      console, grant the SEO service account access, submit `https://surac.dev/sitemap.xml`.
 - [ ] Current professional photo (web size and print size); staging uses the photo from the CV.
 - [ ] GitHub: pin this repository and set the profile's website to `https://surac.dev` (the CLI
       token lacks the `user` scope: `gh auth refresh -h github.com -s user`, or in the browser).
