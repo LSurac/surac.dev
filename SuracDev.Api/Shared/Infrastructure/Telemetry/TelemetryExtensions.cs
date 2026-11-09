@@ -64,7 +64,10 @@ public static class TelemetryExtensions
     builder.Logging.AddOpenTelemetry(logging =>
     {
       logging.SetResourceBuilder(resource);
-      logging.IncludeScopes = true;
+      // No scopes: ASP.NET Core's request scope carries the raw RequestPath, which for /api/links/{token}
+      // is the token itself, on every line logged during that request. Trace and span ids travel in the
+      // OTLP log record anyway.
+      logging.IncludeScopes = false;
       logging.IncludeFormattedMessage = true;
       logging.AddOtlpExporter();
     });

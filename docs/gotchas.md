@@ -12,6 +12,9 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
 - **`sudo caddy validate` breaks the next reload** (2026-11-09). Validating opens the log writers,
   so running it as root creates `/var/log/caddy/surac.dev.access.log` owned by root and the service
   (user `caddy`) fails to reload with `permission denied`. Validate as `sudo -u caddy`.
+- **Log scopes carry the raw request path** (2026-11-09). With `IncludeScopes = true` every exported log line
+  of a request gets ASP.NET Core's `RequestPath` scope, which for `/api/links/{token}` is the token. The OTLP
+  log export therefore runs without scopes; `TelemetryRedaction` only covers the paths the app writes itself.
 - **`.dev` is HSTS-preloaded.** There is no plain-HTTP `surac.dev`; a Caddy misconfiguration shows
   as a browser refusal, not as a redirect. Test TLS first, everything else second.
 - **Angular 22 SSR answers 400 "Bad Request" for every host it does not know** (2026-11-07, found
