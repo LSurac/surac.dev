@@ -35,7 +35,8 @@ services:
       # Empty = telemetry off (staging). Production sets the OTLP endpoint and headers in .env.
       OTEL_EXPORTER_OTLP_ENDPOINT: '${SURACDEV_OTLP_ENDPOINT:-}'
       OTEL_EXPORTER_OTLP_HEADERS: '${SURACDEV_OTLP_HEADERS:-}'
-      OTEL_EXPORTER_OTLP_PROTOCOL: 'grpc'
+      # Seq ingests OTLP over HTTP at /ingest/otlp; the SDK appends /v1/traces and /v1/logs.
+      OTEL_EXPORTER_OTLP_PROTOCOL: 'http/protobuf'
       Reminders__NtfyServer: '${SURACDEV_NTFY_SERVER:-}'
       Reminders__NtfyTopic: '${SURACDEV_NTFY_TOPIC:-}'
       Reminders__NtfyToken: '${SURACDEV_NTFY_TOKEN:-}'

@@ -108,8 +108,8 @@ The procedure was rehearsed on staging on 2026-11-08: the nightly dump restored 
 
 ## Telemetry
 
-OpenTelemetry in the API: ASP.NET Core and HttpClient instrumentation, OTLP/gRPC exporter to the
-maintainer's Seq over the private network. Enabled only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set;
+OpenTelemetry in the API: ASP.NET Core and HttpClient instrumentation, OTLP/HTTP (protobuf) exporter
+to the maintainer's Seq (`<seq>/ingest/otlp`) over the private network. Enabled only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set;
 local, tests and staging run without it. Spans never carry request bodies or cookies; the path of
 `/api/links/{token}` is rewritten to the placeholder before export (`TelemetryRedaction`). Request
 logs of ASP.NET Core are below the `Warning` level and are not exported.
@@ -119,9 +119,9 @@ logs of ASP.NET Core are below the `Warning` level and are not exported.
 On Mondays from 07:00 UTC the API sends one ntfy message listing every application still `Sent`
 fourteen days after `AppliedOn` (`docs/decisions.md`). `.env` sets `SURACDEV_NTFY_SERVER`,
 `SURACDEV_NTFY_TOPIC` and, for a protected topic, `SURACDEV_NTFY_TOKEN`; without server and topic
-the worker is not registered. Staging uses the homelab's ntfy (values copied on the host from the
-homelab's monitor configuration, never written down); production needs a route to it over the
-private network.
+the worker is not registered. Staging and production use the maintainer's existing ntfy topic on a
+public ntfy server, reached directly over HTTPS (values copied host to host from the homelab's
+monitor configuration, never written down).
 
 ## Staging specifics
 
