@@ -73,9 +73,15 @@ Debian 13, `deploy` user with key-only SSH and passwordless sudo, sshd hardening
 (`apt-mark hold`), Caddy from Caddy's repository, Tailscale for the telemetry path, journald
 persistent, logrotate.
 
-`deploy/Caddyfile` is installed to `/etc/caddy/Caddyfile` by hand (not by `deploy.ps1`): apex
-site, `www` redirect, security headers, reverse proxy to `127.0.0.1:<port>`, access log with 14-day
-rotation.
+The VPS is shared with the maintainer's other private sites. Host-wide configuration (packages,
+firewall, users, Tailscale, `/etc/caddy/Caddyfile` with the global options and
+`import sites/*.caddy`) belongs to the host, not to this repository. This project owns its paths
+only: `/opt/surac-dev`, `/opt/surac-dev-backups`, its `surac-dev-*` units and its site block.
+
+`deploy/surac-dev.caddy` is installed to `/etc/caddy/sites/surac-dev.caddy` by hand (not by
+`deploy.ps1`): apex site, `www` redirect, security headers, reverse proxy to `127.0.0.1:<port>`,
+access log with 14-day rotation. It has no global block; `trusted_proxies` comes from the host's
+Caddyfile.
 
 ## Backups
 
@@ -129,7 +135,7 @@ receives a deployment event from the staging workflow.
 
 ## Runbook pointers
 
-- First production deploy: create `.env` from `.env.example` on the host, install the Caddyfile,
+- First production deploy: create `.env` from `.env.example` on the host, install the site block,
   run `deploy.ps1 -Production -TargetHost …`, log in once to set the admin password, enter content,
   upload the photo, generate and check both PDFs, create the first application link, verify the
   backup ran and the uptime monitor is green.

@@ -10,7 +10,7 @@ What exists and how it fits together. For why, see `docs/decisions.md`; for the 
 | `SuracDev.Api` | ASP.NET Core 10 API. Owns the database, auth, content, PDF export, application links. |
 | `SuracDev.Api.Tests` | xUnit. Domain unit tests, integration tests through the HTTP pipeline on PostgreSQL (Testcontainers). |
 | `SuracDev.Web` | Angular 22, SSR, zoneless, Signals. Public site, admin area, Playwright E2E. |
-| `deploy/` | Caddyfile, backup/healthwatch scripts and systemd units for the production host. |
+| `deploy/` | Caddy site block, backup/healthwatch scripts and systemd units for the production host. |
 
 Solution file: `SuracDev.slnx`. Containers: `surac-dev-api`, `surac-dev-web`, and in production
 `surac-dev-db`. Host path `/opt/surac-dev`.

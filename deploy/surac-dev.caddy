@@ -1,0 +1,31 @@
+# Site block, installed by hand to /etc/caddy/sites/surac-dev.caddy on the production host
+# (docs/ops-and-deploy.md). The host is shared with other sites: /etc/caddy/Caddyfile belongs to the
+# host and holds the global options (trusted_proxies) plus `import sites/*.caddy`, so this file has
+# no global block. Caddy terminates TLS (Let's Encrypt), redirects www to the apex and proxies to the
+# web container on loopback. The security headers of the web container stay in place; Caddy adds HSTS.
+
+www.surac.dev {
+  redir https://surac.dev{uri} permanent
+}
+
+surac.dev {
+  encode zstd gzip
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    -Server
+  }
+
+  reverse_proxy 127.0.0.1:8085 {
+    header_up X-Forwarded-Proto https
+  }
+
+  log {
+    output file /var/log/caddy/surac.dev.access.log {
+      roll_size 20mb
+      roll_keep 7
+      roll_keep_for 336h
+    }
+    format json
+  }
+}
