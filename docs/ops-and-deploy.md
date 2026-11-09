@@ -93,8 +93,11 @@ Caddyfile.
 4. Ping a healthchecks.io check on success; failure alerts via ntfy.
 
 The homelab pulls `/opt/surac-dev-backups/` read-only (forced-command SSH key) at 05:00 into the
-existing offsite chain (encrypted rclone to cloud storage). A restore drill runs monthly: restore the
-latest dump into a scratch PostgreSQL, run `MigrateAsync`, count rows, compare with the manifest.
+existing offsite chain (encrypted rclone to cloud storage). The pull is
+`deploy/pi-pull-prod-backups.sh` (own read-only key, alerts when the newest dump is older than 48 h).
+A restore drill runs monthly, `deploy/pi-restore-drill.sh`: it restores the newest dump into a
+throwaway PostgreSQL without network, compares every table's row count with the dump's own data
+and checks the documents archive. Both scripts install on the homelab side, not on production.
 The procedure was rehearsed on staging on 2026-11-08: the nightly dump restored into a throwaway
 `postgres:17-alpine` container without network and matched the live row counts.
 
