@@ -26,7 +26,7 @@ Browser ──HTTPS──▶ Caddy (host, TLS, HSTS, www→apex, security header
                      ├── /b/*, /, /en/*, /ueber-mich, … ──▶ SSR (node) ──▶ surac-dev-api:8080
                      └── static assets, fonts (immutable, versioned file names)
                    surac-dev-api ──▶ PostgreSQL (prod: surac-dev-db container; staging: shared dev instance)
-                                 ──▶ OTLP exporter (traces/logs → Seq, optional, off when unconfigured)
+                                 ──▶ OTLP exporter (traces/logs/metrics → Seq, optional, off when unconfigured)
 ```
 
 Staging uses the same images and compose file without the `prod` profile and without Caddy.
@@ -131,7 +131,9 @@ locale comes from the URL prefix, never from a cookie.
 - **Auth**: cookie `suracdev.auth`, `FallbackPolicy = DefaultPolicy` (deny by default),
   `[AllowAnonymous]` only on deliberately public endpoints. See `docs/security-and-privacy.md`.
 - **Rate limiting**: fixed-window limiter on login and on application-link resolution.
-- **Telemetry**: OpenTelemetry (ASP.NET Core and HttpClient instrumentation, OTLP exporter). Disabled
-  when no endpoint is configured, so local runs and tests stay silent.
+- **Telemetry**: OpenTelemetry (ASP.NET Core, HttpClient and Npgsql traces, logs, metrics; OTLP
+  exporter) plus the usage events: request log middleware, page-view beacon, login lines
+  (`docs/ops-and-deploy.md`, "Telemetry"). Export is disabled when no endpoint is configured, so
+  local runs and tests stay silent.
 - **Health**: `GET /api/health` checks database connectivity; used by the Docker healthcheck and
   uptime monitoring.

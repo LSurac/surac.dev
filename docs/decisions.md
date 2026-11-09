@@ -73,7 +73,9 @@ their date; reversed decisions are struck through, never deleted.
   checkout renders. Real content is entered through the admin and backed up with the database.
 - **Business statistics live in PostgreSQL; telemetry goes to Seq.** Application links record
   coarse events (opened, PDF downloaded, document downloaded) with timestamp and profile, no IP, no
-  user agent. OpenTelemetry traces and logs go to the maintainer's Seq via OTLP for operations only.
+  user agent. OpenTelemetry traces, logs, metrics and the usage events (requests, page views with a
+  shortened address, logins) go to the maintainer's Seq via OTLP, in the same shape as his other sites
+  so one set of dashboards serves all of them.
   Rejected: reading statistics back from Seq (30-day retention, LAN-only, single-user licence, and it
   would couple a business feature to an ops tool).
 - **Single admin, cookie auth, no 2FA, no OAuth.** One seeded admin sets the password on first

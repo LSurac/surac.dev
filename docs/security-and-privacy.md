@@ -20,6 +20,9 @@ Public endpoints (`[AllowAnonymous]`, on the `public` OpenAPI document):
 - `GET /api/links/{token}` and its sub-resources (`/cv.pdf`, `/documents/{id}`), guarded by the
   token itself
 - `GET /api/auth/state` and `POST /api/auth/login` (rate limited)
+- `POST /api/public/page-views` — the page-view beacon (rate limited, writes one log line, stores
+  nothing). Not on the OpenAPI documents (the browser sends it with `sendBeacon`), so
+  `AuthorizationSweepTests` does not enumerate it; `UsageEventTests` covers it.
 
 The read-only public controllers carry `[AnswersHead]` and answer `HEAD` like `GET` (link checkers,
 monitors). The application-link endpoints do not: every `GET` there is recorded as an open or a
@@ -94,10 +97,11 @@ changes those scripts (`docs/gotchas.md`).
 | Phone, street address | `profile` | full PDF via link; Impressum (address only) | § 5 DDG requires the address in the Impressum |
 | Certificates, cover letters | documents volume (`LinkOnly`) | the recipient of a link | contain employer names and signatures; never public |
 | Applications (company, position, status, notes) | `applications` | admin only | the maintainer's notes about his own applications |
-| Link events | `link_events` | admin only | no personal data of visitors is stored |
+| Link events | `link_events` | admin only | no personal data of visitors is stored in the database |
 | Admin password hash, security stamp | `admin_users` | nobody | |
 | Server logs | Caddy access log (IP, path, UA, 14 days), API logs | maintainer | Art. 6 (1) f DSGVO, named in the privacy page |
-| Telemetry | Seq (traces/logs, 30 days) | maintainer | no request bodies, no cookies; link tokens are rewritten to `{token}` in span paths (`TelemetryRedactionTests`) |
+| Telemetry | Seq (traces/logs/metrics, 30 days) | maintainer | no request bodies, no cookies; link tokens are rewritten to `{token}` in every path (`TelemetryRedactionTests`, `UsageEventTests`) |
+| Usage events | Seq (30 days) | maintainer | requests and page views with path, area, referrer host, time and the visitor's address shortened to /24 (IPv6 /48); the signed-in admin and login attempts with the full address; Art. 6 (1) f DSGVO, named in the privacy page |
 
 No cookies on the public site. The admin cookie is strictly necessary and set only after login.
 Therefore no consent banner. Fonts are self-hosted; no third-party requests from the public site.

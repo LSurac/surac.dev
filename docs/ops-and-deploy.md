@@ -111,11 +111,30 @@ The procedure was rehearsed on staging on 2026-11-08: the nightly dump restored 
 
 ## Telemetry
 
-OpenTelemetry in the API: ASP.NET Core and HttpClient instrumentation, OTLP/HTTP (protobuf) exporter
-to the maintainer's Seq (`<seq>/ingest/otlp`) over the private network. Enabled only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set;
-local, tests and staging run without it. Spans never carry request bodies or cookies; the path of
-`/api/links/{token}` is rewritten to the placeholder before export (`TelemetryRedaction`). Request
-logs of ASP.NET Core are below the `Warning` level and are not exported.
+OpenTelemetry in the API: ASP.NET Core, HttpClient and Npgsql traces, logs and metrics over
+OTLP/HTTP (protobuf) to the maintainer's Seq (`<seq>/ingest/otlp`) over the private network, tagged
+`service.name = surac-dev-api`, `deployment.environment.name = production`. Enabled only when
+`OTEL_EXPORTER_OTLP_ENDPOINT` is set; local, tests and staging run without it. Spans never carry
+request bodies or cookies; application-link tokens are replaced by `{token}` in every path that
+reaches telemetry (`TelemetryRedaction`). ASP.NET Core's own request logs are below the `Warning`
+level and are not exported.
+
+Usage events, in the same shape as the maintainer's other sites so the Seq dashboards
+("surac.dev · Übersicht/Besucher/Betrieb/Metriken") are shared code:
+
+- `RequestLoggingMiddleware`: one line per proxied API request (`{RequestMethod} {RequestPath}
+  answered {StatusCode} in {ElapsedMs} ms for {UserName} ({UserRole}) from {ClientIp}.`); requests
+  from inside the stack (SSR) only at Debug.
+- `PageViewsController` (`POST /api/public/page-views`, anonymous, own rate limit) fed by the
+  browser's `PageViewTracker`: `Page view {PagePath} ({PageArea}) by ... via {ReferrerHost}.` Areas
+  `public`, `link` (`/b/{token}`), `admin`. Automated browsers send nothing.
+- Login attempts: `Login succeeded ...` / `Failed login ... {FailureReason}` with the full address.
+- Metrics: the framework meters (hosting, Kestrel, rate limiting, diagnostics, authentication, HTTP,
+  runtime, Npgsql) plus `SuracDev.Site` (`suracdev.page_views` by area, `suracdev.logins` by outcome),
+  delta temporality.
+
+Anonymous visitors appear with the network part of their address only (IPv4 /24, IPv6 /48,
+`ClientAddress`); the signed-in admin and login attempts with the full address. Seq keeps 30 days.
 
 ## Reminders
 
