@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { uiStrings } from './core/i18n/ui-strings';
 import { LocaleService } from './core/locale/locale.service';
+import { PageViewTracker, pageViewPath } from './core/telemetry/page-view-tracker';
 import { SiteFooter } from './layout/site-footer/site-footer';
 import { SiteHeader } from './layout/site-header/site-header';
 
@@ -28,6 +30,20 @@ export class App {
     ),
     { initialValue: isAdminUrl(this.router.url) },
   );
+
+  constructor() {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return;
+    }
+    // Every page the browser shows, the first one included (its navigation ends after hydration).
+    const pageViews = inject(PageViewTracker);
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe((event) => pageViews.track(pageViewPath(event.urlAfterRedirects)));
+  }
 }
 
 function isAdminUrl(url: string): boolean {
