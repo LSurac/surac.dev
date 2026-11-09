@@ -37,6 +37,8 @@ services:
       OTEL_EXPORTER_OTLP_HEADERS: '${SURACDEV_OTLP_HEADERS:-}'
       # Seq ingests OTLP over HTTP at /ingest/otlp; the SDK appends /v1/traces and /v1/logs.
       OTEL_EXPORTER_OTLP_PROTOCOL: 'http/protobuf'
+      # Tells this site's production telemetry apart from other sites in the shared Seq.
+      OTEL_RESOURCE_ATTRIBUTES: 'deployment.environment.name=production'
       Reminders__NtfyServer: '${SURACDEV_NTFY_SERVER:-}'
       Reminders__NtfyTopic: '${SURACDEV_NTFY_TOPIC:-}'
       Reminders__NtfyToken: '${SURACDEV_NTFY_TOKEN:-}'
@@ -90,6 +92,14 @@ services:
     profiles: [prod]
     logging: *default-logging
     mem_limit: 256m
+    # The image's entrypoint chowns its data directory and drops to the postgres user; these are the
+    # only capabilities it needs after the hardening block drops all of them.
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
     environment:
       POSTGRES_DB: suracdev
       POSTGRES_USER: suracdev

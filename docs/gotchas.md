@@ -5,6 +5,10 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
 - **PowerShell `Select-Object -First N` on build output kills the build.** The pipeline closes
   early, the process gets a broken pipe and the step reports success. Use `Select-String`, `grep`
   or write to a file.
+- **`cap_drop: ALL` stops the official Postgres image** (2026-11-09, first production start:
+  `chmod: /var/lib/postgresql/data: Operation not permitted`, `failed switching to 'postgres'`). Its
+  entrypoint runs as root, fixes ownership and drops to `postgres`, so `surac-dev-db` adds back
+  `CHOWN`, `DAC_OVERRIDE`, `FOWNER`, `SETGID`, `SETUID`. Staging never started the `prod` profile.
 - **`.dev` is HSTS-preloaded.** There is no plain-HTTP `surac.dev`; a Caddy misconfiguration shows
   as a browser refusal, not as a redirect. Test TLS first, everything else second.
 - **Angular 22 SSR answers 400 "Bad Request" for every host it does not know** (2026-11-07, found
