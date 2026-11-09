@@ -12,7 +12,6 @@ open in the admin:
 
 ## Manual steps (maintainer)
 
-- [ ] Current professional photo (web size and print size); staging uses the photo from the CV.
 - [ ] GitHub: pin this repository on the profile (browser only; GitHub has no API for profile
       pins). The profile website points to `https://surac.dev` since 2026-11-09.
 
@@ -21,7 +20,4 @@ open in the admin:
 - [ ] Both PDFs open in Acrobat and on a phone (file names, embedded fonts and the text order were
       checked on 2026-11-09).
 - [ ] Spell check in both languages by a second person; English PDF reviewed by a native speaker.
-- [ ] LCP target 1.5 s: production measures 2.0 to 2.5 s in Lighthouse's throttled mobile profile
-      (2026-11-09, after HTTPS/HTTP/2; performance 97 to 98, CLS 0, accessibility/best practices/SEO 100
-      on all 16 pages). Decide whether the target stands for the throttled profile.
 - [ ] Uptime monitor green for 7 days.

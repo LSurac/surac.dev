@@ -195,10 +195,15 @@ their date; reversed decisions are struck through, never deleted.
   initial bundle (108 kB transferred). "Under 150 kB" from the roadmap is met as transferred size;
   as raw size it is out of reach without dropping SSR or the router. The budget warns from 400 kB
   and fails from 430 kB, so a warning means growth, not the status quo.
-- **Measured performance (2026-11-08, Lighthouse mobile profile, staging over plain HTTP/1.1):**
-  performance 93 to 95, accessibility, SEO 100, LCP 2.7 to 2.9 s with the portrait as LCP element.
-  Best practices are 79 on staging only because it has no HTTPS and no HTTP/2; production behind
-  Caddy has both. The hero photo loads with `fetchpriority="high"`.
+- **Measured performance and the LCP target (2026-11-09, Lighthouse mobile profile, production):**
+  performance 97 to 99, accessibility, best practices and SEO 100, CLS 0 on all 16 pages; LCP 2.0 s on
+  the start page (portrait as LCP element) and 1.7 s on project pages. The target is **LCP at most
+  2.0 s in that profile**, not 1.5 s: its first contentful paint alone is 1.5 to 1.7 s (simulated slow
+  4G, TLS), and the LCP cannot come earlier. Two causes were removed on the way: English pages
+  hydrated with German labels for a moment (CLS 0.3 to 0.61), and the preloaded variable serif font
+  (120 kB) delayed the portrait by ~0.8 s until it was cut into fixed weights (`docs/design.md`,
+  "Fonts"). Staging measured 2.7 to 2.9 s over plain HTTP/1.1 on 2026-11-08. The hero photo loads
+  with `fetchpriority="high"`.
 - **Reminders are a stateless weekly digest.** On Mondays from 07:00 UTC the API sends one ntfy
   message listing every application still `Sent` fourteen days after `AppliedOn`. Rejected: one
   reminder per application with a "reminded at" column, which needs a migration and a state to
