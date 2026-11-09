@@ -93,9 +93,11 @@ Invoke-Native "scp" @($ArchivePath, "$Target`:/tmp/$ArchiveName")
 
 Write-Host ""
 Write-Host "=== Remote deploy ===" -ForegroundColor Cyan
+# gzip -t first: the stack folder is emptied only once the uploaded archive is there and intact
+# (2026-11-09 a missing archive left production with nothing but its .env; the running containers kept serving).
 Invoke-Native "ssh" @(
   $Target,
-  "set -e; find '$RemotePath' -mindepth 1 -maxdepth 1 ! -name '.env' -exec rm -rf {} +; tar -xzf '/tmp/$ArchiveName' -C '$RemotePath'; rm -f '/tmp/$ArchiveName'; cd '$RemotePath'; docker compose up -d --build --wait; docker compose ps"
+  "set -e; gzip -t '/tmp/$ArchiveName'; find '$RemotePath' -mindepth 1 -maxdepth 1 ! -name '.env' -exec rm -rf {} +; tar -xzf '/tmp/$ArchiveName' -C '$RemotePath'; rm -f '/tmp/$ArchiveName'; cd '$RemotePath'; docker compose up -d --build --wait; docker compose ps"
 )
 
 Write-Host ""
