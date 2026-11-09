@@ -68,9 +68,12 @@ form controls (2px). Shadows are not used.
 
 ## Fonts
 
-Source Serif 4 (Adobe, SIL OFL 1.1), variable, Latin and Latin-Extended subsets, self-hosted
-under `public/fonts/` as versioned files (`source-serif-4-latin-v1.woff2`), served immutable for a
-year. Preloaded in `index.html`; `font-display: swap` with a size-adjusted fallback
+Source Serif 4 (Adobe, SIL OFL 1.1), Latin subset, self-hosted under `public/fonts/` as versioned
+files, served immutable for a year. The variable font is instanced to fixed weights with the
+optical-size axis kept (`fonttools varLib.instancer <file> wght=400`): `source-serif-4-latin-400-v2`
+(47 kB, preloaded), `-700-v2` and `-400-italic-v2` (loaded only by pages with bold or italic serif
+text). The full 200-900 file (120 kB) delayed the LCP photo by ~0.8 s in Lighthouse's mobile profile
+(2026-11-09). Preloaded in `index.html`; `font-display: swap` with a size-adjusted fallback
 (`'Source Serif 4 Fallback'` via `@font-face` with `size-adjust`) to avoid layout shift. Replacing
 a font file means a new version suffix.
 
