@@ -7,14 +7,16 @@ using Microsoft.AspNetCore.RateLimiting;
 using SuracDev.Api.Domains.Identity.Application;
 using SuracDev.Api.Domains.Identity.Contracts;
 using SuracDev.Api.Domains.Identity.Domain;
+using SuracDev.Api.Shared.Application.Exceptions;
 using SuracDev.Api.Shared.Infrastructure;
+using SuracDev.Api.Shared.Infrastructure.Telemetry;
 
 namespace SuracDev.Api.Domains.Identity.Controllers;
 
 [ApiController]
 [Route("api/auth")]
 [ApiExplorerSettings(GroupName = ApiGroups.Admin)]
-public sealed class AuthController(AdminAuthService authService) : ControllerBase
+public sealed class AuthController(AdminAuthService authService, ILogger<AuthController> logger) : ControllerBase
 {
   [AllowAnonymous]
   [HttpGet("state")]
@@ -29,9 +31,32 @@ public sealed class AuthController(AdminAuthService authService) : ControllerBas
   [HttpPost("login")]
   public async Task<ActionResult<SessionResponse>> Login(LoginRequest request, CancellationToken cancellationToken)
   {
-    var hadPassword = (await authService.GetAdminAsync(cancellationToken)).HasPassword;
-    var admin = await authService.LoginAsync(request.Password, cancellationToken);
+    var account = await authService.GetAdminAsync(cancellationToken);
+    var hadPassword = account.HasPassword;
+    // Login attempts keep the full address: that is the security case (docs/security-and-privacy.md).
+    var clientIp = ClientAddress.ForLog(HttpContext.Connection.RemoteIpAddress, keepFullAddress: true);
+    AdminUser admin;
+    try
+    {
+      admin = await authService.LoginAsync(request.Password, cancellationToken);
+    }
+    catch (DomainValidationException exception)
+    {
+      var reason = exception.Errors.Values.Any(errors => errors.Contains(AdminAuthService.WrongPassword))
+        ? "wrong_password"
+        : "password_rejected";
+      SiteMetrics.RecordLogin(reason);
+      logger.LogWarning(
+        "Failed login on the {LoginArea} page for account {AccountName} ({AccountRole}) from {ClientIp}: {FailureReason}, entered as {IdentifierKind}.",
+        "admin", account.DisplayName, Visitor.AdminRole, clientIp, reason, "password");
+      throw;
+    }
+
     await SignInAsync(admin);
+    SiteMetrics.RecordLogin("succeeded");
+    logger.LogInformation(
+      "Login succeeded on the {LoginArea} page for account {AccountName} ({AccountRole}) from {ClientIp}, entered as {IdentifierKind}.",
+      "admin", admin.DisplayName, Visitor.AdminRole, clientIp, "password");
     return new SessionResponse(admin.Id, admin.DisplayName, IsInitialLogin: !hadPassword);
   }
 

@@ -137,6 +137,14 @@ builder.Services.AddRateLimiter(options =>
       Window = TimeSpan.FromMinutes(15),
       QueueLimit = 0,
     }));
+  options.AddPolicy(RateLimitPolicies.PageViews, httpContext => RateLimitPartition.GetFixedWindowLimiter(
+    httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+    _ => new FixedWindowRateLimiterOptions
+    {
+      PermitLimit = 60,
+      Window = TimeSpan.FromMinutes(1),
+      QueueLimit = 0,
+    }));
   options.AddPolicy(RateLimitPolicies.Link, httpContext => RateLimitPartition.GetFixedWindowLimiter(
     httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
     _ => new FixedWindowRateLimiterOptions
@@ -172,6 +180,9 @@ builder.AddSuracDevTelemetry();
 
 var app = builder.Build();
 
+// Before UseForwardedHeaders: it tells proxied requests by their X-Forwarded-For and reads the client
+// address and the user only after the whole pipeline ran (RequestLoggingMiddleware).
+app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseForwardedHeaders();
 app.UseExceptionHandler();
 

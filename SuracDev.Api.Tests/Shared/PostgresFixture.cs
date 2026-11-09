@@ -15,7 +15,11 @@ public sealed class PostgresFixture : IAsyncLifetime
 {
   private const string TemplateDatabase = "suracdev_template";
 
-  private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:17-alpine").Build();
+  // One database per test, each with its own Npgsql pool that stays open until the run ends; the
+  // default of 100 connections ran out once the usage-event tests joined (2026-11-09).
+  private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:17-alpine")
+    .WithCommand("-c", "max_connections=400")
+    .Build();
 
   public async Task InitializeAsync()
   {
@@ -69,6 +73,18 @@ public sealed class PostgresFixture : IAsyncLifetime
 public sealed class PostgresCollection : ICollectionFixture<PostgresFixture>
 {
   public const string Name = "Postgres";
+}
+
+/// <summary>The data-driven variant of <see cref="PostgresFactAttribute"/>, skipped under the same rule.</summary>
+public sealed class PostgresTheoryAttribute : TheoryAttribute
+{
+  public PostgresTheoryAttribute()
+  {
+    if (!PostgresFactAttribute.CanRun)
+    {
+      Skip = "Needs a running Docker for its PostgreSQL container.";
+    }
+  }
 }
 
 /// <summary>

@@ -9,9 +9,16 @@ namespace SuracDev.Api.Shared.Infrastructure.Telemetry;
 /// </summary>
 public static partial class TelemetryRedaction
 {
-  /// <summary>The request path with the token segment of <c>/api/links/{token}</c> replaced by a placeholder.</summary>
-  public static string Path(string path) => LinkTokenPattern().Replace(path, "/api/links/{token}");
+  /// <summary>
+  /// The path with the token segment of an API link (<c>/api/links/{token}</c>) or a link page
+  /// (<c>/b/{token}</c>) replaced by a placeholder.
+  /// </summary>
+  public static string Path(string path)
+    => PageTokenPattern().Replace(LinkTokenPattern().Replace(path, "/api/links/{token}"), "/b/{token}");
 
   [GeneratedRegex(@"^/api/links/[^/?#]+", RegexOptions.IgnoreCase)]
   private static partial Regex LinkTokenPattern();
+
+  [GeneratedRegex(@"^/b/[^/?#]+", RegexOptions.IgnoreCase)]
+  private static partial Regex PageTokenPattern();
 }

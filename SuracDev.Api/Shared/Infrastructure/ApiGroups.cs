@@ -17,4 +17,7 @@ public static class RateLimitPolicies
 
   /// <summary>Application-link resolution: makes guessing tokens pointless on top of the 128-bit key space.</summary>
   public const string Link = "link";
+
+  /// <summary>The page-view beacon: anonymous, so a script must not be able to flood the log.</summary>
+  public const string PageViews = "page-views";
 }

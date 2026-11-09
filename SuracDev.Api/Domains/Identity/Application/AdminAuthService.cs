@@ -22,6 +22,9 @@ public sealed class AdminAuthService(SuracDevDbContext dbContext)
     => await dbContext.AdminUsers.FindAsync([id], cancellationToken)
       ?? throw new DomainNotFoundException("Admin user not found.");
 
+  /// <summary>The error a wrong password produces; the login log tells it apart from a rejected new one.</summary>
+  public const string WrongPassword = "Wrong password.";
+
   /// <summary>Logs the admin in. Sets the password on the first attempt, verifies it afterwards.</summary>
   public async Task<AdminUser> LoginAsync(string password, CancellationToken cancellationToken)
   {
@@ -38,7 +41,7 @@ public sealed class AdminAuthService(SuracDevDbContext dbContext)
     var result = passwordHasher.VerifyHashedPassword(admin, admin.PasswordHash!, password);
     if (result == PasswordVerificationResult.Failed)
     {
-      throw new DomainValidationException("password", "Wrong password.");
+      throw new DomainValidationException("password", WrongPassword);
     }
 
     if (result == PasswordVerificationResult.SuccessRehashNeeded)
