@@ -14,10 +14,8 @@ open in the admin:
 
 - [ ] VPS provider: confirm the data processing agreement for this account is signed. The privacy
       page already names dogado GmbH, Dortmund, and states that the agreement exists.
-- [ ] Search Console: add the domain property `surac.dev` (DNS TXT verification), submit
-      `https://surac.dev/sitemap.xml`.
-- [ ] Production admin: decide whether to keep the password copied over with the staging content
-      or change it in the admin (rotates the session everywhere).
+- [ ] Search Console: the domain property `surac.dev` has its DNS TXT record; confirm it in the
+      console, grant the SEO service account access, submit `https://surac.dev/sitemap.xml`.
 - [ ] Current professional photo (web size and print size); staging uses the photo from the CV.
 - [ ] GitHub: pin this repository and set the profile's website to `https://surac.dev` (the CLI
       token lacks the `user` scope: `gh auth refresh -h github.com -s user`, or in the browser).
@@ -25,10 +23,6 @@ open in the admin:
 
 ## Production setup (live since 2026-11-09)
 
-- [ ] Telemetry: a Seq ingest key for production, then `SURACDEV_OTLP_ENDPOINT`/`_HEADERS` in the
-      host's `.env`; check that traces arrive as `deployment.environment.name = production`.
-- [ ] healthchecks.io dead-man's switch for the backup timer: the account is at its check limit,
-      so the check could not be created yet; `HEALTHCHECK_URL` stays empty until then.
 - [ ] Staging refresh from production (the homelab's refresh service is being generalised per
       site).
 
