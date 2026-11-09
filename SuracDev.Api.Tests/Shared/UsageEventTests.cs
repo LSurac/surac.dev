@@ -100,8 +100,12 @@ public sealed class UsageEventTests(PostgresFixture postgres)
     await using var _ = factory;
     using var client = factory.CreateClient();
 
-    // The SSR process calls the API directly, without X-Forwarded-For; its page view covers it.
-    await client.GetAsync("/api/public/profile?locale=de");
+    // The SSR process calls the API directly. It passes the page request's X-Forwarded-For on (for the
+    // rate limits) but no X-Real-IP, which only nginx's /api/ location sets; its page view covers it.
+    using var request = new HttpRequestMessage(HttpMethod.Get, "/api/public/profile?locale=de");
+    request.Headers.Add(ApiFactory.PeerAddressHeader, "172.18.0.4");
+    request.Headers.Add("X-Forwarded-For", Visitor);
+    await client.SendAsync(request);
 
     var line = Assert.Single(log.Lines, l => l.Template.Contains("answered {StatusCode}", StringComparison.Ordinal));
     Assert.Equal(LogLevel.Debug, line.Level);
@@ -141,12 +145,14 @@ public sealed class UsageEventTests(PostgresFixture postgres)
     return (factory, log);
   }
 
-  /// <summary>A request as nginx forwards it: from the nginx container, with the visitor in X-Forwarded-For.</summary>
+  /// <summary>A request as nginx's /api/ location forwards it: from the nginx container, with the visitor in
+  /// X-Forwarded-For and X-Real-IP.</summary>
   private static HttpRequestMessage Proxied(HttpMethod method, string url, object? body = null)
   {
     var request = new HttpRequestMessage(method, url);
     request.Headers.Add(ApiFactory.PeerAddressHeader, NginxContainer);
     request.Headers.Add("X-Forwarded-For", Visitor);
+    request.Headers.Add("X-Real-IP", "172.18.0.1");
     if (body is not null)
     {
       request.Content = JsonContent.Create(body);

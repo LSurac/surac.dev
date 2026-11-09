@@ -123,8 +123,9 @@ Usage events, in the same shape as the maintainer's other sites so the Seq dashb
 ("surac.dev · Übersicht/Besucher/Betrieb/Metriken") are shared code:
 
 - `RequestLoggingMiddleware`: one line per proxied API request (`{RequestMethod} {RequestPath}
-  answered {StatusCode} in {ElapsedMs} ms for {UserName} ({UserRole}) from {ClientIp}.`); requests
-  from inside the stack (SSR) only at Debug.
+  answered {StatusCode} in {ElapsedMs} ms for {UserName} ({UserRole}) from {ClientIp}.`) for every
+  request through nginx's `/api/` location (marked by its `X-Real-IP`); the SSR process's own calls
+  carry the page's X-Forwarded-For but no X-Real-IP and stay at Debug.
 - `PageViewsController` (`POST /api/public/page-views`, anonymous, own rate limit) fed by the
   browser's `PageViewTracker`: `Page view {PagePath} ({PageArea}) by ... via {ReferrerHost}.` Areas
   `public`, `link` (`/b/{token}`), `admin`. Automated browsers send nothing.

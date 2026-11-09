@@ -9,11 +9,11 @@ namespace SuracDev.Api.Shared.Infrastructure.Telemetry;
 /// Together with the page views (<see cref="PageViewsController"/>) it feeds the maintainer's Seq
 /// dashboards, in the same shape as his other sites.
 /// <para>
-/// Registered before <c>UseForwardedHeaders</c> on purpose: only a request nginx proxied carries an
-/// X-Forwarded-For, and that header is consumed further down. Requests without it come from inside the
-/// stack (the SSR process fetching content for a page) and are logged at Debug only; the page view
-/// already covers them. Address and user are read after the rest of the pipeline ran, so they are the
-/// real ones.
+/// A browser's request comes through nginx's /api/ location, which sets X-Real-IP. The SSR process
+/// calls the API directly: it passes the page request's X-Forwarded-For on for the rate limits, but no
+/// X-Real-IP, so its calls are logged at Debug only; the page view already covers them. Registered
+/// before <c>UseForwardedHeaders</c>; address and user are read after the rest of the pipeline ran, so
+/// they are the real ones.
 /// </para>
 /// </summary>
 public sealed class RequestLoggingMiddleware(RequestDelegate next, ILogger<RequestLoggingMiddleware> logger)
@@ -23,7 +23,7 @@ public sealed class RequestLoggingMiddleware(RequestDelegate next, ILogger<Reque
 
   public async Task InvokeAsync(HttpContext context)
   {
-    var cameThroughProxy = context.Request.Headers.ContainsKey("X-Forwarded-For");
+    var cameThroughProxy = context.Request.Headers.ContainsKey("X-Real-IP");
     var startedAt = Stopwatch.GetTimestamp();
     try
     {
