@@ -24,13 +24,11 @@ open in the admin:
 
 ## Launch checks (after go-live)
 
-- [ ] Both PDFs open in Acrobat, Chrome and a phone; copy-paste yields text in reading order; file
-      names `Lebenslauf_Leonard_Surac.pdf` / `CV_Leonard_Surac.pdf`.
-- [ ] Start page passes a 30-second recruiter read on desktop and phone.
-- [ ] Every link works; spell check in both languages by a second person; English PDF reviewed by
-      a native speaker.
-- [ ] Keyboard walk-through of every page (Lighthouse accessibility is 100 on all public pages).
-- [ ] Lighthouse on production with HTTPS and HTTP/2; LCP target 1.5 s (staging: 2.7 s over
-      HTTP/1.1 without TLS, `docs/decisions.md`).
+- [ ] Both PDFs open in Acrobat and on a phone (file names, embedded fonts and the text order were
+      checked on 2026-11-09).
+- [ ] Spell check in both languages by a second person; English PDF reviewed by a native speaker.
+- [ ] LCP target 1.5 s: production measures 2.0 to 2.5 s in Lighthouse's throttled mobile profile
+      (2026-11-09, after HTTPS/HTTP/2; performance 97 to 98, CLS 0, accessibility/best practices/SEO 100
+      on all 16 pages). Decide whether the target stands for the throttled profile.
 - [ ] Uptime monitor green for 7 days.
 - [ ] CV PDF in the application folder replaced by the generated one.
