@@ -39,7 +39,25 @@ async function renderPage(get: () => unknown, locale: 'de' | 'en' = 'de') {
   return { projects, response };
 }
 
+function structuredData(): Record<string, unknown> {
+  const block = TestBed.inject(DOCUMENT).head.querySelector('script[type="application/ld+json"]');
+  return JSON.parse(block?.textContent ?? 'null');
+}
+
 describe('case study page', () => {
+  it('describes the project to search engines as a work of the site owner with its stack', async () => {
+    await renderPage(() => of(study));
+    await screen.findByRole('heading', { level: 1, name: 'Beispielprojekt' });
+
+    expect(structuredData()).toMatchObject({
+      '@type': 'CreativeWork',
+      name: 'Beispielprojekt',
+      url: 'https://surac.dev/projekte/beispielprojekt',
+      keywords: '.NET, Angular',
+      author: { name: 'Leonard Surac' },
+    });
+  });
+
   it('tells the story of the project: problem, role, decisions, case study, images and outcome', async () => {
     await renderPage(() => of(study));
 

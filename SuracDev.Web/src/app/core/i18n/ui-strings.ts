@@ -58,9 +58,15 @@ export interface UiStrings {
     readonly outcome: string;
     readonly caseStudy: string;
   };
-  readonly legal: { readonly updated: string; readonly provider: string };
+  readonly legal: {
+    readonly updated: string;
+    readonly provider: string;
+    /** Search descriptions per legal page key. */
+    readonly descriptions: Readonly<Record<string, string>>;
+  };
   readonly applicationLink: { readonly documents: string };
-  readonly about: { readonly title: string; readonly lede: string };
+  /** `descriptionLead` opens the search description; the interest titles follow it. */
+  readonly about: { readonly title: string; readonly lede: string; readonly descriptionLead: string };
   readonly notFound: { readonly title: string; readonly text: string; readonly home: string };
   readonly unavailable: { readonly title: string; readonly text: string };
 }
@@ -116,11 +122,20 @@ const de: UiStrings = {
     outcome: 'Ergebnis',
     caseStudy: 'Fallstudie',
   },
-  legal: { updated: 'Stand', provider: 'Anbieter' },
+  legal: {
+    updated: 'Stand',
+    provider: 'Anbieter',
+    descriptions: {
+      Imprint: 'Impressum von surac.dev: Anbieter, Anschrift und Kontakt nach § 5 DDG.',
+      Privacy:
+        'Datenschutzerklärung von surac.dev: welche Daten beim Besuch verarbeitet werden, zu welchem Zweck und wie lange sie gespeichert bleiben.',
+    },
+  },
   applicationLink: { documents: 'Unterlagen' },
   about: {
     title: 'Über mich',
     lede: 'Was mich neben der Arbeit beschäftigt.',
+    descriptionLead: 'Was mich neben der Arbeit als Entwickler beschäftigt',
   },
   notFound: {
     title: 'Seite nicht gefunden',
@@ -184,11 +199,20 @@ const en: UiStrings = {
     outcome: 'Outcome',
     caseStudy: 'Case study',
   },
-  legal: { updated: 'Updated', provider: 'Provider' },
+  legal: {
+    updated: 'Updated',
+    provider: 'Provider',
+    descriptions: {
+      Imprint: 'Legal notice of surac.dev: provider, postal address and contact under section 5 DDG.',
+      Privacy:
+        'Privacy policy of surac.dev: which data a visit processes, for what purpose and how long it is kept.',
+    },
+  },
   applicationLink: { documents: 'Documents' },
   about: {
     title: 'About me',
     lede: 'What keeps me busy besides work.',
+    descriptionLead: 'What keeps me busy besides my work as a developer',
   },
   notFound: {
     title: 'Page not found',

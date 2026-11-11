@@ -102,7 +102,29 @@ function providers(projects: PublicProjectCard[] = [project]) {
   };
 }
 
+function structuredData(): Record<string, unknown> {
+  const block = TestBed.inject(DOCUMENT).head.querySelector('script[type="application/ld+json"]');
+  return JSON.parse(block?.textContent ?? 'null');
+}
+
 describe('app-home-page', () => {
+  it('describes the person behind the site and their profiles to search engines', async () => {
+    await render(HomePage, { providers: providers().providers });
+    await screen.findByRole('heading', { level: 1, name: 'Max Mustermann' });
+
+    expect(structuredData()['@graph']).toEqual([
+      expect.objectContaining({
+        '@type': 'Person',
+        name: 'Max Mustermann',
+        jobTitle: 'Fullstack-Entwickler · .NET & Angular',
+        image: 'https://surac.dev/api/public/documents/7',
+        sameAs: ['https://github.com/example'],
+        knowsAbout: ['C#'],
+      }),
+      expect.objectContaining({ '@type': 'WebSite', inLanguage: 'de' }),
+    ]);
+  });
+
   it('opens with name, title line, the fact bar and the photo', async () => {
     await render(HomePage, { providers: providers().providers });
 

@@ -40,7 +40,28 @@ async function renderPage(list: () => unknown, locale: 'de' | 'en' = 'de') {
   return { interests, response };
 }
 
+function structuredData(): Record<string, unknown> {
+  const block = TestBed.inject(DOCUMENT).head.querySelector('script[type="application/ld+json"]');
+  return JSON.parse(block?.textContent ?? 'null');
+}
+
+function description(): string | null | undefined {
+  return TestBed.inject(DOCUMENT).head.querySelector('meta[name="description"]')?.getAttribute('content');
+}
+
 describe('about page', () => {
+  it('names the interests in the search description and marks the page as a profile page', async () => {
+    await renderPage(() => of([chess, music]));
+    await screen.findAllByRole('heading', { level: 2 });
+
+    expect(description()).toBe('Was mich neben der Arbeit als Entwickler beschäftigt: Schach, Musik.');
+    expect(structuredData()).toMatchObject({
+      '@type': 'ProfilePage',
+      url: 'https://surac.dev/ueber-mich',
+      mainEntity: { '@type': 'Person', name: 'Leonard Surac' },
+    });
+  });
+
   it('shows every interest with its heading, image and text', async () => {
     await renderPage(() => of([chess, music]));
 

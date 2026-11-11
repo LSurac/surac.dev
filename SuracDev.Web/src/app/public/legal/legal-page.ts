@@ -56,7 +56,7 @@ export class LegalPage {
       if (page) {
         this.seo.apply({
           title: `${page.title} – ${this.strings().siteName}`,
-          description: page.title ?? '',
+          description: this.strings().legal.descriptions[this.pageKey()] ?? page.title ?? '',
           locale: this.locale(),
           paths: PATHS[this.pageKey()] ?? { de: '/', en: '/en' },
         });

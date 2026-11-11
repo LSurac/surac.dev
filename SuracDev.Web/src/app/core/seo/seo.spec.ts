@@ -81,7 +81,7 @@ describe('Seo', () => {
     expect(og('image')).toBe('https://surac.dev/api/public/documents/21');
   });
 
-  it('removes a previous preview image when the page has none', () => {
+  it('shows the site preview card when the page has no image of its own', () => {
     TestBed.configureTestingModule({});
     const seo = TestBed.inject(Seo);
     const paths = { de: '/', en: '/en' };
@@ -89,8 +89,47 @@ describe('Seo', () => {
     seo.apply({ title: 'B', description: 'b', locale: 'de', paths });
 
     const document = TestBed.inject(DOCUMENT);
-    expect(document.head.querySelector('meta[property="og:image"]')).toBeNull();
-    expect(document.head.querySelector('meta[property="og:type"]')?.getAttribute('content')).toBe('website');
-    expect(document.head.querySelector('meta[property="og:locale"]')?.getAttribute('content')).toBe('de_DE');
+    const meta = (selector: string) => document.head.querySelector(selector)?.getAttribute('content');
+    expect(meta('meta[property="og:image"]')).toBe('https://surac.dev/og-image.png');
+    expect(meta('meta[name="twitter:card"]')).toBe('summary_large_image');
+    expect(meta('meta[property="og:type"]')).toBe('website');
+    expect(meta('meta[property="og:locale"]')).toBe('de_DE');
+  });
+
+  it('describes the page to search engines as one JSON-LD block that cannot close its script', () => {
+    TestBed.configureTestingModule({});
+    const paths = { de: '/', en: '/en' };
+    TestBed.inject(Seo).apply({
+      title: 'A',
+      description: 'a',
+      locale: 'de',
+      paths,
+      structuredData: { '@type': 'Person', name: '</script><b>Name' },
+    });
+    TestBed.inject(Seo).apply({
+      title: 'A',
+      description: 'a',
+      locale: 'de',
+      paths,
+      structuredData: { '@type': 'Person', name: '</script><b>Name' },
+    });
+
+    const blocks = TestBed.inject(DOCUMENT).head.querySelectorAll('script[type="application/ld+json"]');
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].textContent).not.toContain('</script>');
+    expect(JSON.parse(blocks[0].textContent ?? '')).toEqual({
+      '@type': 'Person',
+      name: '</script><b>Name',
+    });
+  });
+
+  it('removes the structured data of the previous page when the next one has none', () => {
+    TestBed.configureTestingModule({});
+    const seo = TestBed.inject(Seo);
+    const paths = { de: '/', en: '/en' };
+    seo.apply({ title: 'A', description: 'a', locale: 'de', paths, structuredData: { '@type': 'Person' } });
+    seo.apply({ title: 'B', description: 'b', locale: 'de', paths });
+
+    expect(TestBed.inject(DOCUMENT).head.querySelector('script[type="application/ld+json"]')).toBeNull();
   });
 });

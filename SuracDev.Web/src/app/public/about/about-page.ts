@@ -3,6 +3,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { uiStrings } from '../../core/i18n/ui-strings';
 import { Locale } from '../../core/locale/locale';
 import { Seo } from '../../core/seo/seo';
+import { profilePageData } from '../../core/seo/structured-data';
 import { UiProse } from '../../ui/prose/prose';
 import { UiSectionHeading } from '../../ui/section-heading/section-heading';
 import { failureOf, valueOf } from '../content/load-state';
@@ -76,11 +77,15 @@ export class AboutPage {
   constructor() {
     effect(() => {
       const strings = this.strings();
+      const locale = this.locale();
+      const topics = this.interests().map((interest) => interest.title);
       this.seo.apply({
         title: `${strings.about.title} – ${strings.siteName}`,
-        description: strings.about.lede,
-        locale: this.locale(),
+        description:
+          topics.length > 0 ? `${strings.about.descriptionLead}: ${topics.join(', ')}.` : strings.about.lede,
+        locale,
         paths: PATHS,
+        structuredData: profilePageData(strings.siteName, strings.about.title, PATHS[locale], locale),
       });
     });
   }

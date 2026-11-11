@@ -37,7 +37,18 @@ async function renderPage(
   return { legal, response };
 }
 
+function description(): string | null | undefined {
+  return TestBed.inject(DOCUMENT).head.querySelector('meta[name="description"]')?.getAttribute('content');
+}
+
 describe('legal page', () => {
+  it('gives each legal page its own search description instead of repeating the title', async () => {
+    await renderPage(() => of(imprint));
+    await screen.findByRole('heading', { level: 1, name: 'Impressum' });
+
+    expect(description()).toBe('Impressum von surac.dev: Anbieter, Anschrift und Kontakt nach § 5 DDG.');
+  });
+
   it('shows the Impressum with the provider block from the profile and the date', async () => {
     await renderPage(() => of(imprint));
 

@@ -22,6 +22,7 @@ import { formatPeriod } from '../../core/format/period';
 import { UiStrings, uiStrings } from '../../core/i18n/ui-strings';
 import { Locale } from '../../core/locale/locale';
 import { Seo } from '../../core/seo/seo';
+import { homeData } from '../../core/seo/structured-data';
 import { SOURCE_REPOSITORY_URL } from '../../layout/site-footer/site-footer';
 import { Fact } from '../../ui/fact-bar/fact';
 import { UiFactBar } from '../../ui/fact-bar/fact-bar';
@@ -228,12 +229,17 @@ export class HomePage {
     effect(() => {
       const profile = this.profile();
       if (profile) {
+        const imagePath = profile.photoDocumentId ? documentUrl(profile.photoDocumentId) : null;
+        const skills = (valueOf(this.skillsResource) ?? []).flatMap((group) =>
+          (group.skills ?? []).map((skill) => skill.name ?? ''),
+        );
         this.seo.apply({
           title: `${profile.fullName} – ${profile.titleLine}`,
           description: (profile.intro ?? profile.headline ?? '').slice(0, DESCRIPTION_LENGTH),
           locale: this.locale(),
           paths: { de: '/', en: '/en' },
-          imagePath: profile.photoDocumentId ? documentUrl(profile.photoDocumentId) : null,
+          imagePath,
+          structuredData: homeData({ ...profile, imagePath }, skills.filter(Boolean), this.locale()),
         });
       }
     });

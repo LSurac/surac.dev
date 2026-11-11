@@ -5,9 +5,14 @@ import { Locale } from '../locale/locale';
 /** The public origin of the site; canonical and hreflang links must be absolute. */
 export const SITE_ORIGIN = 'https://surac.dev';
 
+/** The preview card (name and title line, no photo) for pages without an image of their own. */
+const DEFAULT_IMAGE_PATH = '/og-image.png';
+const STRUCTURED_DATA_SELECTOR = 'script[type="application/ld+json"]';
+
 /**
  * What one public page tells search engines and link previews. `paths` are the page's paths in
- * both locales; `imagePath` is a site path of a public image for the preview.
+ * both locales; `imagePath` is a site path of a public image for the preview; `structuredData` is
+ * the page's schema.org JSON-LD (structured-data.ts).
  */
 export interface PageMeta {
   readonly title: string;
@@ -16,6 +21,7 @@ export interface PageMeta {
   readonly paths: Readonly<Record<Locale, string>>;
   readonly type?: 'website' | 'article';
   readonly imagePath?: string | null;
+  readonly structuredData?: Readonly<Record<string, unknown>> | null;
 }
 
 const OG_LOCALES: Readonly<Record<Locale, string>> = { de: 'de_DE', en: 'en_GB' };
@@ -41,6 +47,25 @@ export class Seo {
     this.setLink({ rel: 'alternate', hreflang: 'en' }, page.paths.en);
     this.setLink({ rel: 'alternate', hreflang: 'x-default' }, page.paths.de);
     this.applyOpenGraph(page);
+    this.applyStructuredData(page.structuredData);
+  }
+
+  // A data block, not a script: CSP does not apply to it. `<` is escaped so text from the content
+  // can never close the element.
+  private applyStructuredData(data: PageMeta['structuredData']): void {
+    let block = this.document.head.querySelector<HTMLScriptElement>(STRUCTURED_DATA_SELECTOR);
+    if (!data) {
+      block?.remove();
+      return;
+    }
+
+    if (!block) {
+      block = this.document.createElement('script');
+      block.setAttribute('type', 'application/ld+json');
+      this.document.head.appendChild(block);
+    }
+
+    block.textContent = JSON.stringify(data).replace(/</g, '\\u003c');
   }
 
   private applyOpenGraph(page: PageMeta): void {
@@ -56,11 +81,11 @@ export class Seo {
       this.meta.updateTag({ property, content });
     }
 
-    if (page.imagePath) {
-      this.meta.updateTag({ property: 'og:image', content: SITE_ORIGIN + page.imagePath });
-    } else {
-      this.meta.removeTag('property="og:image"');
-    }
+    this.meta.updateTag({
+      property: 'og:image',
+      content: SITE_ORIGIN + (page.imagePath || DEFAULT_IMAGE_PATH),
+    });
+    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
   }
 
   private setLink(attributes: { rel: string; hreflang?: string }, path: string): void {

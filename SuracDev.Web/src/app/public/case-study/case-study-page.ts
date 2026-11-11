@@ -5,6 +5,7 @@ import { PublicCaseStudy } from '../../api/generated/public.client';
 import { UiStrings, uiStrings } from '../../core/i18n/ui-strings';
 import { Locale } from '../../core/locale/locale';
 import { Seo } from '../../core/seo/seo';
+import { caseStudyData } from '../../core/seo/structured-data';
 import { UiProse } from '../../ui/prose/prose';
 import { documentUrl, PublicContent } from '../content/public-content';
 import { failureOf, valueOf } from '../content/load-state';
@@ -63,13 +64,21 @@ export class CaseStudyPage {
     effect(() => {
       const study = this.study();
       if (study) {
+        const locale = this.locale();
+        const paths = { de: `/projekte/${this.slug()}`, en: `/en/projects/${this.slug()}` };
+        const imagePath = this.images()[0]?.url ?? null;
         this.seo.apply({
           title: `${study.title} – ${this.strings().siteName}`,
           description: study.teaser ?? '',
-          locale: this.locale(),
-          paths: { de: `/projekte/${this.slug()}`, en: `/en/projects/${this.slug()}` },
+          locale,
+          paths,
           type: 'article',
-          imagePath: this.images()[0]?.url ?? null,
+          imagePath,
+          structuredData: caseStudyData(
+            { ...study, path: paths[locale], imagePath },
+            this.strings().siteName,
+            locale,
+          ),
         });
       }
     });
