@@ -15,12 +15,14 @@
   padding: var(--space-8) 0;
   border-bottom: 1px solid var(--color-rule);
   display: grid;
-  grid-template-columns: var(--label-column) 1fr;
+  // minmax(0, 1fr) instead of 1fr: a plain 1fr track never shrinks below its content's min-content
+  // width, so a long code line in a <pre> would widen the page instead of scrolling inside the block.
+  grid-template-columns: var(--label-column) minmax(0, 1fr);
   gap: var(--space-7);
 
   @media (max-width: 760px) {
     padding: 40px 0;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);
   }
 }
