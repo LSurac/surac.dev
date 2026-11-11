@@ -30,7 +30,7 @@ against. Access to Search Console and Seq lives in the maintainer's private tool
 | Source | Figure |
 |---|---|
 | Search Console, 2026-11-04 to 2026-11-10 | 0 clicks, 1 impression (`/en`, position 3), no queries |
-| Index | 14 of 16 sitemap URLs indexed; `/impressum` "Gefunden – zurzeit nicht indexiert", `/projekte/surac-dev` "URL ist Google nicht bekannt" (indexing requested by hand) |
+| Index | 14 of 16 sitemap URLs indexed; `/impressum` "Gefunden – zurzeit nicht indexiert", `/projekte/surac-dev` "URL ist Google nicht bekannt" (manual indexing request still to do) |
 | Seq, 3 days | 38 anonymous visits, 24 with one page; about half from the maintainer, before staying signed in; the rest mostly crawlers and link previews from cloud networks; no external referrer |
 
 ## Changes
