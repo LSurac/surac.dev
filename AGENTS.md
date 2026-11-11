@@ -23,6 +23,7 @@ something changes. Do not duplicate their content here.
 - `docs/ops-and-deploy.md` — hosting, CI/CD, staging vs production, backups, monitoring, telemetry.
 - `docs/build-and-test.md` — the exact commands.
 - `docs/gotchas.md` — non-obvious traps already hit once.
+- `docs/seo.md` — search and link-preview setup, the SEO baseline, changes and their measurement dates.
 - `docs/open-items.md` — what is still open: manual steps, production setup, the launch checks.
   Only open lines stay in it; a finished item is deleted, its lasting facts go to the document
   they belong to.
