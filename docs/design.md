@@ -77,6 +77,27 @@ text). The full 200-900 file (120 kB) delayed the LCP photo by ~0.8 s in Lightho
 (`'Source Serif 4 Fallback'` via `@font-face` with `size-adjust`) to avoid layout shift. Replacing
 a font file means a new version suffix.
 
+## Monogram and icons
+
+The mark is the monogram "LS": an upright L in ink and an italic S in the accent, set from Source
+Serif 4 so it belongs to the type of the page. Chosen on 2026-11-12 from five directions (monogram,
+`ls_` prompt, seal, geometric tile, `surac.dev` wordmark); the others broke the principles above
+(a second typeface, an accent area, ornament, or the domain in place of the name).
+
+- **The header stays text.** The set name is already the wordmark; "LS" beside "Leonard Surac" would
+  say the name twice. The monogram goes where the name does not fit: browser tab, home screen,
+  mail signature.
+- **Two cuts, like the font's optical sizes.** The display cut (L `wght` 600, italic S 400, `opsz`
+  60, cap height 30/64; the spur of the L runs into the S, which carries a thin paper-coloured
+  outline) is used from 180 px up: `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`. The small
+  cut (L 700, S 760, `opsz` 8, cap height 41/64, the S set apart) is used up to 48 px:
+  `favicon.svg`, `favicon.ico` (16, 32, 48).
+- The letters are outlines (paths), not text: a favicon cannot load the web font. `favicon.svg`
+  switches to the dark tokens under `prefers-color-scheme: dark`; the PNGs are light.
+- `site.webmanifest` names the 192 and 512 icons; the SSR server sends it as
+  `application/manifest+json`. Built outside the repository from the variable font with fonttools
+  and rendered with Chromium; to change the mark, rebuild every file from the parameters above.
+
 ## Layout
 
 - Content width 1040px, 24px side gutters, single column below 760px.
