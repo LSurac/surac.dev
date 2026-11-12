@@ -149,6 +149,12 @@ their date; reversed decisions are struck through, never deleted.
 - **The CV uses QuestPDF's bundled Lato, not Source Serif.** The site's serif exists only as woff2,
   which QuestPDF cannot embed, and system fonts are switched off so the output is identical on every
   machine. The PDF is a document for parsers and printers, not a print of the website.
+- **The CV fits two pages.** German hiring expects at most two pages at five years of experience,
+  and the first one is what gets read. Entries may continue on the next page (a heading starts a
+  page only with room for its period and two lines); moving each entry whole left up to a quarter of
+  a page empty and pushed the CV to three. Margins 1.8 cm left and right, 1.5 cm top and bottom,
+  10 pt body at line height 1.25. A test renders neutral text in the volume of the real CV and
+  expects two pages.
 - **CV PDFs are rendered on every request, not cached.** Rendering takes milliseconds; a cache
   would need invalidation on every content change for no measurable gain. Revisit if the PDF
   endpoint ever shows up in the telemetry.
