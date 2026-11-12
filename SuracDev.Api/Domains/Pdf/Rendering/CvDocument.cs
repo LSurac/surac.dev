@@ -17,6 +17,12 @@ public static class CvDocument
   private const float HeadingSize = 12;
   private const float BodySize = 10;
   private const float MetaSize = 9;
+  private const float LineHeight = 1.25f;
+  private const float SectionSpacing = 12;
+
+  /// <summary>Room an entry needs on a page to start there: its heading, period and two lines of text.</summary>
+  private const float EntryStartHeight = 64;
+
   private static readonly Color Muted = Colors.Grey.Darken2;
 
   static CvDocument()
@@ -34,11 +40,12 @@ public static class CvDocument
       .Create(container => container.Page(page =>
       {
         page.Size(PageSizes.A4);
-        page.Margin(2, Unit.Centimetre);
-        page.DefaultTextStyle(style => style.FontSize(BodySize).LineHeight(1.3f));
+        page.MarginHorizontal(1.8f, Unit.Centimetre);
+        page.MarginVertical(1.5f, Unit.Centimetre);
+        page.DefaultTextStyle(style => style.FontSize(BodySize).LineHeight(LineHeight));
         page.Content().Column(column =>
         {
-          column.Spacing(14);
+          column.Spacing(SectionSpacing);
           column.Item().Element(header => Header(header, model));
           AddSections(column, model, texts);
         });
@@ -100,9 +107,10 @@ public static class CvDocument
 
   private static void Entries(ColumnDescriptor column, IReadOnlyList<CvEntry> entries)
   {
+    // A long entry may continue on the next page; moving it whole left most of a page empty.
     foreach (var entry in entries)
     {
-      column.Item().ShowEntire().Column(item =>
+      column.Item().EnsureSpace(EntryStartHeight).Column(item =>
       {
         item.Item().Text(text =>
         {

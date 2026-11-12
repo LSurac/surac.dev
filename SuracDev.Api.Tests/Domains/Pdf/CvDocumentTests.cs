@@ -61,6 +61,60 @@ public sealed class CvDocumentTests
   }
 
   [Fact]
+  public void A_cv_of_five_working_years_fits_on_two_pages()
+  {
+    using var document = PdfDocument.Open(CvDocument.Render(FiveYearModel()));
+
+    Assert.Equal(2, document.NumberOfPages);
+  }
+
+  /// <summary>Neutral text in the volume of the maintainer's real CV in November 2026 (five stations).</summary>
+  private static CvModel FiveYearModel() => Model(Locale.German) with
+  {
+    Intro = Filler(520),
+    Experience =
+    [
+      Station(summary: 230, bullets: [120, 110, 100, 110, 120, 90]),
+      Station(summary: 230, bullets: [110, 80, 80, 100, 80]),
+      Station(summary: 170, bullets: [100, 90, 90, 100, 60]),
+      Station(summary: 0, bullets: [80, 80]),
+      Station(summary: 70, bullets: []),
+    ],
+    Education =
+    [
+      new CvEntry("10/2021 – 06/2024", "Fachinformatiker", "Beispiel-Berufsschule, Musterstadt", null, [], "1,8"),
+      new CvEntry("10/2017 – 02/2020", "Studium", "Beispiel-Hochschule, Musterstadt", null, [], null),
+      new CvEntry("09/2008 – 07/2016", "Hochschulreife", "Beispiel-Gymnasium, Musterstadt", null, [], "2,0"),
+    ],
+    Skills = [.. new[] { 170, 200, 110, 100, 150, 190, 80 }.Select((length, index) =>
+      new CvSkillGroup($"Gruppe {index + 1}", [Filler(length)]))],
+    Projects = [.. new[] { 190, 160, 150, 160 }.Select(length =>
+      new CvProject("Beispielprojekt", Filler(length), ".NET · Angular · PostgreSQL · Docker"))],
+  };
+
+  private static CvEntry Station(int summary, int[] bullets) => new(
+    "05/2026 – heute",
+    "Softwareentwickler",
+    "Beispiel GmbH, Musterstadt",
+    summary > 0 ? Filler(summary) : null,
+    [.. bullets.Select(Filler)],
+    "C# · .NET · ASP.NET Core · Angular · SQL Server · Docker");
+
+  /// <summary>Words of typical German length, about <paramref name="length"/> characters.</summary>
+  private static string Filler(int length)
+  {
+    var words = new List<string>();
+    var index = 0;
+    string[] pool = ["Beispieltext", "für", "eine", "Beschreibung", "mit", "typischer", "Länge", "und", "Inhalt"];
+    while (words.Sum(word => word.Length + 1) < length)
+    {
+      words.Add(pool[index++ % pool.Length]);
+    }
+
+    return string.Join(' ', words);
+  }
+
+  [Fact]
   public void Sections_without_content_are_left_out()
   {
     var model = Model(Locale.German) with { Projects = [], Intro = null };
