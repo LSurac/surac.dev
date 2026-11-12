@@ -9,11 +9,15 @@ function cspScriptSources(): string {
   return /script-src ([^;]+);/.exec(headers)?.[1] ?? '';
 }
 
-/** The sha256 sources of every inline script with code in a server-rendered page; an empty one runs nothing. */
+/**
+ * The sha256 sources of every inline script with code in a server-rendered page; an empty one runs
+ * nothing, and data blocks (the transfer state, the JSON-LD) are not executed, so the CSP skips them.
+ */
 function inlineScriptHashes(html: string): string[] {
   return [...html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)]
     .filter(
-      ([, attributes = '', body = '']) => body.trim() !== '' && !/\bsrc=|application\/json/.test(attributes),
+      ([, attributes = '', body = '']) =>
+        body.trim() !== '' && !/\bsrc=|application\/(ld\+)?json/.test(attributes),
     )
     .map(([, , body = '']) => `'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`);
 }
