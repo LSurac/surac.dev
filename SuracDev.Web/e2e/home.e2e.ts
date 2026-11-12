@@ -9,11 +9,15 @@ function cspScriptSources(): string {
   return /script-src ([^;]+);/.exec(headers)?.[1] ?? '';
 }
 
-/** The sha256 sources of every inline script with code in a server-rendered page; an empty one runs nothing. */
+/**
+ * The sha256 sources of every inline script with code in a server-rendered page; an empty one runs
+ * nothing, and data blocks (the transfer state, the JSON-LD) are not executed, so the CSP skips them.
+ */
 function inlineScriptHashes(html: string): string[] {
   return [...html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)]
     .filter(
-      ([, attributes = '', body = '']) => body.trim() !== '' && !/\bsrc=|application\/json/.test(attributes),
+      ([, attributes = '', body = '']) =>
+        body.trim() !== '' && !/\bsrc=|application\/(ld\+)?json/.test(attributes),
     )
     .map(([, , body = '']) => `'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`);
 }
@@ -48,6 +52,23 @@ test.describe('start page', () => {
     expect(html).toContain('Kenntnisse');
     expect(html).toContain('hreflang="en"');
     expect(html).toContain('<title>Max Mustermann – Fullstack-Entwickler');
+  });
+
+  test('links the icon set and the manifest, and serves every icon they name', async ({ request }) => {
+    const html = await (await request.get('/')).text();
+    const linked = [...html.matchAll(/<link rel="(?:icon|apple-touch-icon|manifest)" href="([^"]+)"/g)].map(
+      ([, href]) => href,
+    );
+    const manifestResponse = await request.get('/site.webmanifest');
+    const manifest = (await manifestResponse.json()) as { icons: { src: string }[] };
+    const icons = manifest.icons.map((icon) => icon.src);
+
+    expect(linked).toEqual(['/favicon.ico', '/favicon.svg', '/apple-touch-icon.png', '/site.webmanifest']);
+    expect(manifestResponse.headers()['content-type']).toContain('application/manifest+json');
+    expect(icons).toEqual(['/icon-192.png', '/icon-512.png']);
+    for (const path of [...linked, ...icons]) {
+      expect((await request.get(path)).status(), path).toBe(200);
+    }
   });
 
   test('renders the content behind a proxy that sends an empty forwarded protocol', async ({ request }) => {
