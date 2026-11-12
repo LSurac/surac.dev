@@ -54,6 +54,23 @@ test.describe('start page', () => {
     expect(html).toContain('<title>Max Mustermann – Fullstack-Entwickler');
   });
 
+  test('links the icon set and the manifest, and serves every icon they name', async ({ request }) => {
+    const html = await (await request.get('/')).text();
+    const linked = [...html.matchAll(/<link rel="(?:icon|apple-touch-icon|manifest)" href="([^"]+)"/g)].map(
+      ([, href]) => href,
+    );
+    const manifestResponse = await request.get('/site.webmanifest');
+    const manifest = (await manifestResponse.json()) as { icons: { src: string }[] };
+    const icons = manifest.icons.map((icon) => icon.src);
+
+    expect(linked).toEqual(['/favicon.ico', '/favicon.svg', '/apple-touch-icon.png', '/site.webmanifest']);
+    expect(manifestResponse.headers()['content-type']).toContain('application/manifest+json');
+    expect(icons).toEqual(['/icon-192.png', '/icon-512.png']);
+    for (const path of [...linked, ...icons]) {
+      expect((await request.get(path)).status(), path).toBe(200);
+    }
+  });
+
   test('renders the content behind a proxy that sends an empty forwarded protocol', async ({ request }) => {
     // nginx forwards $http_x_forwarded_proto, which is empty when nothing sits in front of it (staging).
     const html = await (await request.get('/', { headers: { 'x-forwarded-proto': '' } })).text();
