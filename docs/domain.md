@@ -263,4 +263,3 @@ Contradictions between existing docs, found on the way (open item to fix the wor
   profile"; `docs/content-model.md` and `LinkEvent.cs` store timestamp and locale, no profile.
 - `docs/architecture.md` ("Projects") describes `Domains/Documents/` as "uploaded PDFs"; documents are
   PDF, PNG, JPEG and WebP (`Document.Create`).
-- `docs/architecture.md` ("Projects") still says ASP.NET Core 10 after the move to .NET 11.

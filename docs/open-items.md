@@ -40,7 +40,7 @@ changes.
 - [ ] Rename `Domains/Pdf/` to `Domains/Cv/` (and the test folder); the code inside already says
   `Cv`. Namespace move only, no behaviour change.
 - [ ] Fix doc contradictions: `/b/<slug>` and link events "with timestamp and profile" in
-  `docs/decisions.md`; "uploaded PDFs" and "ASP.NET Core 10" in `docs/architecture.md`.
+  `docs/decisions.md`; "uploaded PDFs" in `docs/architecture.md`.
 - [ ] EF Core 11: `Npgsql.EntityFrameworkCore.PostgreSQL` 11.0.0 is not on nuget.org yet (only
   11.0.0-rc.3 on 2026-11-19), so `Microsoft.EntityFrameworkCore`, `.Relational`, `.Design` and the
   Npgsql provider stay on 10.0.15 / 10.0.3 on net11.0 (comment in `SuracDev.Api.csproj`). Once 11.0.0
