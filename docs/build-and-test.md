@@ -4,7 +4,7 @@ Exact commands. Run from the repository root unless stated otherwise.
 
 ## Prerequisites
 
-- .NET 10 SDK (10.0.3xx)
+- .NET 11 SDK (11.0.1xx)
 - Node 26, npm 10
 - Docker Desktop (integration tests, local PostgreSQL, E2E)
 - `gitleaks` on the PATH for the pre-commit hook (`winget install gitleaks` or

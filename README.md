@@ -1,6 +1,6 @@
 # surac.dev
 
-Personal developer profile of Leonard Surac: a server-side rendered Angular 22 frontend, a .NET 10
+Personal developer profile of Leonard Surac: a server-side rendered Angular 22 frontend, a .NET 11
 API, PostgreSQL, and a small admin area from which the CV, the projects and the application
 links are maintained and the CV is exported as an ATS-friendly PDF.
 
@@ -10,7 +10,7 @@ This repository is the second half of that answer. It is public on purpose.
 
 ## What this repository shows
 
-- **The stack I work with in production**: ASP.NET Core 10, EF Core 10 on PostgreSQL, Angular 22
+- **The stack I work with in production**: ASP.NET Core 11, EF Core 10 on PostgreSQL, Angular 22
   with SSR, Signals and zoneless change detection, Docker Compose behind Caddy.
 - **DDD-light vertical slices** in the API: each domain owns its entities, invariants, use cases and
   contracts. No repository layer over EF Core, no MediatR, no speculative abstractions. The reasoning
@@ -49,7 +49,7 @@ I work agentically. In practice that means:
 
 ## Running it locally
 
-Prerequisites: .NET 10 SDK, Node 26, Docker (for PostgreSQL and the integration tests).
+Prerequisites: .NET 11 SDK, Node 26, Docker (for PostgreSQL and the integration tests).
 
 ```powershell
 # API (expects ConnectionStrings__Default; see docs/build-and-test.md for a local Postgres)

@@ -15,7 +15,7 @@ implementation go into the same change. Domain rules get pure unit tests; endpoi
 integration tests through `ApiFactory` on the Testcontainers PostgreSQL; `ui/` components get
 Testing Library specs that query by role and text.
 
-Backend (`SuracDev.Api/`): .NET 10, controllers, EF Core 10 + Npgsql. Layout
+Backend (`SuracDev.Api/`): .NET 11, controllers, EF Core 10 + Npgsql (EF Core 11 waits for Npgsql 11). Layout
 `Domains/<Name>/{Domain,Application,Contracts,Controllers}`, shared code under `Shared/`. 2-space
 indent, `sealed`, primary constructors, file-scoped namespaces, guard clauses,
 `TreatWarningsAsErrors`. DTOs are sealed records in `Contracts/`; no AutoMapper, project in
