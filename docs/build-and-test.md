@@ -5,7 +5,7 @@ Exact commands. Run from the repository root unless stated otherwise.
 ## Prerequisites
 
 - .NET 11 SDK (11.0.1xx)
-- Node 26, npm 10
+- Node 26, npm 11
 - Docker Desktop (integration tests, local PostgreSQL, E2E)
 - `gitleaks` on the PATH for the pre-commit hook (`winget install gitleaks` or
   `scoop install gitleaks`); CI runs it regardless.
