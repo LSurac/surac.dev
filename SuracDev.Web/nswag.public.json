@@ -1,16 +1,16 @@
 {
-  "runtime": "Net100",
+  "runtime": "Net110",
   "defaultVariables": "OutputDir=src/app/api/generated",
   "documentGenerator": {
     "aspNetCoreToOpenApi": {
       "project": "../SuracDev.Api/SuracDev.Api.csproj",
       "configuration": "Debug",
-      "targetFramework": "net10.0",
+      "targetFramework": "net11.0",
       "noBuild": true,
       "aspNetCoreEnvironment": "OpenApi",
       "documentName": "public",
       "output": "$(OutputDir)/public.openapi.json",
-      "msBuildOutputPath": "../SuracDev.Api/bin/Debug/net10.0/"
+      "msBuildOutputPath": "../SuracDev.Api/bin/Debug/net11.0/"
     }
   },
   "codeGenerators": {
