@@ -51,7 +51,7 @@ SuracDev.Api/
     Projects/                    Project cards and case studies
     Skills/                      SkillGroup, Skill (with "since year", never a percentage)
     Interests/                   the "Über mich" page content
-    Documents/                   uploaded PDFs (CV variants are generated, not uploaded)
+    Documents/                   uploaded PDFs and images (CV variants are generated, not uploaded)
     Applications/                Application (mini ATS), ApplicationLink, LinkEvent, profiles
     Legal/                       Impressum and Datenschutz as Markdown blocks
     Pdf/                         QuestPDF CV documents (Public/Full × de/en)

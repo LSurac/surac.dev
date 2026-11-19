@@ -14,7 +14,7 @@ their date; reversed decisions are struck through, never deleted.
   buttons (CV PDF, e-mail), links to GitHub and LinkedIn. Depth (projects, case studies, how I work)
   follows below. Rejected: a tech-first layout that opens with projects.
 - **One site, three audience profiles, identical content.** An application link
-  (`/b/<slug>`) carries a profile (`Public`, `Recruiter`, `TechLead`) that changes section order,
+  (`/b/<token>`) carries a profile (`Public`, `Recruiter`, `TechLead`) that changes section order,
   the greeting line and the unlocked downloads. Profiles never add or hide facts. Rejected: two
   separate sites; token-dependent content, which would look manipulative the moment HR and a tech
   lead compare notes.
@@ -72,7 +72,7 @@ their date; reversed decisions are struck through, never deleted.
   address, photo or document is committed. The seed creates neutral example content so a fresh
   checkout renders. Real content is entered through the admin and backed up with the database.
 - **Business statistics live in PostgreSQL; telemetry goes to Seq.** Application links record
-  coarse events (opened, PDF downloaded, document downloaded) with timestamp and profile, no IP, no
+  coarse events (opened, PDF downloaded, document downloaded) with timestamp and locale, no IP, no
   user agent. OpenTelemetry traces, logs, metrics and the usage events (requests, page views with a
   shortened address, logins) go to the maintainer's Seq via OTLP, in the same shape as his other sites
   so one set of dashboards serves all of them.

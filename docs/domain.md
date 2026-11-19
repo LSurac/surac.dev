@@ -254,12 +254,3 @@ Nobody has answered these yet; the maintainer can. The ones that need a change a
   link-only documents, but `DocumentService.UpdateAsync` lets an attached document that is neither a
   certificate nor a cover letter become public afterwards, so a link can carry a public document. Harmless for privacy (the file is
   public anyway); is the rule "a link only carries link-only documents" meant as an invariant?
-
-Contradictions between existing docs, found on the way (open item to fix the wording):
-
-- `docs/decisions.md` ("Purpose and audience") writes the link as `/b/<slug>`; it is a token
-  everywhere else and in the code.
-- `docs/decisions.md` ("Architecture", business statistics) says link events carry "timestamp and
-  profile"; `docs/content-model.md` and `LinkEvent.cs` store timestamp and locale, no profile.
-- `docs/architecture.md` ("Projects") describes `Domains/Documents/` as "uploaded PDFs"; documents are
-  PDF, PNG, JPEG and WebP (`Document.Create`).
