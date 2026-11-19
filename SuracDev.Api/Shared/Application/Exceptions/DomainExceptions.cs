@@ -1,7 +1,10 @@
 namespace SuracDev.Api.Shared.Application.Exceptions;
 
-/// <summary>Base type for expected domain errors, mapped to HTTP responses centrally.</summary>
-public abstract class DomainException(string message) : Exception(message);
+/// <summary>
+/// Base type for expected domain errors, mapped to HTTP responses centrally. Closed, so a new kind of
+/// domain error does not compile until <c>GlobalExceptionHandler</c> maps it to a status.
+/// </summary>
+public closed class DomainException(string message) : Exception(message);
 
 /// <summary>A validation error with per-field messages (mapped to 400 ValidationProblemDetails).</summary>
 public sealed class DomainValidationException(IReadOnlyDictionary<string, string[]> errors)

@@ -26,23 +26,7 @@ public sealed class GlobalExceptionHandler(
   {
     ProblemDetails? problemDetails = exception switch
     {
-      DomainValidationException validation => new ValidationProblemDetails(ToModelState(validation.Errors))
-      {
-        Status = StatusCodes.Status400BadRequest,
-        Title = "Validation failed.",
-      },
-      DomainConflictException conflict => new ProblemDetails
-      {
-        Status = StatusCodes.Status409Conflict,
-        Title = "Conflict.",
-        Detail = conflict.Message,
-      },
-      DomainNotFoundException notFound => new ProblemDetails
-      {
-        Status = StatusCodes.Status404NotFound,
-        Title = "Not found.",
-        Detail = notFound.Message,
-      },
+      DomainException domain => FromDomainException(domain),
       DbUpdateException { InnerException: PostgresException postgres } when IsConstraintViolation(postgres)
         => ConstraintConflict(postgres),
       _ => null,
@@ -62,6 +46,28 @@ public sealed class GlobalExceptionHandler(
       ProblemDetails = problemDetails,
     });
   }
+
+  // No discard arm: DomainException is closed, so the compiler rejects this switch when a case is missing.
+  private static ProblemDetails FromDomainException(DomainException exception) => exception switch
+  {
+    DomainValidationException validation => new ValidationProblemDetails(ToModelState(validation.Errors))
+    {
+      Status = StatusCodes.Status400BadRequest,
+      Title = "Validation failed.",
+    },
+    DomainConflictException conflict => new ProblemDetails
+    {
+      Status = StatusCodes.Status409Conflict,
+      Title = "Conflict.",
+      Detail = conflict.Message,
+    },
+    DomainNotFoundException notFound => new ProblemDetails
+    {
+      Status = StatusCodes.Status404NotFound,
+      Title = "Not found.",
+      Detail = notFound.Message,
+    },
+  };
 
   private static bool IsConstraintViolation(PostgresException exception)
     => exception.SqlState is PostgresErrorCodes.UniqueViolation or PostgresErrorCodes.ForeignKeyViolation;
