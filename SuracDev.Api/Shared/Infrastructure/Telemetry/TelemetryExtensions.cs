@@ -16,7 +16,7 @@ public static class TelemetryExtensions
 {
   private const string ServiceName = "surac-dev-api";
 
-  // Built into .NET 10 and Npgsql, no instrumentation packages needed: request duration and counts,
+  // Built into .NET and Npgsql, no instrumentation packages needed: request duration and counts,
   // Kestrel connections, rate-limiter rejections, unhandled exceptions, sign-ins, outgoing HTTP,
   // GC/CPU/memory, database commands. The same list as the maintainer's other sites.
   private static readonly string[] FrameworkMeters =
