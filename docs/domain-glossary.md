@@ -2,6 +2,8 @@
 
 The ubiquitous language. Code uses the English term; the German UI uses the German term. When a
 term changes here, it changes in code, UI and docs together.
+Terms still under review and the places where glossary, code and UI disagree are in
+`docs/domain.md` (section 2).
 
 | English (code) | German (UI) | Meaning |
 |---|---|---|
