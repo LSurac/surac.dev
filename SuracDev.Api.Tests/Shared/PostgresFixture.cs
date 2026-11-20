@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using SuracDev.Api.Data;
@@ -21,7 +22,7 @@ public sealed class PostgresFixture : IAsyncLifetime
     .WithCommand("-c", "max_connections=400")
     .Build();
 
-  public async Task InitializeAsync()
+  public async ValueTask InitializeAsync()
   {
     if (!PostgresFactAttribute.CanRun)
     {
@@ -40,7 +41,7 @@ public sealed class PostgresFixture : IAsyncLifetime
     NpgsqlConnection.ClearAllPools();
   }
 
-  public Task DisposeAsync() => container.DisposeAsync().AsTask();
+  public ValueTask DisposeAsync() => container.DisposeAsync();
 
   /// <summary>Connection string of a freshly migrated, empty database of its own.</summary>
   public async Task<string> CreateDatabaseAsync()
@@ -78,7 +79,8 @@ public sealed class PostgresCollection : ICollectionFixture<PostgresFixture>
 /// <summary>The data-driven variant of <see cref="PostgresFactAttribute"/>, skipped under the same rule.</summary>
 public sealed class PostgresTheoryAttribute : TheoryAttribute
 {
-  public PostgresTheoryAttribute()
+  public PostgresTheoryAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1)
+    : base(sourceFilePath, sourceLineNumber)
   {
     if (!PostgresFactAttribute.CanRun)
     {
@@ -98,7 +100,8 @@ public sealed class PostgresFactAttribute : FactAttribute
 
   public static bool CanRun => Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true" || DockerIsRunning.Value;
 
-  public PostgresFactAttribute()
+  public PostgresFactAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1)
+    : base(sourceFilePath, sourceLineNumber)
   {
     if (!CanRun)
     {

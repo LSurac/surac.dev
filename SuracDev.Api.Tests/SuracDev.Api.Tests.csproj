@@ -6,6 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <!-- xunit v3 test projects are executables. The mtp-off package keeps dotnet test on VSTest, so the
+         gate commands in docs/build-and-test.md and CI stay as they are. -->
+    <OutputType>Exe</OutputType>
+    <!-- xUnit1051 wants TestContext.Current.CancellationToken passed to every awaited call so an aborted
+         run stops sooner; the suite runs in about a minute, so the mechanical edits would buy nothing. -->
+    <NoWarn>$(NoWarn);xUnit1051</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
@@ -33,7 +39,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
     <PackageReference Include="PdfPig" Version="0.1.16" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.17.0" />
-    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.v3.mtp-off" Version="4.0.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" />
   </ItemGroup>
 
