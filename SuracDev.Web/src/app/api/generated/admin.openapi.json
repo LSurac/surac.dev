@@ -2366,7 +2366,7 @@
           "AdminApplications"
         ],
         "summary": "Creates an application.",
-        "description": "Company, position and a known status are required; the job ad must be an absolute http(s) URL.",
+        "description": "Company, position and a known status are required; every status after Draft also needs\n            appliedOn. The job ad must be an absolute http(s) URL.",
         "operationId": "AdminApplications_Create",
         "requestBody": {
           "x-name": "form",
@@ -2393,7 +2393,7 @@
             }
           },
           "400": {
-            "description": "A field breaks a rule; the errors are keyed by field (company, status,\n            jobAdUrl).",
+            "description": "A field breaks a rule; the errors are keyed by field (company, status,\n            appliedOn, jobAdUrl).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2473,7 +2473,7 @@
           "AdminApplications"
         ],
         "summary": "Replaces an application with the given fields.",
-        "description": "Full replacement: fields left out are cleared. The links of the application are not touched.",
+        "description": "Full replacement: fields left out are cleared. The links of the application are not touched. Every\n            status after Draft needs appliedOn.",
         "operationId": "AdminApplications_Update",
         "parameters": [
           {
@@ -4130,7 +4130,7 @@
           },
           "appliedOn": {
             "type": "string",
-            "description": "The day the application was sent; null while it is a draft.",
+            "description": "The day the application was sent; required for every status after Draft.",
             "format": "date",
             "nullable": true
           },

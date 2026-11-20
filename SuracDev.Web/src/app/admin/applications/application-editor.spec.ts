@@ -97,6 +97,24 @@ describe('admin application editor', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Required.');
   });
 
+  it('asks for the applied date once the application is no longer a draft', async () => {
+    const message = 'Required once the application is no longer a draft.';
+    await renderEditor(
+      client({
+        update: vi.fn(() =>
+          throwError(() => ({ status: 400, title: 'Invalid', errors: { appliedOn: [message] } })),
+        ),
+      }),
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: /Beispiel AG/ }));
+    await userEvent.clear(screen.getByLabelText('Beworben am'));
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(message);
+    expect(screen.getByText('Pflicht, sobald sie kein Entwurf mehr ist.')).toBeInTheDocument();
+  });
+
   it('deletes an application only after confirmation', async () => {
     const applications = await renderEditor();
 

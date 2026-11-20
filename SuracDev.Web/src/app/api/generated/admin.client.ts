@@ -4760,7 +4760,7 @@ export class AdminApplicationsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A field breaks a rule; the errors are keyed by field (company, status,\n            jobAdUrl).',
+            'A field breaks a rule; the errors are keyed by field (company, status,\n            appliedOn, jobAdUrl).',
             status,
             _responseText,
             _headers,
@@ -5739,7 +5739,7 @@ export interface ApplicationForm {
   position?: string | undefined;
   /** Absolute http(s) URL of the job ad, or null. */
   jobAdUrl?: string | undefined;
-  /** The day the application was sent; null while it is a draft. */
+  /** The day the application was sent; required for every status after Draft. */
   appliedOn?: string | undefined;
   /** Where the application stands; Unknown is rejected. */
   status?: ApplicationStatus;

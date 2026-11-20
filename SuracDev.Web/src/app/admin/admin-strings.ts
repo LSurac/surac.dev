@@ -207,7 +207,7 @@ export const adminStrings = {
     position: 'Stelle',
     jobAdUrl: 'Stellenanzeige',
     appliedOn: 'Beworben am',
-    appliedOnHint: 'Leer lassen, solange sie ein Entwurf ist.',
+    appliedOnHint: 'Pflicht, sobald sie kein Entwurf mehr ist.',
     status: 'Status',
     statuses: {
       Draft: 'Entwurf',
