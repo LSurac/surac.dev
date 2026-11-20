@@ -37,12 +37,13 @@ public sealed class AdminApplicationsController(ApplicationService applicationSe
     => applicationService.GetAsync(id, cancellationToken);
 
   /// <summary>Creates an application.</summary>
-  /// <remarks>Company, position and a known status are required; the job ad must be an absolute http(s) URL.</remarks>
+  /// <remarks>Company, position and a known status are required; every status after <c>Draft</c> also needs
+  /// <c>appliedOn</c>. The job ad must be an absolute http(s) URL.</remarks>
   /// <param name="form">The new application.</param>
   /// <param name="cancellationToken">Aborts the request.</param>
   /// <response code="201">Created; <c>Location</c> points to the new application.</response>
   /// <response code="400">A field breaks a rule; the errors are keyed by field (<c>company</c>, <c>status</c>,
-  /// <c>jobAdUrl</c>).</response>
+  /// <c>appliedOn</c>, <c>jobAdUrl</c>).</response>
   /// <response code="401">Not logged in.</response>
   [HttpPost]
   [ProducesResponseType<AdminApplication>(StatusCodes.Status201Created)]
@@ -55,7 +56,8 @@ public sealed class AdminApplicationsController(ApplicationService applicationSe
   }
 
   /// <summary>Replaces an application with the given fields.</summary>
-  /// <remarks>Full replacement: fields left out are cleared. The links of the application are not touched.</remarks>
+  /// <remarks>Full replacement: fields left out are cleared. The links of the application are not touched. Every
+  /// status after <c>Draft</c> needs <c>appliedOn</c>.</remarks>
   /// <param name="id">The application's identifier.</param>
   /// <param name="form">The complete application.</param>
   /// <param name="cancellationToken">Aborts the request.</param>

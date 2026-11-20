@@ -34,6 +34,33 @@ public sealed class ApplicationTests
       () => Application.Create(Details with { Status = ApplicationStatus.Unknown }, Now));
   }
 
+  [Theory]
+  [InlineData(ApplicationStatus.Sent)]
+  [InlineData(ApplicationStatus.Replied)]
+  [InlineData(ApplicationStatus.Interview)]
+  [InlineData(ApplicationStatus.Offer)]
+  [InlineData(ApplicationStatus.Rejected)]
+  [InlineData(ApplicationStatus.Withdrawn)]
+  public void Every_status_after_draft_requires_the_applied_date(ApplicationStatus status)
+  {
+    var application = Application.Create(Details, Now);
+
+    var exception = Assert.Throws<DomainValidationException>(
+      () => application.Update(Details with { Status = status, AppliedOn = null }, Now.AddDays(1)));
+
+    Assert.Contains("appliedOn", exception.Errors.Keys);
+    Assert.Equal(ApplicationStatus.Draft, application.Status);
+  }
+
+  [Fact]
+  public void A_draft_may_stay_without_an_applied_date()
+  {
+    var application = Application.Create(Details, Now);
+
+    Assert.Null(application.AppliedOn);
+    Assert.Equal(ApplicationStatus.Draft, application.Status);
+  }
+
   [Fact]
   public void Updating_moves_the_update_stamp_only()
   {

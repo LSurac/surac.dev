@@ -91,6 +91,27 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
   }
 
   [PostgresFact]
+  public async Task A_sent_application_without_applied_date_is_a_validation_error()
+  {
+    await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
+    using var admin = await factory.CreateLoggedInClientAsync();
+    var created = await admin.PostAsJsonAsync(
+      "/api/admin/applications",
+      NewApplication with { Status = ApplicationStatus.Draft, AppliedOn = null },
+      ApiJson.Options);
+
+    var response = await admin.PutAsJsonAsync(
+      created.Headers.Location,
+      NewApplication with { Status = ApplicationStatus.Sent, AppliedOn = null },
+      ApiJson.Options);
+    var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+
+    Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    Assert.Contains("appliedOn", problem!.Errors.Keys);
+  }
+
+  [PostgresFact]
   public async Task A_new_link_shows_its_token_once_and_stores_only_the_hash()
   {
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());

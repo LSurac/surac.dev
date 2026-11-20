@@ -8,7 +8,7 @@ namespace SuracDev.Api.Domains.Applications.Contracts;
 /// <param name="Company">Required.</param>
 /// <param name="Position">Required; the advertised job title.</param>
 /// <param name="JobAdUrl">Absolute http(s) URL of the job ad, or null.</param>
-/// <param name="AppliedOn">The day the application was sent; null while it is a draft.</param>
+/// <param name="AppliedOn">The day the application was sent; required for every status after <c>Draft</c>.</param>
 /// <param name="Status">Where the application stands; <c>Unknown</c> is rejected.</param>
 /// <param name="Notes">Private Markdown notes.</param>
 public sealed record ApplicationForm(

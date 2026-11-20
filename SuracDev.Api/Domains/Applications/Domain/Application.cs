@@ -1,3 +1,4 @@
+using SuracDev.Api.Shared.Application.Exceptions;
 using SuracDev.Api.Shared.Application.Validation;
 
 namespace SuracDev.Api.Domains.Applications.Domain;
@@ -62,15 +63,29 @@ public sealed class Application
     return application;
   }
 
-  /// <summary>Replaces the data after validating it and moves the update stamp.</summary>
+  /// <summary>
+  /// Replaces the data after validating it and moves the update stamp. Every status after
+  /// <see cref="ApplicationStatus.Draft"/> needs <see cref="AppliedOn"/>, so a sent application is never
+  /// left out of the reminder digest (<see cref="ApplicationReminder"/>).
+  /// </summary>
   public void Update(ApplicationDetails details, DateTimeOffset now)
   {
-    Company = Require.Text(details.Company, "company", TextLimits.Name);
-    Position = Require.Text(details.Position, "position", TextLimits.Name);
-    JobAdUrl = Require.OptionalUrl(details.JobAdUrl, "jobAdUrl");
+    var company = Require.Text(details.Company, "company", TextLimits.Name);
+    var position = Require.Text(details.Position, "position", TextLimits.Name);
+    var jobAdUrl = Require.OptionalUrl(details.JobAdUrl, "jobAdUrl");
+    var status = Require.Known(details.Status, "status");
+    var notes = Require.OptionalText(details.Notes, "notes", TextLimits.Markdown);
+    if (status != ApplicationStatus.Draft && details.AppliedOn is null)
+    {
+      throw new DomainValidationException("appliedOn", "Required once the application is no longer a draft.");
+    }
+
+    Company = company;
+    Position = position;
+    JobAdUrl = jobAdUrl;
     AppliedOn = details.AppliedOn;
-    Status = Require.Known(details.Status, "status");
-    Notes = Require.OptionalText(details.Notes, "notes", TextLimits.Markdown);
+    Status = status;
+    Notes = notes;
     UpdatedAt = now;
   }
 }
