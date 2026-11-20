@@ -199,8 +199,10 @@ their date; reversed decisions are struck through, never deleted.
 - **The bundle target is the transferred size; the budget sits above the framework floor.**
   Angular core, router, common and platform-browser alone are about 366 kB of the 395 kB raw
   initial bundle (108 kB transferred). "Under 150 kB" from the roadmap is met as transferred size;
-  as raw size it is out of reach without dropping SSR or the router. The budget warns from 400 kB
-  and fails from 430 kB, so a warning means growth, not the status quo.
+  as raw size it is out of reach without dropping SSR or the router. The budget warns from 410 kB
+  and fails from 430 kB, so a warning means growth, not the status quo. The warning follows the
+  framework floor: Angular 22.3 grew the bundle to 405 kB without an app change, so it moved from
+  400 kB to 410 kB (2026-11-20).
 - **Measured performance and the LCP target (2026-11-09, Lighthouse mobile profile, production):**
   performance 97 to 99, accessibility, best practices and SEO 100, CLS 0 on all 16 pages; LCP 2.0 s on
   the start page (portrait as LCP element) and 1.7 s on project pages. The target is **LCP at most

@@ -50,13 +50,6 @@ changes.
 - [ ] TypeScript stays on ~6.0.3, not 7.0.2: `@angular/compiler-cli` and `@angular/build` 22.3 accept
   only `>=6.0 <6.1`, `typescript-eslint` 8.73 only `<6.1.0`. Revisit with the Angular major that
   supports TypeScript 7.
-- [ ] Bundle budget: Angular 22.3 grew the raw initial bundle from 399.01 kB to 405.22 kB without an
-  app change, so `npm run build` prints the 400 kB `maximumWarning` (the 430 kB error budget holds).
-  Decide: raise the warning in `SuracDev.Web/angular.json` (`docs/decisions.md` says a warning means
-  growth) or accept the warning.
-- [ ] xUnit stays on v2 (`xunit` 2.9.3, `xunit.runner.visualstudio` 4.0.1, both the newest of their
-  packages). Moving to v3 (as sk-sulzfeld did via `xunit.v3.mtp-off`) is a package switch, not an
-  update; decide whether to follow.
 - [ ] Local test trap: the `docker info` probe in `SuracDev.Api.Tests/Shared/PostgresFixture.cs`
   (10 s timeout) reported Docker as down while it ran, skipped 104 integration tests and failed the
   local coverage gate at 54 %. `GITHUB_ACTIONS=true` forces them (331/331 green). Raise the timeout or
