@@ -96,23 +96,25 @@
       }
     }
     @case ('WorkingMode') {
-      <section class="section">
-        <ui-section-heading
-          [number]="numbers()['WorkingMode']"
-          [title]="strings().sections.workingMode"
-          anchor="arbeitsweise"
-        />
-        <div class="prose">
-          @for (paragraph of strings().workingMode.paragraphs; track $index) {
-            <p>{{ paragraph }}</p>
-          }
-          <p>
-            <a [href]="repositoryUrl" target="_blank" rel="noopener noreferrer">{{
-              strings().workingMode.repository
-            }}</a>
-          </p>
-        </div>
-      </section>
+      @if (workingMode().length > 0) {
+        <section class="section">
+          <ui-section-heading
+            [number]="numbers()['WorkingMode']"
+            [title]="strings().sections.workingMode"
+            anchor="arbeitsweise"
+          />
+          <div class="prose">
+            @for (paragraph of workingMode(); track $index) {
+              <p>{{ paragraph }}</p>
+            }
+            <p>
+              <a [href]="repositoryUrl" target="_blank" rel="noopener noreferrer">{{
+                strings().workingMode.repository
+              }}</a>
+            </p>
+          </div>
+        </section>
+      }
     }
   }
 }

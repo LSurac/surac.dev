@@ -39,6 +39,7 @@ async function renderPage(get: () => unknown, locale: 'de' | 'en' = 'de') {
               titleLine: 'Entwickler',
               headline: 'Überschrift',
               intro: 'Kurzprofil.',
+              workingMode: 'Ich plane zuerst.',
               facts: [],
               fallbackFields: [],
             }),

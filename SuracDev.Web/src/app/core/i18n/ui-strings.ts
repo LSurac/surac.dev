@@ -45,10 +45,7 @@ export interface UiStrings {
     readonly statuses: Readonly<Record<string, string>>;
   };
   readonly skills: { readonly since: string };
-  readonly workingMode: {
-    readonly paragraphs: readonly string[];
-    readonly repository: string;
-  };
+  readonly workingMode: { readonly repository: string };
   readonly contact: { readonly lede: string; readonly email: string };
   readonly caseStudy: {
     readonly back: string;
@@ -102,17 +99,7 @@ const de: UiStrings = {
     statuses: { Live: 'Live', InProduction: 'Im Betrieb', Archived: 'Archiviert', Planned: 'Geplant' },
   },
   skills: { since: 'seit' },
-  workingMode: {
-    paragraphs: [
-      'Ich entwickle mit KI-Agenten als Werkzeug. Jede Aufgabe beginnt mit einem Plan, den ich abnehme, ' +
-        'und mit festen Regeln im Repository: Architektur, Teststrategie und Code-Stil stehen in AGENTS.md ' +
-        'und den Dokumenten unter docs/.',
-      'Agenten suchen im Code, schreiben Tests und Implementierung nach diesen Regeln und führen die ' +
-        'Prüfungen aus. Architektur, Datenmodell, Sicherheit und die Abnahme jeder Änderung bleiben bei mir.',
-      'Diese Seite ist so entstanden. Ihr Quellcode zeigt, wie das im Alltag aussieht.',
-    ],
-    repository: 'Quellcode dieser Seite auf GitHub',
-  },
+  workingMode: { repository: 'Quellcode dieser Seite auf GitHub' },
   contact: { lede: 'Am schnellsten erreichen Sie mich per E-Mail.', email: 'E-Mail' },
   caseStudy: {
     back: 'Zur Startseite',
@@ -179,17 +166,7 @@ const en: UiStrings = {
     statuses: { Live: 'Live', InProduction: 'In production', Archived: 'Archived', Planned: 'Planned' },
   },
   skills: { since: 'since' },
-  workingMode: {
-    paragraphs: [
-      'I develop with AI agents as a tool. Every task starts with a plan I approve and with fixed rules ' +
-        'in the repository: architecture, test strategy and code style are written down in AGENTS.md and ' +
-        'the documents under docs/.',
-      'Agents search the code, write tests and implementation by those rules and run the checks. ' +
-        'Architecture, data model, security and the acceptance of every change stay with me.',
-      'This site was built that way. Its source code shows what that looks like day to day.',
-    ],
-    repository: 'Source code of this site on GitHub',
-  },
+  workingMode: { repository: 'Source code of this site on GitHub' },
   contact: { lede: 'E-mail is the fastest way to reach me.', email: 'E-mail' },
   caseStudy: {
     back: 'Back to the start page',

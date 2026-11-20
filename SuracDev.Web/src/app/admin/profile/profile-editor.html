@@ -55,7 +55,12 @@
     <ui-locale-pair [germanLabel]="strings.locale.german" [englishLabel]="strings.locale.english">
       <div de formGroupName="de">
         @for (key of textKeys; track key) {
-          <ui-field [label]="labelFor(key)" [controlId]="'de-' + key" [errors]="errorsFor('de.' + key)">
+          <ui-field
+            [label]="labelFor(key)"
+            [controlId]="'de-' + key"
+            [hint]="hintFor(key)"
+            [errors]="errorsFor('de.' + key)"
+          >
             @if (multiline.has(key)) {
               <textarea [id]="'de-' + key" [formControlName]="key" rows="5"></textarea>
             } @else {
@@ -69,6 +74,7 @@
           <ui-field
             [label]="labelFor(key)"
             [controlId]="'en-' + key"
+            [hint]="hintFor(key)"
             [badge]="untranslated(key)"
             [errors]="errorsFor('en.' + key)"
           >

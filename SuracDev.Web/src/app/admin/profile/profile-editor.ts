@@ -38,8 +38,14 @@ export class ProfileEditor implements OnInit {
 
   protected readonly strings = adminStrings;
   protected readonly text = adminStrings.profile;
-  protected readonly textKeys: readonly TextKey[] = ['titleLine', 'headline', 'intro', 'availabilityLine'];
-  protected readonly multiline: ReadonlySet<TextKey> = new Set<TextKey>(['intro']);
+  protected readonly textKeys: readonly TextKey[] = [
+    'titleLine',
+    'headline',
+    'intro',
+    'availabilityLine',
+    'workingMode',
+  ];
+  protected readonly multiline: ReadonlySet<TextKey> = new Set<TextKey>(['intro', 'workingMode']);
   protected readonly loaded = signal(false);
   protected readonly saving = signal(false);
   protected readonly saved = signal(false);
@@ -85,6 +91,10 @@ export class ProfileEditor implements OnInit {
 
   protected labelFor(key: TextKey): string {
     return this.text[key];
+  }
+
+  protected hintFor(key: TextKey): string | null {
+    return key === 'workingMode' ? this.text.workingModeHint : null;
   }
 
   protected untranslated(key: TextKey): string | null {
@@ -163,7 +173,7 @@ export class ProfileEditor implements OnInit {
   }
 
   private textGroup() {
-    return this.fb.group({ titleLine: '', headline: '', intro: '', availabilityLine: '' });
+    return this.fb.group({ titleLine: '', headline: '', intro: '', availabilityLine: '', workingMode: '' });
   }
 }
 
@@ -177,5 +187,6 @@ function toTextValue(texts: ProfileTextsForm | undefined): Required<Record<TextK
     headline: texts?.headline ?? '',
     intro: texts?.intro ?? '',
     availabilityLine: texts?.availabilityLine ?? '',
+    workingMode: texts?.workingMode ?? '',
   };
 }

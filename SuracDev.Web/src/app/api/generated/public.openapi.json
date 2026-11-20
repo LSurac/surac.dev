@@ -1203,6 +1203,11 @@
             "description": "An optional availability note.",
             "nullable": true
           },
+          "workingMode": {
+            "type": "string",
+            "description": "The working-mode section (\"Arbeitsweise\"), paragraphs separated by a blank line; null\n            hides the section.",
+            "nullable": true
+          },
           "facts": {
             "type": "array",
             "description": "The fact bar, in display order, at most four cells.",

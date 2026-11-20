@@ -18,12 +18,14 @@ const profile: AdminProfile = {
     headline: 'Überschrift.',
     intro: 'Kurzprofil.',
     availabilityLine: undefined,
+    workingMode: 'Ich plane zuerst.',
   },
   en: {
     titleLine: 'Full-stack developer',
     headline: undefined,
     intro: undefined,
     availabilityLine: undefined,
+    workingMode: undefined,
   },
   facts: [{ value: '5', labelDe: 'Jahre', labelEn: 'Years' }],
 };
@@ -119,6 +121,26 @@ describe('admin profile editor', () => {
       }),
     );
     expect(await screen.findByRole('status')).toHaveTextContent('Gespeichert.');
+  });
+
+  it('edits the working mode of the start page in both locales', async () => {
+    const { put } = await renderEditor();
+
+    const german = screen.getByRole('group', { name: 'Deutsch' });
+    const english = screen.getByRole('group', { name: 'English' });
+    expect(within(german).getByLabelText(/Arbeitsweise/)).toHaveValue('Ich plane zuerst.');
+    expect(within(english).getByLabelText(/Arbeitsweise/).tagName).toBe('TEXTAREA');
+    expect(within(german).getByText('Absätze durch eine Leerzeile trennen.')).toBeInTheDocument();
+
+    await userEvent.type(within(english).getByLabelText(/Arbeitsweise/), 'I plan first.');
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(put).toHaveBeenCalledWith(
+      expect.objectContaining({
+        de: expect.objectContaining({ workingMode: 'Ich plane zuerst.' }),
+        en: expect.objectContaining({ workingMode: 'I plan first.' }),
+      }),
+    );
   });
 
   it('removes a fact', async () => {

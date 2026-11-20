@@ -69,6 +69,8 @@ export const adminStrings = {
     headline: 'Überschrift',
     intro: 'Kurzprofil',
     availabilityLine: 'Verfügbarkeit',
+    workingMode: 'Arbeitsweise (Startseite)',
+    workingModeHint: 'Absätze durch eine Leerzeile trennen.',
     facts: 'Kennzahlen',
     factValue: 'Wert',
     factLabelDe: 'Bezeichnung (Deutsch)',

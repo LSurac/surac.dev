@@ -1726,6 +1726,9 @@ export interface PublicProfile {
   intro?: string | undefined;
   /** An optional availability note. */
   availabilityLine?: string | undefined;
+  /** The working-mode section ("Arbeitsweise"), paragraphs separated by a blank line; null
+            hides the section. */
+  workingMode?: string | undefined;
   /** The fact bar, in display order, at most four cells. */
   facts?: PublicFact[];
   /** JSON names of the fields shown in German because the requested locale has no text for

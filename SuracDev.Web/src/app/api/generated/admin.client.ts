@@ -5384,10 +5384,16 @@ export interface AdminProfile {
 
 /** The translatable texts of the profile in one locale. */
 export interface ProfileTextsForm {
+  /** Required in German. */
   titleLine?: string | undefined;
+  /** Required in German. */
   headline?: string | undefined;
+  /** The short profile. */
   intro?: string | undefined;
+  /** An optional availability note. */
   availabilityLine?: string | undefined;
+  /** The start page's working-mode section; paragraphs separated by a blank line. */
+  workingMode?: string | undefined;
 }
 
 /** One cell of the fact bar with both labels. */

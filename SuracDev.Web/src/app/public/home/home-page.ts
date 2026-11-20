@@ -155,6 +155,8 @@ export class HomePage {
     };
   });
   protected readonly intro = computed(() => this.profile()?.intro ?? null);
+  /** The working-mode text from the profile, one entry per paragraph (separated by a blank line). */
+  protected readonly workingMode = computed(() => toParagraphs(this.profile()?.workingMode));
   /** Short notes under the intro; empty when there is none, so no empty paragraph is rendered. */
   protected readonly profileNotes = computed(() =>
     [this.profile()?.availabilityLine].filter((line): line is string => !!line),
@@ -255,10 +257,19 @@ export class HomePage {
         return this.projects().length > 0;
       case 'Skills':
         return this.skillGroups().length > 0;
+      case 'WorkingMode':
+        return this.workingMode().length > 0;
       default:
         return true;
     }
   }
+}
+
+function toParagraphs(text: string | undefined): string[] {
+  return (text ?? '')
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
 }
 
 function toProfileLinks(profile: PublicProfile | undefined): HeroLink[] {

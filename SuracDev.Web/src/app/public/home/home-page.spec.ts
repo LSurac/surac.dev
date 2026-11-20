@@ -25,6 +25,7 @@ const profile: PublicProfile = {
   headline: 'Beispielüberschrift.',
   intro: 'Kurzprofil in drei Sätzen.',
   availabilityLine: undefined,
+  workingMode: 'Ich plane zuerst.\n\nDann prüfe ich.',
   facts: [
     { value: '5', label: 'Jahre' },
     { value: '1,8', label: 'Abschluss' },
@@ -226,6 +227,26 @@ describe('app-home-page', () => {
       '/en/projects/beispielprojekt',
     );
     expect(screen.getByRole('heading', { level: 2, name: /How I work/ })).toBeInTheDocument();
+  });
+
+  it('shows the working mode from the profile, one paragraph per block', async () => {
+    await render(HomePage, { providers: providers().providers });
+    await screen.findByRole('heading', { level: 1 });
+
+    const section = screen.getByRole('heading', { level: 2, name: /Arbeitsweise/ }).closest('section')!;
+    expect(within(section).getByText('Ich plane zuerst.').tagName).toBe('P');
+    expect(within(section).getByText('Dann prüfe ich.').tagName).toBe('P');
+  });
+
+  it('hides the working mode section while the profile has no text for it', async () => {
+    const setup = providers();
+    setup.clients.profile.get.mockReturnValue(of({ ...profile, workingMode: undefined }));
+    await render(HomePage, { providers: setup.providers });
+    await screen.findByRole('heading', { level: 1 });
+
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent?.trim()),
+    ).toEqual(['01 Profil', '02 Werdegang', '03 Projekte', '04 Kenntnisse', '05 Kontakt']);
   });
 
   it('keeps the other sections when one part of the content fails to load', async () => {

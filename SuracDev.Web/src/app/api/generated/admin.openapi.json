@@ -3167,18 +3167,27 @@
         "properties": {
           "titleLine": {
             "type": "string",
+            "description": "Required in German.",
             "nullable": true
           },
           "headline": {
             "type": "string",
+            "description": "Required in German.",
             "nullable": true
           },
           "intro": {
             "type": "string",
+            "description": "The short profile.",
             "nullable": true
           },
           "availabilityLine": {
             "type": "string",
+            "description": "An optional availability note.",
+            "nullable": true
+          },
+          "workingMode": {
+            "type": "string",
+            "description": "The start page's working-mode section; paragraphs separated by a blank line.",
             "nullable": true
           }
         }
