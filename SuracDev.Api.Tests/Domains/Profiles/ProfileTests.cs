@@ -1,6 +1,7 @@
 using SuracDev.Api.Domains.Profiles.Domain;
 using SuracDev.Api.Shared.Application.Exceptions;
 using SuracDev.Api.Shared.Application.Localization;
+using SuracDev.Api.Shared.Application.Validation;
 
 namespace SuracDev.Api.Tests.Domains.Profiles;
 
@@ -19,7 +20,8 @@ public sealed class ProfileTests
     TitleLine: "Fullstack-Entwickler · .NET & Angular",
     Headline: "Beispielüberschrift.",
     Intro: "Beispieltext.",
-    AvailabilityLine: null);
+    AvailabilityLine: null,
+    WorkingMode: "Erster Absatz.\n\nZweiter Absatz.");
 
   [Fact]
   public void A_new_profile_carries_its_contact_data_and_the_german_texts()
@@ -57,7 +59,7 @@ public sealed class ProfileTests
   {
     var profile = Profile.Create(Contact, German);
 
-    profile.SetTexts(Locale.English, new ProfileTexts("Full-stack developer", null, null, null));
+    profile.SetTexts(Locale.English, new ProfileTexts("Full-stack developer", null, null, null, null));
 
     var english = profile.Translations.Single(translation => translation.Locale == Locale.English);
     Assert.Equal("Full-stack developer", english.TitleLine);
@@ -68,11 +70,34 @@ public sealed class ProfileTests
   public void Clearing_every_english_text_removes_the_english_translation()
   {
     var profile = Profile.Create(Contact, German);
-    profile.SetTexts(Locale.English, new ProfileTexts("Full-stack developer", null, null, null));
+    profile.SetTexts(Locale.English, new ProfileTexts("Full-stack developer", null, null, null, null));
 
-    profile.SetTexts(Locale.English, new ProfileTexts(" ", null, "", null));
+    profile.SetTexts(Locale.English, new ProfileTexts(" ", null, "", null, " "));
 
     Assert.Single(profile.Translations);
+  }
+
+  [Fact]
+  public void The_working_mode_is_optional_and_at_most_a_paragraph_long()
+  {
+    var profile = Profile.Create(Contact, German with { WorkingMode = null });
+
+    var exception = Assert.Throws<DomainValidationException>(
+      () => profile.SetTexts(Locale.German, German with { WorkingMode = new string('a', TextLimits.Paragraph + 1) }));
+
+    Assert.Null(Assert.Single(profile.Translations).WorkingMode);
+    Assert.Contains("de.workingMode", exception.Errors.Keys);
+  }
+
+  [Fact]
+  public void An_english_working_mode_alone_keeps_the_english_translation()
+  {
+    var profile = Profile.Create(Contact, German);
+
+    profile.SetTexts(Locale.English, new ProfileTexts(null, null, null, null, "How I work."));
+
+    var english = profile.Translations.Single(translation => translation.Locale == Locale.English);
+    Assert.Equal("How I work.", english.WorkingMode);
   }
 
   [Fact]

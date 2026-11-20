@@ -17,6 +17,7 @@ public sealed class CvModelTests
     "Überschrift",
     null,
     null,
+    null,
     [],
     []);
 

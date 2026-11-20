@@ -32,7 +32,9 @@ internal static class ExampleContent
         Headline: "Beispielinhalt – im Admin-Bereich durch echte Daten ersetzen.",
         Intro: "Dieser Text ist ein neutrales Beispiel. Er zeigt, wo das Kurzprofil steht: drei bis fünf Sätze "
           + "darüber, was, womit und in welchem Umfeld entwickelt wird.",
-        AvailabilityLine: null));
+        AvailabilityLine: null,
+        WorkingMode: "Dieser Text ist ein neutrales Beispiel. Er zeigt, wo die Arbeitsweise steht: wie Aufgaben "
+          + "geplant, umgesetzt und geprüft werden.\n\nEine Leerzeile trennt die Absätze."));
     profile.SetTexts(
       Locale.English,
       new ProfileTexts(
@@ -40,7 +42,9 @@ internal static class ExampleContent
         Headline: "Example content – replace it with real data in the admin area.",
         Intro: "This text is a neutral example. It shows where the short profile goes: three to five sentences "
           + "about what is built, with which tools and in which context.",
-        AvailabilityLine: null));
+        AvailabilityLine: null,
+        WorkingMode: "This text is a neutral example. It shows where the working mode goes: how tasks are "
+          + "planned, built and checked.\n\nA blank line separates the paragraphs."));
     profile.ReplaceFacts(
     [
       new FactInput("5", "Jahre Berufserfahrung (Beispiel)", "Years of experience (example)"),

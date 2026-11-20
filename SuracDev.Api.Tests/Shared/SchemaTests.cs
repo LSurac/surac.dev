@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql;
 using SuracDev.Api.Data;
 using SuracDev.Api.Domains.Applications.Domain;
@@ -29,6 +31,27 @@ public sealed class SchemaTests(PostgresFixture postgres)
   }
 
   [PostgresFact]
+  public async Task The_working_mode_migration_carries_the_former_page_text_into_the_existing_profile()
+  {
+    await using var dbContext = await NewContextAsync();
+    var migrator = dbContext.GetService<IMigrator>();
+    await migrator.MigrateAsync("RenameLinkProfileToAudience");
+    await dbContext.Database.ExecuteSqlRawAsync(
+      "INSERT INTO profiles (\"FullName\", \"Email\", \"Location\", \"AddressLines\") "
+      + "VALUES ('Max', 'max@example.org', 'Musterstadt', ARRAY[]::text[]); "
+      + "INSERT INTO profile_translations (\"ProfileId\", \"Locale\", \"TitleLine\", \"Headline\") "
+      + "SELECT \"Id\", locale, 'Titel', 'Kopf' FROM profiles, (VALUES ('de'), ('en')) AS l(locale)");
+
+    await migrator.MigrateAsync();
+
+    var texts = await dbContext.Set<ProfileTranslation>().AsNoTracking()
+      .ToDictionaryAsync(translation => translation.Locale.Code, translation => translation.WorkingMode);
+    Assert.StartsWith("Ich entwickle mit KI-Agenten als Werkzeug.", texts["de"], StringComparison.Ordinal);
+    Assert.StartsWith("I develop with AI agents as a tool.", texts["en"], StringComparison.Ordinal);
+    Assert.Equal(3, texts["de"]!.Split("\n\n").Length);
+  }
+
+  [PostgresFact]
   public async Task A_profile_round_trips_with_facts_and_both_locales()
   {
     var connectionString = await postgres.CreateDatabaseAsync();
@@ -40,8 +63,8 @@ public sealed class SchemaTests(PostgresFixture postgres)
 
       var profile = Profile.Create(
         new ProfileContact("Max Mustermann", "max@example.org", null, "Musterstadt", ["Musterstraße 1"], null, null),
-        new ProfileTexts("Titel", "Überschrift", null, null));
-      profile.SetTexts(Locale.English, new ProfileTexts("Title", null, null, null));
+        new ProfileTexts("Titel", "Überschrift", null, null, null));
+      profile.SetTexts(Locale.English, new ProfileTexts("Title", null, null, null, null));
       profile.ReplaceFacts([new FactInput("5", "Jahre", "Years")]);
       profile.SetPhoto(document.Id);
       write.Profiles.Add(profile);

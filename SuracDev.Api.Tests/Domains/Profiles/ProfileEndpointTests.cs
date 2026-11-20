@@ -56,6 +56,32 @@ public sealed class ProfileEndpointTests(PostgresFixture postgres)
   }
 
   [PostgresFact]
+  public async Task The_working_mode_is_edited_in_the_admin_and_falls_back_to_german()
+  {
+    await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
+    using (var admin = await factory.CreateLoggedInClientAsync())
+    {
+      var current = await admin.GetFromJsonAsync<AdminProfile>("/api/admin/profile");
+      var put = await admin.PutAsJsonAsync(
+        "/api/admin/profile",
+        current! with
+        {
+          De = current.De with { WorkingMode = "Erster Absatz.\n\nZweiter Absatz." },
+          En = current.En! with { WorkingMode = null },
+        });
+      Assert.Equal(HttpStatusCode.NoContent, put.StatusCode);
+    }
+
+    using var client = factory.CreateClient();
+    var german = await client.GetFromJsonAsync<PublicProfile>("/api/public/profile");
+    var english = await client.GetFromJsonAsync<PublicProfile>("/api/public/profile?locale=en");
+
+    Assert.Equal("Erster Absatz.\n\nZweiter Absatz.", german!.WorkingMode);
+    Assert.Equal(german.WorkingMode, english!.WorkingMode);
+    Assert.Equal(["workingMode"], english.FallbackFields);
+  }
+
+  [PostgresFact]
   public async Task An_unsupported_locale_is_a_validation_error()
   {
     await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());

@@ -15,11 +15,17 @@ public sealed record ProfileContact(
   string? LinkedInUrl);
 
 /// <summary>The translatable texts of the profile in one locale.</summary>
-public sealed record ProfileTexts(string? TitleLine, string? Headline, string? Intro, string? AvailabilityLine)
+public sealed record ProfileTexts(
+  string? TitleLine,
+  string? Headline,
+  string? Intro,
+  string? AvailabilityLine,
+  string? WorkingMode)
 {
   /// <summary>True when no field carries text; an empty English set is removed instead of stored.</summary>
   public bool IsEmpty => string.IsNullOrWhiteSpace(TitleLine) && string.IsNullOrWhiteSpace(Headline)
-    && string.IsNullOrWhiteSpace(Intro) && string.IsNullOrWhiteSpace(AvailabilityLine);
+    && string.IsNullOrWhiteSpace(Intro) && string.IsNullOrWhiteSpace(AvailabilityLine)
+    && string.IsNullOrWhiteSpace(WorkingMode);
 }
 
 /// <summary>One cell of the fact bar as the admin enters it.</summary>
@@ -134,6 +140,9 @@ public sealed class ProfileTranslation : ITranslation
 
   public string? AvailabilityLine { get; private set; }
 
+  /// <summary>The working-mode section of the start page; paragraphs are separated by a blank line.</summary>
+  public string? WorkingMode { get; private set; }
+
   internal static ProfileTranslation Create(Locale locale, ProfileTexts texts)
   {
     var translation = new ProfileTranslation { Locale = locale };
@@ -147,6 +156,7 @@ public sealed class ProfileTranslation : ITranslation
     Headline = Require.Translated(texts.Headline, Locale, "headline", TextLimits.Line, required: true);
     Intro = Require.Translated(texts.Intro, Locale, "intro", TextLimits.Paragraph);
     AvailabilityLine = Require.Translated(texts.AvailabilityLine, Locale, "availabilityLine", TextLimits.Line);
+    WorkingMode = Require.Translated(texts.WorkingMode, Locale, "workingMode", TextLimits.Paragraph);
   }
 }
 

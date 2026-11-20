@@ -24,6 +24,7 @@ public sealed class ProfileService(SuracDevDbContext dbContext, DocumentReferenc
     var headline = text.Text(t => t.Headline, nameof(PublicProfile.Headline))!;
     var intro = text.Text(t => t.Intro, nameof(PublicProfile.Intro));
     var availabilityLine = text.Text(t => t.AvailabilityLine, nameof(PublicProfile.AvailabilityLine));
+    var workingMode = text.Text(t => t.WorkingMode, nameof(PublicProfile.WorkingMode));
     var facts = profile.Facts.Select(fact => ToPublic(fact, locale, text)).ToList();
 
     return new PublicProfile(
@@ -37,6 +38,7 @@ public sealed class ProfileService(SuracDevDbContext dbContext, DocumentReferenc
       headline,
       intro,
       availabilityLine,
+      workingMode,
       facts,
       text.FallbackFields);
   }
@@ -85,7 +87,7 @@ public sealed class ProfileService(SuracDevDbContext dbContext, DocumentReferenc
       profile.SetTexts(Locale.German, german);
     }
 
-    profile.SetTexts(Locale.English, ToTexts(form.En ?? new ProfileTextsForm(null, null, null, null)));
+    profile.SetTexts(Locale.English, ToTexts(form.En ?? new ProfileTextsForm(null, null, null, null, null)));
     profile.ReplaceFacts(form.Facts.Select(fact => new FactInput(fact.Value, fact.LabelDe, fact.LabelEn)).ToList());
     profile.SetPhoto(form.PhotoDocumentId);
     await dbContext.SaveChangesAsync(cancellationToken);
@@ -115,10 +117,15 @@ public sealed class ProfileService(SuracDevDbContext dbContext, DocumentReferenc
   }
 
   private static ProfileTexts ToTexts(ProfileTextsForm form)
-    => new(form.TitleLine, form.Headline, form.Intro, form.AvailabilityLine);
+    => new(form.TitleLine, form.Headline, form.Intro, form.AvailabilityLine, form.WorkingMode);
 
   private static ProfileTextsForm ToForm(ProfileTranslation translation)
-    => new(translation.TitleLine, translation.Headline, translation.Intro, translation.AvailabilityLine);
+    => new(
+      translation.TitleLine,
+      translation.Headline,
+      translation.Intro,
+      translation.AvailabilityLine,
+      translation.WorkingMode);
 
   private static FactForm ToForm(ProfileFact fact)
     => new(

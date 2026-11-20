@@ -15,6 +15,8 @@ namespace SuracDev.Api.Domains.Profiles.Contracts;
 /// <param name="Headline">The hero sentence.</param>
 /// <param name="Intro">The short profile, three to five sentences.</param>
 /// <param name="AvailabilityLine">An optional availability note.</param>
+/// <param name="WorkingMode">The working-mode section ("Arbeitsweise"), paragraphs separated by a blank line; null
+/// hides the section.</param>
 /// <param name="Facts">The fact bar, in display order, at most four cells.</param>
 /// <param name="FallbackFields">JSON names of the fields shown in German because the requested locale has no text for
 /// them.</param>
@@ -29,6 +31,7 @@ public sealed record PublicProfile(
   string Headline,
   string? Intro,
   string? AvailabilityLine,
+  string? WorkingMode,
   IReadOnlyList<PublicFact> Facts,
   IReadOnlyList<string> FallbackFields);
 
@@ -66,7 +69,17 @@ public sealed record AdminProfile(
   IReadOnlyList<FactForm> Facts);
 
 /// <summary>The translatable texts of the profile in one locale.</summary>
-public sealed record ProfileTextsForm(string? TitleLine, string? Headline, string? Intro, string? AvailabilityLine);
+/// <param name="TitleLine">Required in German.</param>
+/// <param name="Headline">Required in German.</param>
+/// <param name="Intro">The short profile.</param>
+/// <param name="AvailabilityLine">An optional availability note.</param>
+/// <param name="WorkingMode">The start page's working-mode section; paragraphs separated by a blank line.</param>
+public sealed record ProfileTextsForm(
+  string? TitleLine,
+  string? Headline,
+  string? Intro,
+  string? AvailabilityLine,
+  string? WorkingMode);
 
 /// <summary>One cell of the fact bar with both labels.</summary>
 /// <param name="Value">Required, at most 20 characters.</param>
