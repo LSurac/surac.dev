@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SuracDev.Api.Domains.Applications.Contracts;
@@ -174,15 +175,18 @@ public sealed class ApplicationEndpointTests(PostgresFixture postgres)
       path,
       NewLink with
       {
-        Profile = AudienceProfile.Recruiter,
+        Audience = AudienceProfile.Recruiter,
         UnlockFullPdf = false,
         DocumentIds = [certificate, coverLetter],
       },
       ApiJson.Options);
     var read = await admin.GetFromJsonAsync<AdminApplicationLink>(path, ApiJson.Options);
+    using var json = JsonDocument.Parse(await admin.GetStringAsync(path));
 
     Assert.Equal(HttpStatusCode.NoContent, updated.StatusCode);
-    Assert.Equal(AudienceProfile.Recruiter, read!.Profile);
+    Assert.Equal(AudienceProfile.Recruiter, read!.Audience);
+    Assert.Equal("Recruiter", json.RootElement.GetProperty("audience").GetString());
+    Assert.False(json.RootElement.TryGetProperty("profile", out _));
     Assert.False(read.UnlockFullPdf);
     Assert.Equal([certificate, coverLetter], read.DocumentIds.Order());
   }

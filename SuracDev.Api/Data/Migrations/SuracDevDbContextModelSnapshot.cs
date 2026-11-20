@@ -17,7 +17,7 @@ namespace SuracDev.Api.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.14")
+                .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -75,6 +75,9 @@ namespace SuracDev.Api.Data.Migrations
                     b.Property<long>("ApplicationId")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("Audience")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -91,9 +94,6 @@ namespace SuracDev.Api.Data.Migrations
 
                     b.Property<bool>("IsRevoked")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("Profile")
-                        .HasColumnType("integer");
 
                     b.Property<string>("TokenHash")
                         .IsRequired()

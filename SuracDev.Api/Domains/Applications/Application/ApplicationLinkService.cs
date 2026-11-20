@@ -113,7 +113,7 @@ public sealed class ApplicationLinkService(SuracDevDbContext dbContext, TimeProv
 
   private static LinkSettings ToSettings(ApplicationLinkForm form, DateTimeOffset now)
     => new(
-      form.Profile,
+      form.Audience,
       form.GreetingDe,
       form.GreetingEn,
       form.ExpiresAt ?? now + ApplicationLink.DefaultLifetime,
@@ -123,7 +123,7 @@ public sealed class ApplicationLinkService(SuracDevDbContext dbContext, TimeProv
     => new(
       link.Id,
       link.ApplicationId,
-      link.Profile,
+      link.Audience,
       link.GreetingDe,
       link.GreetingEn,
       link.ExpiresAt,

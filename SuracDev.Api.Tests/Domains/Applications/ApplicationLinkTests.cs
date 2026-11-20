@@ -65,9 +65,12 @@ public sealed class ApplicationLinkTests
   }
 
   [Fact]
-  public void The_unknown_profile_is_rejected()
+  public void The_unknown_audience_is_rejected()
   {
-    Assert.Throws<DomainValidationException>(() => NewLink(Settings with { Profile = AudienceProfile.Unknown }));
+    var exception = Assert.Throws<DomainValidationException>(
+      () => NewLink(Settings with { Audience = AudienceProfile.Unknown }));
+
+    Assert.Contains("audience", exception.Errors.Keys);
   }
 
   [Fact]

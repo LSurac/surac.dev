@@ -363,7 +363,7 @@ public sealed class SuracDevDbContext(DbContextOptions<SuracDevDbContext> option
         .OnDelete(DeleteBehavior.Cascade);
       entity.Property(link => link.TokenHash).HasMaxLength(64).IsFixedLength().IsRequired();
       entity.HasIndex(link => link.TokenHash).IsUnique();
-      entity.Property(link => link.Profile).HasConversion<int>();
+      entity.Property(link => link.Audience).HasConversion<int>();
       entity.Property(link => link.GreetingDe).HasMaxLength(TextLimits.Line);
       entity.Property(link => link.GreetingEn).HasMaxLength(TextLimits.Line);
       entity.HasMany(link => link.Documents).WithOne()

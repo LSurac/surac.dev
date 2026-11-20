@@ -148,7 +148,7 @@ public sealed class SchemaTests(PostgresFixture postgres)
     var linkEvent = await read.LinkEvents.SingleAsync();
 
     Assert.Equal(linkId, loadedLink.Id);
-    Assert.Equal(AudienceProfile.TechLead, loadedLink.Profile);
+    Assert.Equal(AudienceProfile.TechLead, loadedLink.Audience);
     Assert.Single(loadedLink.Documents);
     Assert.Equal(Locale.English, linkEvent.Locale);
     Assert.Single(await read.Interests.ToListAsync());

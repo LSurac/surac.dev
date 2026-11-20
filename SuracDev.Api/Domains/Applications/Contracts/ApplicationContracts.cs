@@ -41,14 +41,14 @@ public sealed record AdminApplication(
   DateTimeOffset UpdatedAt);
 
 /// <summary>The settings of an application link, for <c>POST</c> and <c>PUT</c>.</summary>
-/// <param name="Profile">The audience the link is made for; decides the section order.</param>
+/// <param name="Audience">The audience the link is made for; decides the section order.</param>
 /// <param name="GreetingDe">Optional one-line German greeting.</param>
 /// <param name="GreetingEn">Optional one-line English greeting; the German one is used when empty.</param>
 /// <param name="ExpiresAt">Must lie in the future; null sets it to 90 days from now.</param>
 /// <param name="UnlockFullPdf">Whether the link delivers the full CV with phone and street address.</param>
 /// <param name="DocumentIds">The link-only documents the link unlocks.</param>
 public sealed record ApplicationLinkForm(
-  AudienceProfile Profile,
+  AudienceProfile Audience,
   string? GreetingDe,
   string? GreetingEn,
   DateTimeOffset? ExpiresAt,
@@ -59,7 +59,7 @@ public sealed record ApplicationLinkForm(
 /// creation.</summary>
 /// <param name="Id">The link's identifier.</param>
 /// <param name="ApplicationId">The application the link belongs to.</param>
-/// <param name="Profile">The audience the link is made for.</param>
+/// <param name="Audience">The audience the link is made for.</param>
 /// <param name="GreetingDe">German greeting, if any.</param>
 /// <param name="GreetingEn">English greeting, if any.</param>
 /// <param name="ExpiresAt">When the link stops working.</param>
@@ -71,7 +71,7 @@ public sealed record ApplicationLinkForm(
 public sealed record AdminApplicationLink(
   long Id,
   long ApplicationId,
-  AudienceProfile Profile,
+  AudienceProfile Audience,
   string? GreetingDe,
   string? GreetingEn,
   DateTimeOffset ExpiresAt,
@@ -91,7 +91,7 @@ public sealed record CreatedApplicationLink(string Token, AdminApplicationLink L
 /// link only decides order, greeting and downloads (docs/decisions.md, "One site, three audience profiles").
 /// </summary>
 /// <param name="Greeting">The greeting in the requested locale or German, or null.</param>
-/// <param name="Sections">The start-page sections in the order of the link's profile.</param>
+/// <param name="Sections">The start-page sections in the order of the link's audience.</param>
 /// <param name="FullCv">Whether <c>cv.pdf</c> of this link is the full variant with phone and street address.</param>
 /// <param name="Documents">The documents the link unlocks, for <c>documents/{id}</c> of this link.</param>
 public sealed record PublicApplicationLink(

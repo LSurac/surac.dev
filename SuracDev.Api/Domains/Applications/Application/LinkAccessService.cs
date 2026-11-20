@@ -39,7 +39,7 @@ public sealed class LinkAccessService(
     await RecordAsync(link, LinkEventKind.Opened, locale, null, cancellationToken);
     return new PublicApplicationLink(
       link.GreetingFor(locale),
-      SectionOrder.For(link.Profile),
+      SectionOrder.For(link.Audience),
       link.UnlockFullPdf,
       documents.Select(document => ToPublic(document, locale)).ToList());
   }

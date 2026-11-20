@@ -10,7 +10,7 @@ namespace SuracDev.Api.Domains.Applications.Domain;
 
 /// <summary>The settings of a link as the admin enters them.</summary>
 public sealed record LinkSettings(
-  AudienceProfile Profile,
+  AudienceProfile Audience,
   string? GreetingDe,
   string? GreetingEn,
   DateTimeOffset ExpiresAt,
@@ -38,7 +38,7 @@ public sealed class ApplicationLink
   /// <summary>Lowercase hex SHA-256 of the clear token; the clear token is shown once and never stored.</summary>
   public string TokenHash { get; private set; } = null!;
 
-  public AudienceProfile Profile { get; private set; }
+  public AudienceProfile Audience { get; private set; }
 
   public string? GreetingDe { get; private set; }
 
@@ -65,7 +65,7 @@ public sealed class ApplicationLink
   }
 
   /// <summary>
-  /// Changes profile, greetings, expiry and the PDF unlock; the expiry must lie in the future. A
+  /// Changes audience, greetings, expiry and the PDF unlock; the expiry must lie in the future. A
   /// revoked link stays as it was revoked: reviving it would reopen a URL the admin closed.
   /// </summary>
   public void Update(LinkSettings settings, DateTimeOffset now)
@@ -76,7 +76,7 @@ public sealed class ApplicationLink
       throw new DomainValidationException("expiresAt", "Must lie in the future.");
     }
 
-    Profile = Require.Known(settings.Profile, "profile");
+    Audience = Require.Known(settings.Audience, "audience");
     GreetingDe = Require.OptionalText(settings.GreetingDe, "greetingDe", TextLimits.Line);
     GreetingEn = Require.OptionalText(settings.GreetingEn, "greetingEn", TextLimits.Line);
     ExpiresAt = settings.ExpiresAt;
