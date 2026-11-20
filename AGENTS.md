@@ -13,10 +13,10 @@ something changes. Do not duplicate their content here.
 - `docs/decisions.md` — settled trade-offs that look like improvements and are not. Read before
   "fixing" something that looks wrong.
 - `docs/content-model.md` — the entities, their translations, visibility rules and the application
-  link / profile mechanism.
+  link / audience mechanism.
 - `docs/domain-glossary.md` — the ubiquitous language (German/English) used in code and UI.
 - `docs/domain.md` — the domain story, the bounded contexts cut by behaviour, the context map and
-  the open domain questions.
+  the decided domain questions.
 - `docs/design.md` — design tokens, typography, layout rules and the explicit list of things this
   site never does visually.
 - `docs/testing.md` — the test pyramid, TDD rules, coverage thresholds, how tests are named.

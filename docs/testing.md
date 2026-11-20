@@ -14,7 +14,7 @@ what kinds of tests exist, what each is for, how they are named, and what the CI
 
 The four end-to-end flows: (1) the start page renders server-side with the profile and a working
 CV download, (2) the admin logs in, edits a text, and the public page shows it, (3) an application
-link opens with its profile and greeting and unlocks its documents, (4) an expired or revoked link
+link opens with its audience and greeting and unlocks its documents, (4) an expired or revoked link
 answers 404 in both locales.
 
 ## Rules

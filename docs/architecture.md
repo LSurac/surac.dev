@@ -43,16 +43,16 @@ SuracDev.Api/
   Data/
     SuracDevDbContext.cs         all EF mapping inline, snake_case tables, PascalCase columns
     SuracDevDbContextFactory.cs  design-time factory for `dotnet ef`
-    Migrations/                  generated only
+    Migrations/                  generated only; a data step is appended as `migrationBuilder.Sql` and tested
   Domains/
     Identity/                    AdminUser, login, password change, security stamp
-    Profiles/                    the person: name, title line, intro, contact, photo, fact bar
+    Profiles/                    the person: name, title line, intro, working mode, contact, photo, fact bar
     Career/                      Experience and Education entries
     Projects/                    Project cards and case studies
     Skills/                      SkillGroup, Skill (with "since year", never a percentage)
     Interests/                   the "Über mich" page content
     Documents/                   uploaded PDFs and images (CV variants are generated, not uploaded)
-    Applications/                Application (mini ATS), ApplicationLink, LinkEvent, profiles
+    Applications/                Application (mini ATS), ApplicationLink, LinkEvent, audiences
     Legal/                       Impressum and Datenschutz as Markdown blocks
     Pdf/                         QuestPDF CV documents (Public/Full × de/en)
     Health/                      /api/health
@@ -68,7 +68,8 @@ Each domain folder holds `Domain/` (entities, value objects, enums), `Applicatio
 services), `Contracts/` (sealed record DTOs) and `Controllers/`. Controllers are thin: bind, call one
 service method, return. Services use the `DbContext` directly and throw the shared exceptions.
 Domain folders are plural where the entity name would otherwise collide with the namespace
-(`Profiles/` holds `Profile`).
+(`Profiles/` holds `Profile`). The folders are modules cut by work object; the bounded contexts they
+belong to are cut by behaviour in `docs/domain.md`.
 
 Each content domain has a public controller (`/api/public/...`, anonymous, one locale per request
 via `?locale=de|en`) and an admin controller (`/api/admin/...`, REST CRUD). Public responses carry

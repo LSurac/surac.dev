@@ -48,12 +48,12 @@ their date; reversed decisions are struck through, never deleted.
   generation, Docker Compose behind Caddy. The discipline that keeps it from becoming the
   "over-engineered portfolio site" reviewers reject: no feature without a real user (the maintainer as
   admin, or the recruiter), and every structural choice justified here or in `docs/architecture.md`.
-- **DDD-light, not tactical DDD.** Bounded contexts are domain folders. Entities have private
-  setters, factory methods and behaviour methods that enforce invariants. Value objects exist where
-  they prevent a class of bugs (`Locale`, `Slug`). Application services are the use cases and use EF
-  Core directly. Rejected: aggregates with repositories, domain events infrastructure, MediatR, unit
-  of work, CQRS. Eight entities do not justify that ceremony, and saying so is part of the work
-  sample.
+- **DDD-light, not tactical DDD.** Domain folders are modules; the bounded contexts are in
+  `docs/domain.md`. Entities have private setters, factory methods and behaviour methods that enforce
+  invariants. Value objects exist where they prevent a class of bugs (`Locale`, `Slug`). Application
+  services are the use cases and use EF Core directly. Rejected: aggregates with repositories, domain
+  events infrastructure, MediatR, unit of work, CQRS. Eight entities do not justify that ceremony, and
+  saying so is part of the work sample.
 - **Component-driven Angular without Storybook (v1).** `ui/` holds presentational components with
   inputs and outputs only; `public/` and `admin/` compose them. A dev-only `/styleguide` route renders
   every `ui/` component with its variants. Storybook may follow once the site is live; it was
@@ -224,3 +224,44 @@ their date; reversed decisions are struck through, never deleted.
   half-finished one.
 - **Telemetry rewrites the path of `/api/links/{token}`** before a span is exported. The token is
   a capability; the request logs that would carry it are below the exported level anyway.
+
+## Domain review (2026-11-20)
+
+The maintainer's answers to the questions of the first pass of `docs/domain.md` (section 7).
+
+- **The link's audience is called `Audience`.** `ApplicationLink.Profile` held an `AudienceProfile` next
+  to the `Profile` entity, one English word for two things in one API. The property, the admin DTO
+  field and the validation key are `audience`; a migration renamed the column. The enum keeps its name
+  `AudienceProfile`. Rejected: fixing only the glossary, which would have left the code saying
+  "profile" where the UI says "Zielgruppe".
+- **Domain folders are modules, not bounded contexts.** The five content folders form one context;
+  the cut by behaviour lives in `docs/domain.md` (the "DDD-light" entry above was reworded). Rejected:
+  reading every folder as a context, which cuts by data.
+- **Every status after `Draft` needs `AppliedOn`** (`Application.Update`). A sent application without
+  a date was silently left out of the reminder digest. No migration touches existing rows; the rule
+  applies on the next save (production had no such row on 2026-11-20). Rejected: reminding from
+  `CreatedAt`, a second meaning of "sent", and accepting the gap.
+- **An expired link may be revived** by moving `ExpiresAt` into the future (`ApplicationLink.Update`).
+  Expiry is a timer, 90 days by default, not a decision to close; extending it is a deliberate act on
+  a link that is not known to have leaked. Revoking stays final and is the way to close a URL for good.
+- **One `Document` serves public images and link-only certificates.** Upload, sniffing, labels,
+  delivery and deletion are the same; the difference is the visibility, and the rules that keep the
+  two apart sit on `Document.ChangeVisibility` and `DocumentService.UpdateAsync`. Rejected: two
+  entities, tables and admin lists for one upload pipeline.
+- **The working-mode section ("Arbeitsweise") is content.** It was UI text in the web bundle, so a
+  wording change needed a release while every other start-page section is edited in the admin. It is
+  now `WorkingMode` on the profile translations, edited in the profile form like the intro;
+  paragraphs are separated by a blank line, and the section hides while the text is empty. The link to
+  the repository stays a UI string. The migration `AddProfileWorkingMode` copied the former text into
+  the existing German and English translations as a data step appended to the generated migration
+  (`migrationBuilder.Sql`), covered by a test in `SchemaTests`.
+- **`DocumentService` knows its customers on purpose.** It reads the profile, projects, interests and
+  links before a visibility change or a delete (`IsShownPubliclyAsync`, `IsAttachedToLinkAsync`), which
+  breaks the direction of the context map (`docs/domain.md`, check 11) but answers with a message that
+  says where the document is used. Rejected: letting the foreign keys refuse the delete, which gives a
+  generic conflict and still needs the reads for the visibility rules.
+- **A link only ever carries link-only documents.** `ApplicationLink.AttachDocuments` accepts only
+  link-only documents, and `DocumentService.UpdateAsync` answers 409 when an attached document would
+  be made public; the admin removes it from the link first.
+- **The admin uses the glossary words.** "Kenntnisbereich" (not "Kenntnisgruppe"), "Interesse" for an
+  entry of "Über mich", whose kind is its "Art"; "Abschnitt" means only a section of the start page.

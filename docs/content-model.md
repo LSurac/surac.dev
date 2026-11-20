@@ -30,7 +30,7 @@ The person. Exactly one row.
 | `AddressLines` | Only for the full PDF and the Impressum. |
 | `GitHubUrl`, `LinkedInUrl` | |
 | `PhotoDocumentId` | Reference to an uploaded public image document. |
-| `Translations`: `TitleLine`, `Headline`, `Intro`, `AvailabilityLine` | `TitleLine` is the search-term line ("Fullstack-Entwickler · .NET & Angular"). |
+| `Translations`: `TitleLine`, `Headline`, `Intro`, `AvailabilityLine`, `WorkingMode` | `TitleLine` is the search-term line ("Fullstack-Entwickler · .NET & Angular"). `WorkingMode` is the start page's "Arbeitsweise" section, paragraphs separated by a blank line; empty hides the section. |
 | `Facts` (ordered, up to 4) | The fact bar: `Value` ("5", "1,8", "C1") plus translated `Label`. |
 
 ### Experience
@@ -86,20 +86,20 @@ they are rendered on demand (docs/decisions.md explains why without a cache).
 ### Application and ApplicationLink
 
 `Application` is the maintainer's mini ATS: `Company`, `Position`, `JobAdUrl`, `AppliedOn`
-(DateOnly, nullable), `Status` enum `Unknown=0, Draft=1, Sent=2, Replied=3, Interview=4, Offer=5,
-Rejected=6, Withdrawn=7`, `Notes` (Markdown), `CreatedAt`, `UpdatedAt`.
+(DateOnly; required for every status after `Draft`), `Status` enum `Unknown=0, Draft=1, Sent=2,
+Replied=3, Interview=4, Offer=5, Rejected=6, Withdrawn=7`, `Notes` (Markdown), `CreatedAt`, `UpdatedAt`.
 
 `ApplicationLink` belongs to exactly one application:
 
 | Field | Notes |
 |---|---|
 | `TokenHash` | Public path `/b/<token>`; the token is 128 random bits in base64url, generated server-side; only its SHA-256 (hex) is stored. The clear token is shown once at creation. |
-| `Profile` enum | `Unknown=0, Public=1, Recruiter=2, TechLead=3` |
+| `Audience` (enum `AudienceProfile`) | `Unknown=0, Public=1, Recruiter=2, TechLead=3` |
 | `GreetingDe`, `GreetingEn` | Optional one-line greeting ("Für das Team Sales Backend bei …"). |
-| `ExpiresAt` | Required; default 90 days. |
+| `ExpiresAt` | Required; default 90 days. Moving it into the future revives an expired link. |
 | `IsRevoked` | Manual kill switch; final, a revoked link cannot be changed any more. |
 | `UnlockFullPdf` | Full PDF with phone and address. |
-| `Documents` | The certificates / cover letter unlocked by this link (`LinkOnly` documents only). |
+| `Documents` | The certificates / cover letter unlocked by this link (`LinkOnly` documents only; an attached document cannot be made public). |
 
 `LinkEvent`: `LinkId`, `Kind` enum `Unknown=0, Opened=1, PdfDownloaded=2, DocumentDownloaded=3`,
 `OccurredAt`, `Locale`, `DocumentId` (nullable). **No IP address, no user agent, no referrer.**
@@ -121,7 +121,7 @@ Applications still `Sent` fourteen days after `AppliedOn` are listed in a weekly
 longest waiting first (`ApplicationReminder`). Nothing is stored about reminders; the digest repeats
 each week until the status changes.
 
-Profile behaviour is configuration, not code paths: a `SectionOrder` per profile (list of section
+Audience behaviour is configuration, not code paths: a `SectionOrder` per audience (list of section
 keys) lives in `Shared/Application/Audience/` and is covered by tests. `Public` is the order the open
 site uses.
 

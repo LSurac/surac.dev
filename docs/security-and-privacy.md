@@ -59,6 +59,7 @@ endpoint is on that list. Adding to the list is a deliberate, reviewed act.
   enumeration pointless on top of the key space. Server-side renders pass the visitor's
   `X-Forwarded-For` on to the API, so the limit applies per visitor, not per web container.
 - Revoking is final: a revoked link cannot be changed or revived; the admin creates a new one.
+  Expiry is not final: moving `ExpiresAt` into the future revives an expired link.
 - Link pages carry `noindex`; their canonical and Open Graph URL is the open start page, so a link
   preview never shows the token.
 - A link unlocks exactly what the admin attached: the full PDF (phone, address) and the chosen
@@ -74,7 +75,8 @@ endpoint is on that list. Adding to the list is a deliberate, reviewed act.
   database is only resolved below the storage root.
 - A rejected upload leaves no file behind. A document still referenced (profile photo, project or
   interest image, application link) cannot be deleted, and one shown on the open site cannot be
-  made link-only. Certificates and cover letters can never be made public.
+  made link-only. One attached to an application link cannot be made public, so a link only ever
+  carries link-only documents. Certificates and cover letters can never be made public.
 - Images are not processed in v1 (no resizing library); the admin uploads web-sized images.
 
 ## Transport and headers

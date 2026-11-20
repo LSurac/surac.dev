@@ -10,31 +10,6 @@ open in the admin:
 
 - [ ] "Über mich": a chess photo, once one exists (Immich had only screenshots of games).
 
-## Domain review (maintainer decides)
-
-Questions from the first pass of `docs/domain.md` (section 7); each needs a yes or no before code
-changes.
-
-- [ ] Q1: keep `ApplicationLink.Profile` and only say "Zielgruppe" in `docs/domain-glossary.md`, or
-  rename it to `Audience` (column rename migration, admin client break).
-- [ ] Q2: reword "Bounded contexts are domain folders" in `docs/decisions.md` ("DDD-light") to
-  point at the contexts in `docs/domain.md`; same for "domains" in `docs/architecture.md`.
-- [ ] Q3: require `AppliedOn` for every status after `Draft` in `Application.Update`; today a `Sent`
-  application without a date is never reminded (`ApplicationReminder.Due`).
-- [ ] Q4: may an expired link be revived by a new `ExpiresAt` (`ApplicationLink.Update`), or is
-  expiry final like revoking?
-- [ ] Q5: one `Document` for public images and link-only certificates, or two concepts?
-- [ ] Q6: the "Arbeitsweise" text lives in `SuracDev.Web/src/app/core/i18n/ui-strings.ts`, not in the
-  admin; deliberate?
-- [ ] Q7: keep the back-references in `DocumentService` (`IsShownPubliclyAsync`, `DeleteAsync`) as a
-  deliberate exception, or let the foreign keys refuse the delete.
-- [ ] Q8: should `DocumentService.UpdateAsync` refuse to make a document public while a link has it
-  attached, so a link only ever carries link-only documents?
-- [ ] Glossary drift: settle "Kenntnisbereich" vs. "Kenntnisgruppe" and "Interesse" vs. the admin's
-  "Über mich"/"Abschnitt"/"Thema"; rename the admin's "Abschnitte" of interests
-  (`admin-strings.ts`, `interests.list`) so "Abschnitt" means only a start-page section.
-- [ ] Merge the reviewed terms from `docs/domain.md` section 2 into `docs/domain-glossary.md`.
-
 ## Engineering
 
 - [ ] Rename `Domains/Pdf/` to `Domains/Cv/` (and the test folder); the code inside already says

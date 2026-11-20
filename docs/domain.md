@@ -1,8 +1,9 @@
 # surac.dev — Domain
 
-Status: first pass by the agent, not reviewed (2026-11-19). Derived from code, tests and the existing
-docs without a review round; every decision names its source, and what the agent decided alone is
-marked "agent, unreviewed". The questions a review would have asked are collected in section 7.
+Status: first pass by the agent (2026-11-19), derived from code, tests and the existing docs; every
+decision names its source, and what the agent decided alone is marked "agent, unreviewed". The
+maintainer decided the questions of section 7 on 2026-11-20; the terms of section 2 are merged into
+`docs/domain-glossary.md`.
 
 This file is the domain view: the story, the contexts cut by behaviour, how they depend on each other
 and which role one concept plays in each. It does not repeat what other documents hold: the
@@ -39,41 +40,22 @@ glossary terms with the German word where the UI uses it.
 
 ## 2. Ubiquitous language
 
-The glossary is `docs/domain-glossary.md`. This section holds only what the review found: terms the
-glossary lacks, and places where glossary, code and UI disagree. Source of all rows: agent,
-unreviewed; the UI words come from `SuracDev.Web/src/app/admin/admin-strings.ts`.
-
-### Missing from the glossary
-
-| German (UI) | Code | Meaning | Note |
-|---|---|---|---|
-| Aufruf | `LinkEventKind.Opened` | One page view of `/b/<token>`; reloads, language switches and messenger previews count. | The statistics say "Aufrufe"; the glossary names the event kinds only in English. |
-| Unterlagen | `ApplicationLink.Documents`, `ApplicationLinkDocument` | The link-only documents one link unlocks. | The role of a document in the application context (section 5). |
-| freigeben | `UnlockFullPdf`, `AttachDocuments` | What a link adds beyond the open site: the full CV and documents. Never content. | |
-| widerrufen | `ApplicationLink.Revoke`, `IsRevoked` | End a link for good; it then answers like an unknown one. | Final, unlike expiry (question Q4). |
-| Gültig bis / abgelaufen | `ExpiresAt`, `IsActiveAt` | The end of a link's life; 90 days by default. | |
-| Begrüßung | `GreetingDe`, `GreetingEn` | The one line a link shows above the start page. | |
-| Abschnitt (der Startseite) | `SiteSection` | One block of the start page: hero, facts, intro, projects, career, skills, working mode, contact. | Reserved; see conflicts. |
-| Auf der Startseite | `Project.IsFeatured` | A featured project: on the start page and in the CV, at most five visible. | |
-| Status (Bewerbung) | `ApplicationStatus` | Entwurf, Versendet, Antwort erhalten, Gespräch, Angebot, Absage, Zurückgezogen. | |
-| Versendet (gezählt) | `ApplicationPipeline.IsSent` | Every status except `Draft`. | Differs from the status "Versendet"; see conflicts. |
-| Antwortquote | `ApplicationPipeline.ResponseRate` | Responded / sent; `Withdrawn` counts as sent without response. | |
-| Zeit bis zum ersten Aufruf | `ApplicationPipeline.MinutesToFirstOpen` | From the first link's creation to the first opening of any of the application's links. | |
-| Erinnerung | `ApplicationReminder` | The stateless weekly digest of applications `Sent` for 14 days or more. | |
-| Beworben am | `Application.AppliedOn` | The day the application went out; empty while it is a draft. | Not enforced; question Q3. |
-| Thema | `InterestKind` | The topic of an "Über mich" entry. | |
-| nicht übersetzt | `fallbackFields` | A field shown in German because the English one is empty. | |
+The glossary is `docs/domain-glossary.md`. The first pass found sixteen terms it lacked (Aufruf,
+Unterlagen, freigeben, widerrufen, Gültig bis, Begrüßung, Abschnitt, Auf der Startseite, Status,
+versendet insgesamt, Antwortquote, Zeit bis zum ersten Aufruf, Erinnerung, Beworben am, the kind of an
+interest, nicht übersetzt); they were merged into it on 2026-11-20. This section keeps the places
+where glossary, code and UI disagreed and how each was settled.
 
 ### Conflicts
 
-| Term | Where | Conflict | Proposal |
+| Term | Where | Conflict | Settled (2026-11-20) |
 |---|---|---|---|
-| Profile | `Profile` (the person) and `ApplicationLink.Profile` / `AudienceProfile` | One English word for two things in one API (check 3). The German UI already separates them: "Profil" and "Zielgruppe". | Glossary: "Zielgruppe" instead of "Zielgruppen-Profil". Code rename only with a migration; question Q1. |
-| Abschnitt | `SiteSection` and the admin list of interests ("Abschnitte", `admin-strings.ts`, `interests.list`) | One German word for a start-page block and an "Über mich" entry. | Call the interests "Einträge" or "Themen" in the admin. |
-| Kenntnisbereich / Kenntnisgruppe | glossary vs. admin UI (`skills.list`) | Two German words for `SkillGroup`. | Settle on one; the UI word is the one the maintainer reads. |
-| Interesse | glossary vs. admin UI | The UI never says "Interesse"; it says "Über mich", "Abschnitt", "Thema". | Glossary follows the UI, or the UI follows the glossary. |
-| Versendet | `ApplicationStatus.Sent` vs. `ApplicationPipeline.IsSent` | The status "Versendet" is one value; "sent" in the statistics is every status after `Draft`. | Name the statistic "versendet insgesamt" in the glossary; no code change. |
-| Pdf | `Domains/Pdf/` | The folder names the file format, not the domain object; the code inside says `CvService`, `CvModel`, `CvDocument`. | `Domains/Cv/`; engineering item in `docs/open-items.md`. |
+| Profile | `Profile` (the person) and `ApplicationLink.Profile` / `AudienceProfile` | One English word for two things in one API (check 3). The German UI already separated them: "Profil" and "Zielgruppe". | Renamed to `ApplicationLink.Audience` (column rename migration, admin field `audience`); glossary "Zielgruppe" (Q1). |
+| Abschnitt | `SiteSection` and the admin list of interests ("Abschnitte", `admin-strings.ts`, `interests.list`) | One German word for a start-page block and an "Über mich" entry. | The admin calls the entries "Interessen"; "Abschnitt" means only a start-page section. |
+| Kenntnisbereich / Kenntnisgruppe | glossary vs. admin UI (`skills.list`) | Two German words for `SkillGroup`. | "Kenntnisbereich" everywhere. |
+| Interesse | glossary vs. admin UI | The UI never said "Interesse"; it said "Über mich", "Abschnitt", "Thema". | The UI follows the glossary: "Interesse"; the kind of an interest is its "Art". |
+| Versendet | `ApplicationStatus.Sent` vs. `ApplicationPipeline.IsSent` | The status "Versendet" is one value; "sent" in the statistics is every status after `Draft`. | The glossary names the statistic "versendet insgesamt"; no code change. |
+| Pdf | `Domains/Pdf/` | The folder names the file format, not the domain object; the code inside says `CvService`, `CvModel`, `CvDocument`. | Open: `Domains/Cv/`, engineering item in `docs/open-items.md`. |
 | Company | `Experience.Company`, `Application.Company` | Same word, two roles (former employer, prospective employer). | Fine: different contexts (section 5). |
 
 ## 3. Bounded contexts
@@ -98,9 +80,8 @@ Why the cuts are where they are (source: agent, unreviewed, from the evidence na
   interests have the same actors (the maintainer writes, the visitor reads), the same lifecycle
   (edit in place, German required, English optional, field fallback) and the same rules (visibility,
   "since year, never a level", HR-first order). The folders are modules cut by work object, which is
-  check 1's red flag for a context but fine for a module. This contradicts `docs/decisions.md`
-  ("Bounded contexts are domain folders") and `docs/architecture.md` ("Backend layout", which calls
-  them domains); question Q2.
+  check 1's red flag for a context but fine for a module. `docs/decisions.md` ("DDD-light") and
+  `docs/architecture.md` ("Backend layout") say so since 2026-11-20 (Q2).
 - **Applying is its own context.** Different actor (the recipient, anonymous but holding a
   capability), different lifecycle (links expire and are revoked, events only grow), different legal
   role (`Notes` and the statistics never leave the admin, `docs/security-and-privacy.md`). It stays
@@ -113,9 +94,9 @@ Why the cuts are where they are (source: agent, unreviewed, from the evidence na
 - **Filing documents is separate.** Different lifecycle (immutable content, upload and delete),
   different legal role (certificates and cover letters carry third-party data and are never public,
   `Document.ChangeVisibility`), different storage (files on a volume).
-- **Not a context**: the working-mode section ("Arbeitsweise"). Its text lives in the web's i18n
-  files (`SuracDev.Web/src/app/core/i18n/ui-strings.ts`, `workingMode`), not in the content model;
-  question Q6.
+- **Not a context**: the working-mode section ("Arbeitsweise"). It is a start-page section of
+  Presenting the portfolio; since 2026-11-20 its text is `WorkingMode` on the profile, edited in the
+  admin like the intro (Q6).
 
 ## 4. Context map
 
@@ -175,7 +156,7 @@ today's code; section 6 lists them.
 | | Publishing the legal pages | the service provider named in the Impressum | name and address taken from `Profile` |
 | | Signing in the maintainer | the admin | `AdminUser` |
 | A reader | Presenting the portfolio | visitor (anonymous) | no entity |
-| | Applying | recipient of one link, filed under an audience | `AudienceProfile` (never told to the recipient) |
+| | Applying | recipient of one link, filed under an audience | `ApplicationLink.Audience` (never told to the recipient) |
 | | Rendering the CV | ATS parser or printer | no entity |
 | | Observing use and operation | a page view with a shortened address | usage event in Seq |
 | A company | Presenting the portfolio | former employer | `Experience.Company` |
@@ -188,69 +169,61 @@ today's code; section 6 lists them.
 
 | # | Check | Result |
 |---|---|---|
-| 1 | Cut by behaviour, not by data | failed first: the code calls its five content folders contexts. Fixed in this file by one context "Presenting the portfolio"; the folders stay modules (Q2). |
+| 1 | Cut by behaviour, not by data | failed first: the code called its five content folders contexts. Fixed by one context "Presenting the portfolio"; the folders are modules (Q2, decided). |
 | 2 | The name says what happens there | `Domains/Pdf` names a file format; proposal `Cv` (open item). `Identity` promises more than one admin login; kept as the generic name. |
-| 3 | A word means one thing inside a context | failed: "Profile" (person / audience) and "Abschnitt" (start-page block / interest entry); section 2. |
+| 3 | A word means one thing inside a context | failed first: "Profile" (person / audience) and "Abschnitt" (start-page block / interest entry). Fixed on 2026-11-20 (`ApplicationLink.Audience`, "Interessen" in the admin); section 2. |
 | 4 | One concept in several contexts has a role name in each | ok: section 5. The UI already says "Unterlagen" for documents in the application context. |
 | 5 | Names use the experts' verbs | ok, apart from the drifts in section 2. |
 | 6 | A name promises only what exists | ok. `UnlockFullPdf` unlocks exactly the full CV. |
 | 7 | Odd terms checked against published language | kept: ATS, Impressum, Datenschutzerklärung, capability URL. |
-| 8 | One expert word for two lifecycles is asked about, not split | asked: one `Document` serves public site images and link-only certificates (Q5). Not split. |
+| 8 | One expert word for two lifecycles is asked about, not split | asked: one `Document` serves public site images and link-only certificates. Stays one concept (Q5, decided). |
 | 9 | The cut has evidence | ok: section 3 names it per boundary. |
 | 10 | Each context has a type and a persistence style with a reason | ok: two core, two supporting, three generic; one ledger (`LinkEvent`), nothing event-sourced, because no decision depends on the history. |
-| 11 | No cycle, no shared model by accident | exception: `DocumentService` reads the tables of the contexts it supplies (`Profiles`, `Projects`, `Interests` in `IsShownPubliclyAsync`; `ApplicationLinks` in `DeleteAsync` and `OpenAttachedAsync`), so Filing documents and its two customers know each other. The shared `SuracDevDbContext` is deliberate (`docs/decisions.md`, "DDD-light"); the back-reference is a question (Q7). |
+| 11 | No cycle, no shared model by accident | exception: `DocumentService` reads the tables of the contexts it supplies (`Profiles`, `Projects`, `Interests` in `IsShownPubliclyAsync`; `ApplicationLinks` in `UpdateAsync`, `DeleteAsync` and `OpenAttachedAsync`), so Filing documents and its two customers know each other. The shared `SuracDevDbContext` is deliberate (`docs/decisions.md`, "DDD-light"); the back-reference is a deliberate exception (Q7, decided). |
 | 12 | First-pass names re-checked after the cut changed | ok. |
 
 All other checks passed.
 
-## 7. Decisions and open questions
+## 7. Decisions
 
 | # | Question | Decision | Source |
 |---|---|---|---|
 | D1 | Which language does the domain story use? | English with the German UI words, like the other docs | `AGENTS.md`, "Code style" |
-| D2 | Is the start page's working-mode text content? | treated as UI text, as built | `SuracDev.Web/src/app/core/i18n/ui-strings.ts` |
+| D2 | Is the start page's working-mode text content? | ~~treated as UI text, as built~~ content of the profile since 2026-11-20 (Q6) | maintainer, 2026-11-20 |
 | D3 | Recipient access and the maintainer's tracking: one context or two? | one context, two entry points | agent, unreviewed (section 3) |
 | D4 | Is the CV its own context? | yes, supporting, without data | `Domains/Pdf`, `docs/decisions.md` (Phase 1) |
 | D5 | Persistence of link events | append-only ledger, not event-sourced | `LinkEvent.cs`, `docs/decisions.md` (Architecture) |
 | D6 | Which contexts are core? | presenting the portfolio and applying | agent, unreviewed |
 | D7 | Shared `DbContext` and `Shared/Application` | shared kernel on purpose | `docs/decisions.md`, "DDD-light" |
 
-### Open questions
+### Questions of the first pass (decided 2026-11-20)
 
-Nobody has answered these yet; the maintainer can. The ones that need a change are also in
-`docs/open-items.md`.
+The maintainer answered all of them on 2026-11-20; the reasons are in `docs/decisions.md` ("Domain
+review").
 
-- **Q1 — "Profile" twice.** `ApplicationLink.Profile` (column, admin DTO field `profile`) holds an
-  `AudienceProfile`, next to the `Profile` entity. Today the admin UI says "Zielgruppe" and nothing
-  breaks. Options: (a) accept and only fix the glossary (no cost); (b) rename the property and DTO
-  field to `Audience` (an EF migration renaming a column, a breaking change of the admin client).
-  Recommendation: (a).
-- **Q2 — What is a bounded context here?** `docs/decisions.md` says "Bounded contexts are domain
-  folders"; this file cuts by behaviour and finds seven contexts over eleven folders. Options:
-  (a) reword that line to "domain folders are modules; the contexts are in `docs/domain.md`" (one
-  sentence); (b) keep the folder-equals-context reading and drop section 3 of this file.
-  Recommendation: (a).
-- **Q3 — Sent without a date.** `Application.Update` accepts `Sent` (and every later status) with
-  `AppliedOn` empty, although the admin hint says the date stays empty only for drafts.
-  `ApplicationReminder.Due` silently skips such an application, so it is never reminded. Options:
-  (a) require `AppliedOn` for every status after `Draft` (domain rule plus a test; existing rows
-  without a date must be fixed by hand first); (b) keep it and remind from `CreatedAt` instead;
-  (c) accept. Recommendation: (a).
-- **Q4 — Reviving an expired link.** Revoking is final (`docs/decisions.md`, Phase 2), but an expired
-  link can be brought back by moving `ExpiresAt` into the future (`ApplicationLink.Update`). Is that
-  wanted, or should expiry be final like revoking?
-- **Q5 — One `Document`, two lifecycles.** A public image (site, alt text, must stay public while
-  shown) and a link-only certificate (third-party data, never public) share one entity, one table and
-  one admin list. The rules hold today (`Document.ChangeVisibility`, `DocumentService.UpdateAsync`).
-  Should they stay one concept, or are "Bild" and "Unterlage" two things to the maintainer?
-- **Q6 — Working mode as content.** The "Arbeitsweise" text is UI text in the web bundle, so changing
-  it needs a release, while every other start-page section is edited in the admin. Deliberate?
+- **Q1 — "Profile" twice.** `ApplicationLink.Profile` (column, admin DTO field `profile`) held an
+  `AudienceProfile`, next to the `Profile` entity. Options: (a) accept and only fix the glossary;
+  (b) rename the property and DTO field to `Audience` (an EF migration renaming a column, a breaking
+  change of the admin client). **Decided: (b)**, `ApplicationLink.Audience`, migration
+  `RenameLinkProfileToAudience`.
+- **Q2 — What is a bounded context here?** `docs/decisions.md` said "Bounded contexts are domain
+  folders"; this file cuts by behaviour and finds seven contexts over eleven folders. **Decided:**
+  "Domain folders are modules; the bounded contexts are in `docs/domain.md`."
+- **Q3 — Sent without a date.** `Application.Update` accepted `Sent` (and every later status) with
+  `AppliedOn` empty, and `ApplicationReminder.Due` silently skipped such an application. **Decided:**
+  every status after `Draft` requires `AppliedOn` (400, keyed `appliedOn`). Existing rows are not
+  migrated; the rule applies on the next save. Production had no such row on 2026-11-20.
+- **Q4 — Reviving an expired link.** Revoking is final, but an expired link can be brought back by
+  moving `ExpiresAt` into the future (`ApplicationLink.Update`). **Decided:** reviving stays allowed;
+  expiry is a timer, revoking is the way to close a link for good.
+- **Q5 — One `Document`, two lifecycles.** A public image and a link-only certificate share one entity,
+  one table and one admin list. **Decided:** one concept; the visibility rules keep them apart.
+- **Q6 — Working mode as content.** The "Arbeitsweise" text was UI text in the web bundle.
+  **Decided:** it is content: `WorkingMode` on the profile translations, edited in the admin; the
+  migration `AddProfileWorkingMode` carried the former text over, so the page did not change.
 - **Q7 — Back-references from documents.** `DocumentService` checks the profile, projects, interests
-  and links before a visibility change or delete, which gives precise messages but makes Filing
-  documents know all its customers. Options: (a) accept and document as a deliberate exception;
-  (b) let the foreign keys refuse the delete (`GlobalExceptionHandler` already maps them to 409)
-  and keep only the visibility check. Recommendation: (a).
-- **Q8 — Document attached, then made public.** `ApplicationLink.AttachDocuments` accepts only
-  link-only documents, but `DocumentService.UpdateAsync` lets an attached document that is neither a
-  certificate nor a cover letter become public afterwards, so a link can carry a public document. Harmless for privacy (the file is
-  public anyway); is the rule "a link only carries link-only documents" meant as an invariant?
+  and links before a visibility change or delete. **Decided:** kept as a deliberate exception for the
+  precise messages.
+- **Q8 — Document attached, then made public.** `DocumentService.UpdateAsync` let an attached document
+  become public afterwards. **Decided:** "a link only carries link-only documents" is an invariant;
+  making an attached document public answers 409.
