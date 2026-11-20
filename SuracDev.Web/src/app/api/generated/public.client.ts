@@ -1851,7 +1851,7 @@ export interface PublicEducation {
 export interface PublicApplicationLink {
   /** The greeting in the requested locale or German, or null. */
   greeting?: string | undefined;
-  /** The start-page sections in the order of the link's profile. */
+  /** The start-page sections in the order of the link's audience. */
   sections?: SiteSection[];
   /** Whether cv.pdf of this link is the full variant with phone and street address. */
   fullCv?: boolean;

@@ -1515,7 +1515,7 @@
           },
           "sections": {
             "type": "array",
-            "description": "The start-page sections in the order of the link's profile.",
+            "description": "The start-page sections in the order of the link's audience.",
             "items": {
               "$ref": "#/components/schemas/SiteSection"
             }

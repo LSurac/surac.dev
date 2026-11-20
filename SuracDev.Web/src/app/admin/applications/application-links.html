@@ -48,14 +48,14 @@
       <h3 class="editor__section">{{ editing() === 'new' ? text.formNew : text.formEdit }}</h3>
       <div class="editor__grid">
         <ui-field
-          [label]="text.profile"
-          controlId="link-profile"
-          [hint]="text.profileHint"
-          [errors]="errorsFor('profile')"
+          [label]="text.audience"
+          controlId="link-audience"
+          [hint]="text.audienceHint"
+          [errors]="errorsFor('audience')"
         >
-          <select id="link-profile" formControlName="profile">
-            @for (profile of profiles; track profile) {
-              <option [value]="profile">{{ text.profiles[profile] }}</option>
+          <select id="link-audience" formControlName="audience">
+            @for (audience of audiences; track audience) {
+              <option [value]="audience">{{ text.audiences[audience] }}</option>
             }
           </select>
         </ui-field>

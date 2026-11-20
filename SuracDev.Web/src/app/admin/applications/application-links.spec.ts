@@ -12,7 +12,7 @@ import { ApplicationLinks } from './application-links';
 const active: AdminApplicationLink = {
   id: 10,
   applicationId: 1,
-  profile: 'Recruiter',
+  audience: 'Recruiter',
   greetingDe: 'Für das Team Backend',
   greetingEn: undefined,
   expiresAt: '2027-02-06T12:00:00Z',
@@ -26,7 +26,7 @@ const active: AdminApplicationLink = {
 const revoked: AdminApplicationLink = {
   ...active,
   id: 11,
-  profile: 'TechLead',
+  audience: 'TechLead',
   isRevoked: true,
   isActive: false,
   unlockFullPdf: false,
@@ -90,7 +90,7 @@ describe('admin application links', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Link erzeugen' }));
 
     expect(links.create).toHaveBeenCalledWith(1, {
-      profile: 'TechLead',
+      audience: 'TechLead',
       greetingDe: 'Hallo Team',
       greetingEn: undefined,
       expiresAt: undefined,
@@ -132,7 +132,7 @@ describe('admin application links', () => {
     expect(links.update).toHaveBeenCalledWith(
       1,
       10,
-      expect.objectContaining({ profile: 'Recruiter', unlockFullPdf: true, documentIds: [5] }),
+      expect.objectContaining({ audience: 'Recruiter', unlockFullPdf: true, documentIds: [5] }),
     );
   });
 

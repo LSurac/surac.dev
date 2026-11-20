@@ -1,7 +1,7 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
 
 /**
- * Flows 3 and 4 (docs/testing.md): an application link opens with its profile and greeting and
+ * Flows 3 and 4 (docs/testing.md): an application link opens with its audience and greeting and
  * unlocks its documents; a revoked or unknown link answers 404 in both locales. The application,
  * the document and the links are created through the admin API, as the admin UI would.
  */
@@ -47,7 +47,7 @@ async function createLink(
 ): Promise<CreatedLink> {
   const response = await request.post(`/api/admin/applications/${applicationId}/links`, {
     data: {
-      profile: 'TechLead',
+      audience: 'TechLead',
       greetingDe: 'Für das Team Backend der Beispiel AG',
       greetingEn: 'For the backend team at Beispiel AG',
       unlockFullPdf: true,

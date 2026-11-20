@@ -2082,7 +2082,7 @@
             }
           },
           "400": {
-            "description": "A setting breaks a rule (profile, expiresAt, greetingDe,\n            documentIds).",
+            "description": "A setting breaks a rule (audience, expiresAt, greetingDe,\n            documentIds).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3902,7 +3902,7 @@
             "description": "The application the link belongs to.",
             "format": "int64"
           },
-          "profile": {
+          "audience": {
             "description": "The audience the link is made for.",
             "oneOf": [
               {
@@ -3992,7 +3992,7 @@
         "description": "The settings of an application link, for POST and PUT.",
         "additionalProperties": false,
         "properties": {
-          "profile": {
+          "audience": {
             "description": "The audience the link is made for; decides the section order.",
             "oneOf": [
               {

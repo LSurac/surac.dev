@@ -4209,7 +4209,7 @@ export class AdminApplicationLinksClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
           return throwException(
-            'A setting breaks a rule (profile, expiresAt, greetingDe,\n            documentIds).',
+            'A setting breaks a rule (audience, expiresAt, greetingDe,\n            documentIds).',
             status,
             _responseText,
             _headers,
@@ -5659,7 +5659,7 @@ export interface AdminApplicationLink {
   /** The application the link belongs to. */
   applicationId?: number;
   /** The audience the link is made for. */
-  profile?: AudienceProfile;
+  audience?: AudienceProfile;
   /** German greeting, if any. */
   greetingDe?: string | undefined;
   /** English greeting, if any. */
@@ -5692,7 +5692,7 @@ export interface CreatedApplicationLink {
 /** The settings of an application link, for POST and PUT. */
 export interface ApplicationLinkForm {
   /** The audience the link is made for; decides the section order. */
-  profile?: AudienceProfile;
+  audience?: AudienceProfile;
   /** Optional one-line German greeting. */
   greetingDe?: string | undefined;
   /** Optional one-line English greeting; the German one is used when empty. */

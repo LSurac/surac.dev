@@ -15,7 +15,7 @@ import { UiField } from '../../ui/field/field';
 import { adminStrings } from '../admin-strings';
 import { SaveProblem, toProblem } from '../forms/problem';
 
-type KnownProfile = Exclude<AudienceProfile, 'Unknown'>;
+type KnownAudience = Exclude<AudienceProfile, 'Unknown'>;
 type Editing = number | 'new' | null;
 
 /** A link prepared for the list: one summary line and whether it can still be changed. */
@@ -32,7 +32,7 @@ interface CreatedAddresses {
 }
 
 const NO_PROBLEM: SaveProblem = { status: null, messages: [], fieldErrors: {} };
-const PROFILES = Object.keys(adminStrings.links.profiles) as KnownProfile[];
+const AUDIENCES = Object.keys(adminStrings.links.audiences) as KnownAudience[];
 const DATE_FORMAT = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
 /**
@@ -56,7 +56,7 @@ export class ApplicationLinks {
 
   protected readonly strings = adminStrings;
   protected readonly text = adminStrings.links;
-  protected readonly profiles = PROFILES;
+  protected readonly audiences = AUDIENCES;
   protected readonly editing = signal<Editing>(null);
   protected readonly attached = signal<readonly number[]>([]);
   protected readonly created = signal<CreatedAddresses | null>(null);
@@ -84,7 +84,7 @@ export class ApplicationLinks {
   );
 
   protected readonly form = this.fb.group({
-    profile: 'Recruiter' as KnownProfile,
+    audience: 'Recruiter' as KnownAudience,
     greetingDe: '',
     greetingEn: '',
     expiresAt: '',
@@ -120,7 +120,7 @@ export class ApplicationLinks {
 
     this.resetMessages();
     this.form.setValue({
-      profile: (link.profile as KnownProfile | undefined) ?? 'Recruiter',
+      audience: (link.audience as KnownAudience | undefined) ?? 'Recruiter',
       greetingDe: link.greetingDe ?? '',
       greetingEn: link.greetingEn ?? '',
       expiresAt: link.expiresAt ? toDateInput(link.expiresAt) : '',
@@ -186,7 +186,7 @@ export class ApplicationLinks {
   private toForm(): ApplicationLinkForm {
     const value = this.form.getRawValue();
     return {
-      profile: value.profile,
+      audience: value.audience,
       greetingDe: value.greetingDe || undefined,
       greetingEn: value.greetingEn || undefined,
       expiresAt: value.expiresAt ? endOfDay(value.expiresAt) : undefined,
@@ -198,13 +198,13 @@ export class ApplicationLinks {
 
 function summarize(link: AdminApplicationLink): string {
   const text = adminStrings.links;
-  const profile = text.profiles[link.profile as KnownProfile] ?? '';
+  const audience = text.audiences[link.audience as KnownAudience] ?? '';
   if (link.isRevoked) {
-    return `${profile} · ${text.states.revoked}`;
+    return `${audience} · ${text.states.revoked}`;
   }
 
   const parts = [
-    profile,
+    audience,
     link.isActive ? text.states.active : text.states.expired,
     `${text.until} ${DATE_FORMAT.format(new Date(link.expiresAt ?? ''))}`,
   ];
