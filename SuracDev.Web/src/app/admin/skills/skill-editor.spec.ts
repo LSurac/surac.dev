@@ -35,7 +35,7 @@ function client(overrides: Partial<Record<'create' | 'update' | 'delete', Return
 
 async function renderEditor(groups = client()) {
   await render(SkillEditor, { providers: [{ provide: AdminSkillGroupsClient, useValue: groups }] });
-  await screen.findByRole('list', { name: 'Kenntnisgruppen' });
+  await screen.findByRole('list', { name: 'Kenntnisbereiche' });
   return groups;
 }
 
@@ -75,7 +75,7 @@ describe('admin skill editor', () => {
   it('creates a new group with a skill and selects it', async () => {
     const groups = await renderEditor();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Neue Gruppe' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Neuer Kenntnisbereich' }));
     const german = screen.getByRole('group', { name: 'Deutsch' });
     await userEvent.type(within(german).getByLabelText('Name'), 'Werkzeuge');
     await userEvent.click(screen.getByRole('button', { name: 'Kenntnis hinzufügen' }));

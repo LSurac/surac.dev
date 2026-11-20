@@ -59,7 +59,7 @@ async function renderEditor() {
       { provide: AdminDocumentsClient, useValue: { list: vi.fn(() => of([board, certificate])) } },
     ],
   });
-  await screen.findByRole('list', { name: 'Abschnitte' });
+  await screen.findByRole('list', { name: 'Interessen' });
   return interests;
 }
 
@@ -76,7 +76,7 @@ describe('admin interest editor', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /^Schach/ }));
 
-    expect(screen.getByLabelText('Thema')).toHaveDisplayValue('Schach');
+    expect(screen.getByLabelText('Art')).toHaveDisplayValue('Schach');
     expect(screen.getByLabelText('Bild')).toHaveDisplayValue('Schachbrett (brett.webp)');
     expect(
       within(screen.getByRole('group', { name: 'Deutsch' })).getByLabelText('Text (Markdown)'),
@@ -89,7 +89,7 @@ describe('admin interest editor', () => {
   it('offers only public images', async () => {
     await renderEditor();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Neuer Abschnitt' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Neues Interesse' }));
 
     const options = within(screen.getByLabelText('Bild')).getAllByRole('option');
     expect(options.map((option) => option.textContent?.trim())).toEqual([
@@ -101,8 +101,8 @@ describe('admin interest editor', () => {
   it('creates a section with topic, image and texts', async () => {
     const interests = await renderEditor();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Neuer Abschnitt' }));
-    await userEvent.selectOptions(screen.getByLabelText('Thema'), 'Homelab');
+    await userEvent.click(screen.getByRole('button', { name: 'Neues Interesse' }));
+    await userEvent.selectOptions(screen.getByLabelText('Art'), 'Homelab');
     await userEvent.selectOptions(screen.getByLabelText('Bild'), 'Schachbrett (brett.webp)');
     await userEvent.type(
       within(screen.getByRole('group', { name: 'Deutsch' })).getByLabelText('Titel'),
