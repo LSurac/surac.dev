@@ -2787,7 +2787,7 @@ export class AdminDocumentsClient {
               ? null
               : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
           return throwException(
-            'The document is shown on the open site and would become link-only.',
+            'The document is shown on the open site and would become link-only, or it is attached\n            to an application link and would become public.',
             status,
             _responseText,
             _headers,
