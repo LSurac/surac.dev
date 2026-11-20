@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SuracDev.Api.Domains.Documents.Contracts;
 using SuracDev.Api.Domains.Documents.Domain;
 using SuracDev.Api.Domains.Profiles.Contracts;
+using SuracDev.Api.Tests.Domains.Applications;
 using SuracDev.Api.Tests.Shared;
 
 namespace SuracDev.Api.Tests.Domains.Documents;
@@ -136,6 +137,35 @@ public sealed class DocumentEndpointTests(PostgresFixture postgres)
     Assert.Equal(HttpStatusCode.NoContent, deleted.StatusCode);
     Assert.Equal(HttpStatusCode.NotFound, gone.StatusCode);
     Assert.Single(Directory.EnumerateFiles(factory.DocumentsPath, "*", SearchOption.AllDirectories));
+  }
+
+  [PostgresFact]
+  public async Task A_document_attached_to_a_link_cannot_be_made_public()
+  {
+    await using var factory = new ApiFactory(await postgres.CreateDatabaseAsync());
+    using var admin = await factory.CreateLoggedInClientAsync();
+    var attached = await factory.AddDocumentAsync(DocumentKind.Other, DocumentVisibility.LinkOnly);
+    var spare = await factory.AddDocumentAsync(DocumentKind.Other, DocumentVisibility.LinkOnly);
+    var applicationId = await ApplicationEndpointTests.CreateApplicationAsync(admin);
+    await ApplicationEndpointTests.CreateLinkAsync(
+      admin, applicationId, ApplicationEndpointTests.NewLink with { DocumentIds = [attached] });
+
+    var refused = await admin.PutAsJsonAsync(
+      $"/api/admin/documents/{attached}",
+      new DocumentUpdateForm(DocumentVisibility.Public, "Urkunde", null),
+      ApiJson.Options);
+    var problem = await refused.Content.ReadFromJsonAsync<ProblemDetails>();
+    var published = await admin.PutAsJsonAsync(
+      $"/api/admin/documents/{spare}",
+      new DocumentUpdateForm(DocumentVisibility.Public, "Urkunde", null),
+      ApiJson.Options);
+    var list = (await admin.GetFromJsonAsync<List<AdminDocument>>("/api/admin/documents", ApiJson.Options))!;
+
+    Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+    Assert.Contains("application link", problem!.Detail, StringComparison.Ordinal);
+    Assert.Equal(HttpStatusCode.NoContent, published.StatusCode);
+    Assert.Equal(DocumentVisibility.LinkOnly, list.Single(document => document.Id == attached).Visibility);
+    Assert.Equal(DocumentVisibility.Public, list.Single(document => document.Id == spare).Visibility);
   }
 
   [PostgresFact]

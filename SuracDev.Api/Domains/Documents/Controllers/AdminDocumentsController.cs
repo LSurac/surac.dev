@@ -69,8 +69,8 @@ public sealed class AdminDocumentsController(DocumentService documentService) : 
   /// <summary>Changes the labels and the visibility of a document.</summary>
   /// <remarks>
   /// The file itself never changes; upload a new document instead. A document shown on the open site
-  /// (profile photo, project or interest image) cannot be made link-only, and certificates and cover
-  /// letters can never be made public.
+  /// (profile photo, project or interest image) cannot be made link-only, a document attached to an
+  /// application link cannot be made public, and certificates and cover letters can never be made public.
   /// </remarks>
   /// <param name="id">The document's identifier.</param>
   /// <param name="form">The new visibility and labels.</param>
@@ -79,7 +79,8 @@ public sealed class AdminDocumentsController(DocumentService documentService) : 
   /// <response code="400">The visibility breaks a kind rule.</response>
   /// <response code="401">Not logged in.</response>
   /// <response code="404">No document has this id.</response>
-  /// <response code="409">The document is shown on the open site and would become link-only.</response>
+  /// <response code="409">The document is shown on the open site and would become link-only, or it is attached
+  /// to an application link and would become public.</response>
   [HttpPut("{id:long}")]
   [Produces("application/json")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]

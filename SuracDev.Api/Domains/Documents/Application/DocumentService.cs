@@ -85,11 +85,14 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
     }
   }
 
-  /// <summary>Changes labels and visibility. A document shown on the open site stays public.</summary>
+  /// <summary>
+  /// Changes labels and visibility. A document shown on the open site stays public, and a document attached
+  /// to an application link stays link-only, so a link only ever carries link-only documents.
+  /// </summary>
   /// <exception cref="DomainNotFoundException">No document has this id.</exception>
   /// <exception cref="DomainValidationException">The visibility breaks a kind rule.</exception>
   /// <exception cref="DomainConflictException">The document is in use on the open site and would become
-  /// link-only.</exception>
+  /// link-only, or it is attached to a link and would become public.</exception>
   public async Task UpdateAsync(long id, DocumentUpdateForm form, CancellationToken cancellationToken)
   {
     var document = await FindAsync(id, cancellationToken);
@@ -99,6 +102,14 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
     {
       throw new DomainConflictException(
         "The document is shown on the open site (profile photo, project or interest image).");
+    }
+
+    if (form.Visibility == DocumentVisibility.Public
+      && !document.IsPublic
+      && await IsAttachedToLinkAsync(id, cancellationToken))
+    {
+      throw new DomainConflictException(
+        "The document is attached to an application link; remove it from the link before making it public.");
     }
 
     document.ChangeVisibility(form.Visibility);
@@ -113,10 +124,7 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
   public async Task DeleteAsync(long id, CancellationToken cancellationToken)
   {
     var document = await FindAsync(id, cancellationToken);
-    var attachedToLink = await dbContext.ApplicationLinks
-      .SelectMany(link => link.Documents)
-      .AnyAsync(attached => attached.DocumentId == id, cancellationToken);
-    if (attachedToLink || await IsShownPubliclyAsync(id, cancellationToken))
+    if (await IsAttachedToLinkAsync(id, cancellationToken) || await IsShownPubliclyAsync(id, cancellationToken))
     {
       throw new DomainConflictException(
         "The document is still in use; remove it from the profile, projects, interests and links first.");
@@ -170,6 +178,11 @@ public sealed class DocumentService(SuracDevDbContext dbContext, DocumentStorage
     => await dbContext.Documents.Include(document => document.Translations)
       .SingleOrDefaultAsync(document => document.Id == id, cancellationToken)
       ?? throw new DomainNotFoundException($"Document {id} does not exist.");
+
+  private async Task<bool> IsAttachedToLinkAsync(long id, CancellationToken cancellationToken)
+    => await dbContext.ApplicationLinks
+      .SelectMany(link => link.Documents)
+      .AnyAsync(attached => attached.DocumentId == id, cancellationToken);
 
   private async Task<bool> IsShownPubliclyAsync(long id, CancellationToken cancellationToken)
     => await dbContext.Profiles.AnyAsync(profile => profile.PhotoDocumentId == id, cancellationToken)
