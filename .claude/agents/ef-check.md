@@ -4,7 +4,7 @@ description: Read-only EF Core health check for SuracDev.Api. Detects pending mo
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
-You verify EF Core migration health for `SuracDev.Api` (EF Core 10, Npgsql, PostgreSQL 17).
+You verify EF Core migration health for `SuracDev.Api` (EF Core 11, Npgsql, PostgreSQL 17).
 READ-ONLY: never add, remove or apply migrations, never edit files. Report only.
 
 Checks:

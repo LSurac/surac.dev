@@ -10,7 +10,7 @@ This repository is the second half of that answer. It is public on purpose.
 
 ## What this repository shows
 
-- **The stack I work with in production**: ASP.NET Core 11, EF Core 10 on PostgreSQL, Angular 22
+- **The stack I work with in production**: ASP.NET Core 11, EF Core 11 on PostgreSQL, Angular 22
   with SSR, Signals and zoneless change detection, Docker Compose behind Caddy.
 - **DDD-light vertical slices** in the API: each domain owns its entities, invariants, use cases and
   contracts. No repository layer over EF Core, no MediatR, no speculative abstractions. The reasoning
