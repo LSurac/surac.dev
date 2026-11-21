@@ -87,7 +87,7 @@ services:
 
   surac-dev-db:
     <<: *hardening
-    image: postgres:17-alpine
+    image: postgres:19-alpine
     container_name: surac-dev-db
     profiles: [prod]
     logging: *default-logging
@@ -104,8 +104,11 @@ services:
       POSTGRES_DB: suracdev
       POSTGRES_USER: suracdev
       POSTGRES_PASSWORD: '${SURACDEV_DB_PASSWORD}'
+    # Since PostgreSQL 18 the image keeps PGDATA in /var/lib/postgresql/<major>/docker and refuses a mount
+    # at /var/lib/postgresql/data. A major upgrade gets a new volume, filled by dump and restore; the old
+    # one stays on the host as the rollback until it is deleted by hand (docs/open-items.md).
     volumes:
-      - surac-dev-pgdata:/var/lib/postgresql/data
+      - surac-dev-pg19data:/var/lib/postgresql
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U suracdev -d suracdev']
       interval: 10s
@@ -115,4 +118,4 @@ services:
 volumes:
   surac-dev-dpkeys:
   surac-dev-documents:
-  surac-dev-pgdata:
+  surac-dev-pg19data:

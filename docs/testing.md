@@ -8,7 +8,7 @@ what kinds of tests exist, what each is for, how they are named, and what the CI
 | Level | Tool | Scope | Database | Speed |
 |---|---|---|---|---|
 | Domain unit | xUnit | entities, value objects, audience section order, PDF document model | none | ms |
-| API integration | xUnit + `WebApplicationFactory` + Testcontainers | one HTTP request through the real pipeline: routing, auth, validation, EF, ProblemDetails | real PostgreSQL 17 per test (template copy) | 10–100 ms per test after container start |
+| API integration | xUnit + `WebApplicationFactory` + Testcontainers | one HTTP request through the real pipeline: routing, auth, validation, EF, ProblemDetails | real PostgreSQL 19 per test (template copy) | 10–100 ms per test after container start |
 | UI component | Vitest + Angular Testing Library | one `ui/` or feature component as a user sees it | none, API mocked at the client boundary | ms |
 | End-to-end | Playwright | the four critical flows against the running stack | throwaway PostgreSQL | seconds |
 

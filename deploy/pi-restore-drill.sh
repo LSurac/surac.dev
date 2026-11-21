@@ -4,7 +4,7 @@
 # backup. It takes the NEWEST file of each kind, never touches the production host or the homelab's own databases,
 # and reports by ntfy (success at normal priority, any failure at high):
 #   1. Freshness: the dump is younger than 48 h.
-#   2. Database: restores the dump into a throwaway postgres:17-alpine container (data in tmpfs, no published port,
+#   2. Database: restores the dump into a throwaway postgres:19-alpine container (data in tmpfs, no published port,
 #      removed on exit) and compares, for every table in the dump, the restored row count with the rows in the dump's
 #      own COPY block. A restore that "succeeds" but skips data fails here.
 #   3. Files: extracts the newest documents archive into a scratch directory and compares the extracted file count
@@ -16,7 +16,7 @@
 set -euo pipefail
 
 SRC="/opt/backups/homelab/surac-dev-prod"
-IMAGE="postgres:17-alpine"
+IMAGE="postgres:19-alpine"
 CONTAINER="surac-dev-restore-drill"
 DB_USER="suracdev"
 DB_NAME="suracdev"
@@ -57,7 +57,9 @@ documents="$(newest 'documents/documents-*.tar.gz')"
 # --- database ---
 password="$(head -c 24 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
 docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
-docker run -d --name "$CONTAINER" --memory 384m --tmpfs /var/lib/postgresql/data \
+# Since PostgreSQL 18 the image keeps PGDATA below /var/lib/postgresql/<major>/ and refuses to start with a mount
+# at /var/lib/postgresql/data.
+docker run -d --name "$CONTAINER" --memory 384m --tmpfs /var/lib/postgresql \
 	-e POSTGRES_DB="$DB_NAME" -e POSTGRES_USER="$DB_USER" -e POSTGRES_PASSWORD="$password" \
 	"$IMAGE" >/dev/null
 

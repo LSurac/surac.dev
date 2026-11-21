@@ -18,7 +18,7 @@ public sealed class PostgresFixture : IAsyncLifetime
 
   // One database per test, each with its own Npgsql pool that stays open until the run ends; the
   // default of 100 connections ran out once the usage-event tests joined (2026-11-09).
-  private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:17-alpine")
+  private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:19-alpine")
     .WithCommand("-c", "max_connections=400")
     .Build();
 
