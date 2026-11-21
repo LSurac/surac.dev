@@ -13,7 +13,7 @@ Exact commands. Run from the repository root unless stated otherwise.
 ## Local database
 
 ```powershell
-docker run -d --name surac-dev-postgres -e POSTGRES_USER=suracdev -e POSTGRES_PASSWORD=suracdev -e POSTGRES_DB=suracdev -p 5432:5432 postgres:17-alpine
+docker run -d --name surac-dev-postgres -e POSTGRES_USER=suracdev -e POSTGRES_PASSWORD=suracdev -e POSTGRES_DB=suracdev -p 5432:5432 postgres:19-alpine
 $env:ConnectionStrings__Default = "Host=localhost;Port=5432;Database=suracdev;Username=suracdev;Password=suracdev"
 ```
 

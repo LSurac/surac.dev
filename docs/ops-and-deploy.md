@@ -99,7 +99,7 @@ A restore drill runs monthly, `deploy/pi-restore-drill.sh`: it restores the newe
 throwaway PostgreSQL without network, compares every table's row count with the dump's own data
 and checks the documents archive. Both scripts install on the homelab side, not on production.
 The procedure was rehearsed on staging on 2026-11-08: the nightly dump restored into a throwaway
-`postgres:17-alpine` container without network and matched the live row counts.
+`postgres:17-alpine` container (the drill's image then) without network and matched the live row counts.
 
 ## Monitoring
 

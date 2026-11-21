@@ -21,7 +21,7 @@ function Invoke-Native {
 }
 
 docker rm -f $containerName 2>$null | Out-Null
-Invoke-Native "docker" @("run", "-d", "--name", $containerName, "-e", "POSTGRES_USER=e2e", "-e", "POSTGRES_PASSWORD=e2e", "-e", "POSTGRES_DB=suracdev_e2e", "-p", "${port}:5432", "postgres:17-alpine")
+Invoke-Native "docker" @("run", "-d", "--name", $containerName, "-e", "POSTGRES_USER=e2e", "-e", "POSTGRES_PASSWORD=e2e", "-e", "POSTGRES_DB=suracdev_e2e", "-p", "${port}:5432", "postgres:19-alpine")
 
 try {
   $deadline = (Get-Date).AddSeconds(60)
