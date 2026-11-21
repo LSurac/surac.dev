@@ -9,7 +9,7 @@
 # Needs:   /root/.ssh/surac-dev-prod-pull_ed25519 - a key of its own that the production host restricts to read-only
 #          access to /opt/surac-dev-backups/ (rrsync -ro), never the deploy key: the deploy user is in the docker group and
 #          therefore root-equivalent on production. Plus the host in /root/.ssh/known_hosts.
-# Cron:    via pi-dev-center-reporting-job (job key pi-surac-dev-prod-pull) at 05:00. The production backup runs at 03:33;
+# Cron:    via overwatch-reporting-job (job key pi-surac-dev-prod-pull) at 05:00. The production backup runs at 03:33;
 #          the homelab offsite sync at 05:30.
 set -euo pipefail
 

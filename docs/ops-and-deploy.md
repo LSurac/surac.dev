@@ -153,7 +153,7 @@ check, config backup and update jobs pick it up automatically. The database `sur
 role is created once by hand on the shared instance and is dumped by the homelab's nightly database
 backup like every other database there. The two named volumes (uploaded documents, Data Protection
 keys) are not bind mounts, so the homelab's config backup and rebuild export name them explicitly;
-a new volume in `compose.yaml` has to be added there too. The homelab's Pi Dev Center journal
+a new volume in `compose.yaml` has to be added there too. The homelab's Overwatch journal
 receives a deployment event from the staging workflow.
 
 ## Runbook pointers
