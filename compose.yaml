@@ -106,7 +106,7 @@ services:
       POSTGRES_PASSWORD: '${SURACDEV_DB_PASSWORD}'
     # Since PostgreSQL 18 the image keeps PGDATA in /var/lib/postgresql/<major>/docker and refuses a mount
     # at /var/lib/postgresql/data. A major upgrade gets a new volume, filled by dump and restore; the old
-    # one stays on the host as the rollback until it is deleted by hand (docs/open-items.md).
+    # one stays on the host as the rollback until it is deleted by hand.
     volumes:
       - surac-dev-pg19data:/var/lib/postgresql
     healthcheck:
