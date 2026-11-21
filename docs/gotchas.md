@@ -71,3 +71,12 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
   endpoint that carries no `[AllowAnonymous]`, so the fallback policy challenges first. Public
   read-only controllers carry `[AnswersHead]`; the application links deliberately do not, because
   a HEAD there would be recorded as an open or a download.
+- **EF Core 11: `Property()` no longer maps an array as a primitive collection** (2026-11-21, EF Core
+  10 to 11 upgrade). `Property(x => x.StackTags)` on a `string[]` became a scalar `text[]`: the schema
+  and `has-pending-model-changes` stayed clean, but `StackTags.Contains(...)` in a query no longer
+  translated. Array columns are configured with `PrimitiveCollection(...)`; a schema test runs an
+  element filter on each of them.
+- **Npgsql 11 reports serialization failures and deadlocks as `DbUpdateConcurrencyException`**
+  (`40001`/`40P01`, inner `PostgresException`), and EF Core 11 split queries throw
+  `DbQueryConcurrencyException` when rows change between their statements (EF 10 silently returned
+  an empty collection). `GlobalExceptionHandler` maps neither, so both end as a logged 500.
