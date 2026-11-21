@@ -112,7 +112,7 @@ locale comes from the URL prefix, never from a cookie.
 
 ## Database conventions
 
-- PostgreSQL 17. Tables `snake_case`, columns keep the PascalCase property names (quoted), as in the
+- PostgreSQL 19. Tables `snake_case`, columns keep the PascalCase property names (quoted), as in the
   maintainer's other projects.
 - Identity columns via `UseIdentityByDefaultColumn()`. Timestamps are `timestamptz`
   (`DateTimeOffset`), dates are `date` (`DateOnly`).

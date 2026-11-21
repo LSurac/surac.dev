@@ -12,7 +12,7 @@ them from repository variables and secrets.
 | Branch | `dev` | `master` |
 | URL | internal, port 8085 | `https://surac.dev` |
 | TLS | none (internal) | Caddy on the host, Let's Encrypt |
-| Database | shared development PostgreSQL instance, database `suracdev` | `surac-dev-db` container (`postgres:17-alpine`), named volume |
+| Database | shared development PostgreSQL instance, database `suracdev` | `surac-dev-db` container (`postgres:19-alpine`), named volume |
 | Compose profile | none | `prod` |
 | Telemetry | none | OTLP to Seq via the private network |
 
@@ -25,9 +25,9 @@ One `compose.yaml` for both. Production enables the database container and the O
 |---|---|---|---|
 | `surac-dev-api` | `SuracDev.Api/Dockerfile` (sdk → aspnet:11.0, Ubuntu 26.04) | 384 MB | internal only, port 8080; runs as the image's `app` user (uid 1654), which owns `/keys` and `/documents` |
 | `surac-dev-web` | `SuracDev.Web/Dockerfile` (node build → nginx + node runtime) | 256 MB | nginx on 8080 proxies `/api/` to the API and everything else to the SSR process on 4000; published on `127.0.0.1:<port>` |
-| `surac-dev-db` | `postgres:17-alpine` | 256 MB | `prod` profile only, volume `surac-dev-pgdata` |
+| `surac-dev-db` | `postgres:19-alpine` | 256 MB | `prod` profile only, volume `surac-dev-pg19data` at `/var/lib/postgresql` |
 
-Volumes: `surac-dev-dpkeys` (Data Protection), `surac-dev-documents` (uploads), `surac-dev-pgdata`
+Volumes: `surac-dev-dpkeys` (Data Protection), `surac-dev-documents` (uploads), `surac-dev-pg19data`
 (production database). All services: `restart: unless-stopped`, json-file logging capped at
 10 MB × 3, non-root users, `cap_drop: ALL`, `no-new-privileges`.
 

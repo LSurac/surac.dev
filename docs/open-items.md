@@ -25,3 +25,9 @@ open in the admin:
   closed or destroyed stream` from the SSR server after the application-link documents test (tests
   passed). Not reproduced in three reruns or on the old packages; likely an aborted download stream.
   Look at it if it shows up in CI.
+
+## Production host (maintainer)
+
+- [ ] Delete the old PostgreSQL 17 volume `surac-dev_surac-dev-pgdata` on the production host once
+  PostgreSQL 19 has run cleanly for two weeks after the cutover (nightly backups, restore drill and
+  health checks green). It is the rollback until then; deleting it needs the maintainer's go.
