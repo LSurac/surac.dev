@@ -91,7 +91,7 @@ public sealed class SuracDevDbContext(DbContextOptions<SuracDevDbContext> option
       entity.Property(profile => profile.Email).HasMaxLength(TextLimits.Name).IsRequired();
       entity.Property(profile => profile.Phone).HasMaxLength(TextLimits.Name);
       entity.Property(profile => profile.Location).HasMaxLength(TextLimits.Name).IsRequired();
-      entity.Property(profile => profile.AddressLines).IsRequired();
+      entity.PrimitiveCollection(profile => profile.AddressLines).IsRequired();
       entity.Property(profile => profile.GitHubUrl).HasMaxLength(TextLimits.Url);
       entity.Property(profile => profile.LinkedInUrl).HasMaxLength(TextLimits.Url);
       entity.HasOne<Document>().WithMany().HasForeignKey(profile => profile.PhotoDocumentId)
@@ -151,7 +151,7 @@ public sealed class SuracDevDbContext(DbContextOptions<SuracDevDbContext> option
       entity =>
       {
         entity.Property(translation => translation.RoleTitle).HasMaxLength(TextLimits.Name);
-        entity.Property(translation => translation.Bullets).IsRequired();
+        entity.PrimitiveCollection(translation => translation.Bullets).IsRequired();
         entity.Property(translation => translation.StackLine).HasMaxLength(TextLimits.Line);
       });
 
@@ -186,7 +186,7 @@ public sealed class SuracDevDbContext(DbContextOptions<SuracDevDbContext> option
       entity.Property(project => project.Status).HasConversion<int>();
       entity.Property(project => project.LiveUrl).HasMaxLength(TextLimits.Url);
       entity.Property(project => project.RepositoryUrl).HasMaxLength(TextLimits.Url);
-      entity.Property(project => project.StackTags).IsRequired();
+      entity.PrimitiveCollection(project => project.StackTags).IsRequired();
       entity.HasMany(project => project.Translations).WithOne()
         .HasForeignKey(translation => translation.ProjectId).OnDelete(DeleteBehavior.Cascade);
       entity.HasMany(project => project.Decisions).WithOne()

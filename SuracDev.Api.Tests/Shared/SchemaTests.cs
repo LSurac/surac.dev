@@ -178,6 +178,18 @@ public sealed class SchemaTests(PostgresFixture postgres)
   }
 
   [PostgresFact]
+  public async Task Array_columns_are_primitive_collections_that_filter_by_element_in_sql()
+  {
+    await using var dbContext = await NewContextAsync();
+
+    Assert.Empty(await dbContext.Projects.Where(project => project.StackTags.Contains(".NET")).ToListAsync());
+    Assert.Empty(await dbContext.Profiles.Where(profile => profile.AddressLines.Contains("x")).ToListAsync());
+    Assert.Empty(await dbContext.Set<ExperienceTranslation>()
+      .Where(translation => translation.Bullets.Contains("x"))
+      .ToListAsync());
+  }
+
+  [PostgresFact]
   public async Task The_database_refuses_a_locale_outside_de_and_en()
   {
     await using var dbContext = await NewContextAsync();
