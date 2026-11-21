@@ -22,7 +22,7 @@ paths = [
 ]
 regexes = [
   # Throwaway credentials of local containers, the OpenApi dummy and the test fixtures.
-  '''Password=suracdev\b''',
+  '''(?i)Password=suracdev\b''',
   '''Password=openapi\b''',
   '''Password=e2e\b''',
   '''Password=never\b''',
