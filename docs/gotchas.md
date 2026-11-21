@@ -80,3 +80,9 @@ Non-obvious traps already hit once. Add the date and the symptom; keep entries s
   (`40001`/`40P01`, inner `PostgresException`), and EF Core 11 split queries throw
   `DbQueryConcurrencyException` when rows change between their statements (EF 10 silently returned
   an empty collection). `GlobalExceptionHandler` maps neither, so both end as a logged 500.
+- **The web container's nginx keeps the API's old IP.** `SuracDev.Web/nginx.conf` proxies to
+  `http://surac-dev-api:8080` without a `resolver`, so nginx resolves the name once at start. When a
+  deploy recreates `surac-dev-api` but not `surac-dev-web` (web image unchanged) and the API comes back
+  on a new IP, every `/api` request answers 502 and the web healthcheck turns unhealthy, which also
+  fails `docker compose up --wait`. Seen on 2026-11-21 after the PostgreSQL 19 cutover. Fix:
+  `docker compose restart surac-dev-web` in `/opt/surac-dev`.
