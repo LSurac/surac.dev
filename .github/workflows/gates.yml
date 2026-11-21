@@ -54,7 +54,7 @@ jobs:
       - name: Build
         run: dotnet build SuracDev.slnx --configuration Release
 
-      # Testcontainers starts PostgreSQL 17 in Docker, available on ubuntu-latest. The coverage
+      # Testcontainers starts PostgreSQL 19 in Docker, available on ubuntu-latest. The coverage
       # threshold (85 % lines) lives in the test project file and fails the step when missed.
       - name: Test with coverage gate
         run: dotnet test SuracDev.Api.Tests/SuracDev.Api.Tests.csproj --configuration Release --no-build -p:CollectCoverage=true
