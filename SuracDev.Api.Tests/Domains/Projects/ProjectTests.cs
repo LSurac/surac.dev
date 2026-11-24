@@ -55,6 +55,14 @@ public sealed class ProjectTests
   }
 
   [Fact]
+  public void A_project_may_be_shown_while_it_is_still_in_development()
+  {
+    var project = Project.Create(Details with { Status = ProjectStatus.InDevelopment }, German);
+
+    Assert.Equal(ProjectStatus.InDevelopment, project.Status);
+  }
+
+  [Fact]
   public void The_end_year_may_not_precede_the_start_year()
   {
     var exception = Assert.Throws<DomainValidationException>(

@@ -12,6 +12,8 @@ public enum ProjectStatus
   InProduction = 2,
   Archived = 3,
   Planned = 4,
+  /// <summary>Built and running somewhere (staging, a pilot), but not yet in production use.</summary>
+  InDevelopment = 5,
 }
 
 /// <summary>The structural data of a project as the admin enters it.</summary>
