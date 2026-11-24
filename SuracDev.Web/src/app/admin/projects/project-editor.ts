@@ -28,7 +28,7 @@ type DecisionGroup = ReturnType<typeof createDecisionGroup>;
 type ImageGroup = ReturnType<typeof createImageGroup>;
 
 const NO_PROBLEM: SaveProblem = { status: null, messages: [], fieldErrors: {} };
-const STATUSES: readonly ProjectStatus[] = ['Live', 'InProduction', 'Archived', 'Planned'];
+const STATUSES: readonly ProjectStatus[] = ['Live', 'InProduction', 'InDevelopment', 'Archived', 'Planned'];
 const TEXT_KEYS: readonly TextKey[] = [
   'title',
   'teaser',

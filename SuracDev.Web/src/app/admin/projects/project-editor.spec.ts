@@ -125,6 +125,15 @@ describe('admin project editor', () => {
     );
   });
 
+  it('offers the status for a project that is still in development', async () => {
+    await renderEditor();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Neues Projekt' }));
+    await userEvent.selectOptions(screen.getByLabelText('Status'), 'In Entwicklung');
+
+    expect(screen.getByLabelText('Status')).toHaveDisplayValue('In Entwicklung');
+  });
+
   it('shows a conflict such as a taken slug', async () => {
     const conflict = {
       status: 409,

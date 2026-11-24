@@ -1647,7 +1647,7 @@ export interface PublicProjectCard {
 }
 
 /** Where a project stands. Stored as int; Unknown is never written and values are frozen. */
-export type ProjectStatus = 'Unknown' | 'Live' | 'InProduction' | 'Archived' | 'Planned';
+export type ProjectStatus = 'Unknown' | 'Live' | 'InProduction' | 'Archived' | 'Planned' | 'InDevelopment';
 
 /** The case study of a project, in one locale. */
 export interface PublicCaseStudy {

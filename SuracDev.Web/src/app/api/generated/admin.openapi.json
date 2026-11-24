@@ -2889,14 +2889,16 @@
           "Live",
           "InProduction",
           "Archived",
-          "Planned"
+          "Planned",
+          "InDevelopment"
         ],
         "enum": [
           "Unknown",
           "Live",
           "InProduction",
           "Archived",
-          "Planned"
+          "Planned",
+          "InDevelopment"
         ]
       },
       "ProjectTextsForm": {
