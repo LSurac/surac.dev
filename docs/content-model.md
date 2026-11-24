@@ -53,7 +53,7 @@ A project card plus its case study.
 | Field | Notes |
 |---|---|
 | `Slug` (value object, unique, per locale route) | `projekte/<slug>` and `en/projects/<slug>`; the slug is shared across locales. |
-| `Status` enum | `Unknown=0, Live=1, InProduction=2, Archived=3, Planned=4` |
+| `Status` enum | `Unknown=0, Live=1, InProduction=2, Archived=3, Planned=4, InDevelopment=5` |
 | `StartedYear`, `EndedYear` (nullable) | |
 | `LiveUrl`, `RepositoryUrl` (nullable) | |
 | `StackTags` (ordered list of strings) | Rendered as a stack line, never as bars. |
