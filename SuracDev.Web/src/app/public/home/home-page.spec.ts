@@ -215,7 +215,7 @@ describe('app-home-page', () => {
     expect(screen.getByRole('link', { name: 'Quellcode dieser Seite auf GitHub' })).toBeInTheDocument();
   });
 
-  it('marks a project that is still in development as such',async () => {
+  it('marks a project that is still in development as such', async () => {
     const inDevelopment = { ...project, status: 'InDevelopment' as const };
     await render(HomePage, { providers: providers([inDevelopment]).providers });
     await screen.findByRole('heading', { level: 1 });
