@@ -43,6 +43,7 @@ cd SuracDev.Web
 npm ci
 npm start                 # dev server on http://localhost:4200 with /api proxied to :5180
 npm run lint
+npm run format:check
 npm run test              # Vitest watch
 npm run test:ci           # once, coverage, threshold 80 % lines
 npm run build             # production SSR build into dist/surac-dev/{browser,server}
@@ -61,6 +62,7 @@ dotnet build SuracDev.slnx
 dotnet test SuracDev.Api.Tests/SuracDev.Api.Tests.csproj --no-build -p:CollectCoverage=true -p:Threshold=85 -p:ThresholdType=line -p:ThresholdStat=total
 cd SuracDev.Web
 npm run lint
+npm run format:check
 npm run test:ci
 npm run build
 npm run contract:check
